@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Photography Portfolio | picinview</title>
+    <!-- 引入 Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Licorice&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body, html {
@@ -14,23 +16,18 @@
             background-color: #050505;
             color: white;
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            /* 隱藏捲動條 (Firefox) */
             scrollbar-width: none; 
-            /* 隱藏捲動條 (IE/Edge) */
             -ms-overflow-style: none; 
         }
 
-        /* 隱藏捲動條 (Chrome, Safari, Opera) */
         body::-webkit-scrollbar {
             display: none;
         }
 
-        /* 預設隱藏水平捲動 */
         body {
             overflow-x: hidden;
         }
 
-        /* 背景畫布固定在視窗 */
         #canvas-container {
             position: fixed;
             top: 0;
@@ -48,7 +45,6 @@
             height: 100%;
         }
 
-        /* 頁面內容基礎樣式 */
         .page-content {
             position: relative;
             width: 100%;
@@ -59,13 +55,11 @@
             transition: opacity 0.5s ease;
         }
 
-        /* 分頁 active 時根據類別決定顯示模式 */
         .page-content.active {
             display: block;
             opacity: 1;
         }
 
-        /* 如果是固定高度的頁面（About/Contact），則強制使用 Flex 居中 */
         .page-content.active.fixed-page {
             display: flex;
             align-items: center;
@@ -111,7 +105,6 @@
             opacity: 0.5;
         }
 
-        /* Portfolio 頁面英雄區 */
         .hero-section {
             height: 100vh;
             display: flex;
@@ -140,7 +133,6 @@
             letter-spacing: -0.02em;
         }
 
-        /* 分類卡片區域 */
         .galleries-section {
             padding: 10vh 5vw;
             background: linear-gradient(to bottom, transparent, #050505 20%);
@@ -189,7 +181,6 @@
             letter-spacing: -0.02em;
         }
 
-        /* 子頁面內容容器 */
         .sub-page-container {
             max-width: 800px;
             width: 90%;
@@ -201,7 +192,6 @@
             box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
 
-        /* 自定義游標 */
         body { cursor: none; }
         .custom-cursor {
             position: fixed;
@@ -216,7 +206,6 @@
             transform: translate(-50%, -50%);
         }
 
-        /* 表單樣式 */
         input, textarea {
             background: transparent;
             border-bottom: 1px solid rgba(255,255,255,0.2);
@@ -230,7 +219,6 @@
             transition: border-color 0.3s ease;
         }
         input:focus, textarea:focus { border-bottom-color: white; }
-
         textarea { margin-bottom: 3rem; }
 
         .submit-btn {
@@ -282,28 +270,16 @@
 
     <!-- 頁面 2: About Me -->
     <div id="page-about" class="page-content fixed-page">
-        <div class="sub-page-container">
-            <h2 class="text-3xl font-black mb-8 uppercase tracking-widest text-center">About Me</h2>
-            <p class="text-lg leading-relaxed opacity-80 mb-6">
-                我是 PICINVIEW 的創作者，致力於捕捉那些稍縱即逝的瞬間（The evanescent）。透過光影的流動，我試圖在喧囂的世界中尋找那份寧靜的平衡。
-            </p>
-            <p class="text-lg leading-relaxed opacity-80 mb-8">
-                作為一名專注於視覺敘事的攝影師，我認為每一張照片都是對當下視角（View）的深刻挑選。歡迎與我一同探索影像中的流體美學。
-            </p>
-            
-            <div class="flex flex-wrap justify-center gap-x-8 gap-y-4 pt-6 border-t border-white/10">
-                <a href="https://www.instagram.com/picinview/" target="_blank" class="text-xs font-bold tracking-[0.3em] uppercase hover:text-gray-400 transition flex items-center">
-                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-                    Instagram 
-                </a>
-                <a href="https://www.threads.net/@picinview" target="_blank" class="text-xs font-bold tracking-[0.3em] uppercase hover:text-gray-400 transition flex items-center">
-                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24"><path d="M12 24c-6.627 0-12-5.373-12-12s5.373-12 12-12 12 5.373 12 12-5.373 12-12 12zm0-22c-5.523 0-10 4.477-10 10s4.477 10 10 10 10-4.477 10-10-4.477-10-10-10zm0 15.5c-3.037 0-5.5-2.463-5.5-5.5s2.463-5.5 5.5-5.5 5.5 2.463 5.5 5.5-2.463 5.5-5.5 5.5zm0-9c-1.933 0-3.5 1.567-3.5 3.5s1.567 3.5 3.5 3.5 3.5-1.567 3.5-3.5-1.567-3.5-3.5-3.5z"/></svg>
-                    Threads
-                </a>
-                <a href="https://www.youtube.com/@picinview" target="_blank" class="text-xs font-bold tracking-[0.3em] uppercase hover:text-gray-400 transition flex items-center">
-                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-                    YouTube
-                </a>
+        <div class="sub-page-container text-center">
+            <h2 class="text-7xl mb-6" style="font-family: 'Licorice', cursive; text-transform: none; letter-spacing: normal;">Jason Shih</h2>
+            <div class="space-y-6 opacity-80 text-lg leading-relaxed mb-10">
+                <p>一個在新竹載浮載沉的研究生，在生活的風口浪尖，拿著相機進入觀景窗裡的桃花源。</p>
+                <p>光影流動之際，我試圖在喧囂的世界中尋找那份寧靜的平衡。</p>
+            </div>
+            <div class="flex flex-wrap justify-center gap-x-8 gap-y-4 pt-8 border-t border-white/10">
+                <a href="https://www.instagram.com/picinview/" target="_blank" class="text-xs font-bold tracking-[0.3em] uppercase hover:text-gray-400 transition flex items-center">Instagram</a>
+                <a href="https://www.threads.net/@picinview" target="_blank" class="text-xs font-bold tracking-[0.3em] uppercase hover:text-gray-400 transition flex items-center">Threads</a>
+                <a href="https://www.youtube.com/@picinview" target="_blank" class="text-xs font-bold tracking-[0.3em] uppercase hover:text-gray-400 transition flex items-center">YouTube</a>
             </div>
         </div>
     </div>
@@ -311,12 +287,12 @@
     <!-- 頁面 3: Contact -->
     <div id="page-contact" class="page-content fixed-page">
         <div class="sub-page-container">
-            <h2 class="text-3xl font-black mb-12 uppercase tracking-widest">Contact</h2>
+            <h2 class="text-3xl font-black mb-12 uppercase tracking-widest text-center">Contact</h2>
             <form id="contactForm" class="w-full" onsubmit="handleMailSend(event)">
                 <input type="text" id="senderName" placeholder="YOUR NAME" required>
                 <input type="email" id="senderEmail" placeholder="YOUR EMAIL" required>
                 <textarea id="senderMessage" rows="4" placeholder="YOUR MESSAGE" required></textarea>
-                <div class="submit-btn">
+                <div class="submit-btn w-full text-center">
                     <button type="submit" class="border border-white px-10 py-4 text-[10px] tracking-[0.3em] uppercase hover:bg-white hover:text-black transition pointer-events-auto">Send Message</button>
                 </div>
             </form>
@@ -339,7 +315,7 @@
         let scrollOffset = 0;
         const scrollSpeed = 0.3; 
 
-        // 頁面切換邏輯
+        // 頁面切換與捲動管理
         window.switchPage = (pageId) => {
             document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
             const targetPage = document.getElementById(`page-${pageId}`);
@@ -350,12 +326,10 @@
                 document.body.style.overflow = "hidden";
             } else {
                 canvasContainer.style.opacity = "1";
-                // 恢復 Portfolio 頁面捲動但不顯示捲動條
                 document.body.style.overflowY = "scroll"; 
             }
         };
 
-        // 郵件寄送邏輯
         window.handleMailSend = (e) => {
             e.preventDefault();
             const name = document.getElementById('senderName').value;
@@ -366,37 +340,64 @@
             window.location.href = `mailto:picinview.offical@gmail.com?subject=${subject}&body=${body}`;
         };
 
+        // --- 照片管理區 ---
+        // 以後只要在下面陣列裡貼上新的照片連結，網站就會自動適應
         const seedImages = [
-            "https://images.unsplash.com/photo-1493238792040-81564986bbac?auto=format&fit=crop&w=600&q=80",
-            "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80",
-            "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=600&q=80",
-            "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?auto=format&fit=crop&w=600&q=80",
-            "https://images.unsplash.com/photo-1433086566780-6029a72e82b9?auto=format&fit=crop&w=600&q=80",
-            "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=600&q=80",
-            "https://images.unsplash.com/photo-1501854140801-50d01698950b?auto=format&fit=crop&w=600&q=80",
-            "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=600&q=80",
-            "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80",
-            "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=600&q=80"
+            "https://lh3.googleusercontent.com/d/1-UvOc5AvCWzrAIxqSisJ51LYkHj7HoVR=w10000",
+            "https://lh3.googleusercontent.com/d/1JyR9w7pQdU9SXnI5RR1FhqtiBauiPm56=w10000",
+            "https://lh3.googleusercontent.com/d/1ZXW6sCMj-hf3UU8gnYGFMNTIVBuMrF49=w10000",
+            "https://lh3.googleusercontent.com/d/1mM6UXA6h8ZsgdQx1SXtGc7Hx03_t9nGs=w10000",
+            "https://lh3.googleusercontent.com/d/1UbX_JDP4lfLfFMRtPdPaG75TEsyXnnX9=w10000",
+            "https://lh3.googleusercontent.com/d/1xkUyRhAjcqKeHinO087Z_-zny0b9jrOA=w10000",
+            "https://lh3.googleusercontent.com/d/1H2ZaDAxYoj0owaoP0LNPKW-HqToaKx7W=w10000",
+            "https://lh3.googleusercontent.com/d/1wzzYrcM_BWrxACQGvjB8tXBUmpHvn8BE=w10000",
+            "https://lh3.googleusercontent.com/d/1lN6nzJ45A2TcAshEyDW2UtSRTNBwRq0A=w10000",
+            "https://lh3.googleusercontent.com/d/15yjw7MIFzxhwlCEUejaCtlExjXtHv9xF=w10000"
         ];
+
         const loadedImages = seedImages.map(src => {
             const img = new Image();
             img.crossOrigin = "anonymous"; img.src = src;
             return img;
         });
+
+        // 動態隨機序列：根據照片總數自動計算網格填充
+        const imageSequence = [];
+        const COLS = 5;
+        let totalGridSlots = 0;
         const colVerticalOffsets = [0, 120, -80, 200, 40];
+
+        function initDynamicSequence() {
+            imageSequence.length = 0;
+            const imgCount = seedImages.length;
+            // 確保網格高度至少能涵蓋螢幕 (最小 30 格)
+            totalGridSlots = Math.max(imgCount, 30);
+            // 補齊到 COLS 的倍數，確保矩陣整齊
+            totalGridSlots = Math.ceil(totalGridSlots / COLS) * COLS;
+
+            const pool = [];
+            for (let i = 0; i < totalGridSlots; i++) {
+                pool.push(i % imgCount);
+            }
+            // Shuffle
+            for (let i = pool.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [pool[i], pool[j]] = [pool[j], pool[i]];
+            }
+            imageSequence.push(...pool);
+        }
+        initDynamicSequence();
 
         function resize() {
             width = canvas.width = window.innerWidth;
             height = canvas.height = window.innerHeight;
         }
-        window.addEventListener('resize', resize);
+        window.addEventListener('resize', () => { resize(); initDynamicSequence(); });
         resize();
 
         window.addEventListener('mousemove', e => {
-            mouse.px = mouse.x;
-            mouse.py = mouse.y;
-            mouse.x = e.clientX;
-            mouse.y = e.clientY;
+            mouse.px = mouse.x; mouse.py = mouse.y;
+            mouse.x = e.clientX; mouse.y = e.clientY;
             cursor.style.left = `${mouse.x}px`;
             cursor.style.top = `${mouse.y}px`;
             if (Math.abs(mouse.x - mouse.px) > 1 || Math.abs(mouse.y - mouse.py) > 1) {
@@ -409,23 +410,47 @@
             }
         });
 
+        function drawCoverImage(ctx, img, dx, dy, dw, dh) {
+            const imgW = img.naturalWidth;
+            const imgH = img.naturalHeight;
+            const imgAspect = imgW / imgH;
+            const destAspect = dw / dh;
+            let sx, sy, sw, sh;
+            if (imgAspect > destAspect) {
+                sh = imgH; sw = imgH * destAspect;
+                sx = (imgW - sw) / 2; sy = 0;
+            } else {
+                sw = imgW; sh = imgW / destAspect;
+                sx = 0; sy = (imgH - sh) / 2;
+            }
+            ctx.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh);
+        }
+
         function drawGrid(isColor, offset) {
             if (loadedImages.length === 0) return;
-            const cols = 5; const rows = 8; const gap = 15; 
-            const imgW = (width - (cols + 1) * gap) / cols;
-            const imgH = imgW * 1.1; const totalGridHeight = rows * (imgH + gap);
+            const gap = 15; 
+            const imgW = (width - (COLS + 1) * gap) / COLS;
+            const imgH = imgW * 1.1; 
+            const totalRows = totalGridSlots / COLS;
+            const totalGridHeight = totalRows * (imgH + gap);
+
             ctx.save();
             if (!isColor) ctx.filter = 'grayscale(100%) brightness(15%)';
-            for (let i = 0; i < 40; i++) {
-                const c = i % cols; const r = Math.floor(i / cols);
-                const img = loadedImages[i % loadedImages.length];
+            
+            for (let i = 0; i < totalGridSlots; i++) {
+                const c = i % COLS;
+                const r = Math.floor(i / COLS);
+                const imgIndex = imageSequence[i];
+                const img = loadedImages[imgIndex];
+
                 const x = gap + c * (imgW + gap);
                 let yBase = gap + r * (imgH + gap) + colVerticalOffsets[c];
                 let y = ((yBase - offset) % totalGridHeight + totalGridHeight) % totalGridHeight - imgH;
+
                 const drawImg = (posY) => {
                     if (posY + imgH > -imgH && posY < height + imgH) {
-                        if (img.complete && img.naturalWidth !== 0) {
-                            ctx.drawImage(img, x, posY, imgW, imgH);
+                        if (img && img.complete && img.naturalWidth !== 0) {
+                            drawCoverImage(ctx, img, x, posY, imgW, imgH);
                         } else {
                             ctx.fillStyle = isColor ? "rgba(40,40,40,1)" : "rgba(10,10,10,1)";
                             ctx.fillRect(x, posY, imgW, imgH);
