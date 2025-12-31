@@ -4,6 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Photography Portfolio | picinview</title>
+    
+    <!-- 
+        網站分頁圖示 (Favicon) 設定 
+        1. 如果您有本地檔案，請將檔案放在與此 HTML 同一層級，並將 href 改為 "your-icon.png"
+        2. 如果您使用線上網址，請直接貼上連結。
+        3. 下面提供了三種常見的定義方式：
+    -->
+    
+    <!-- 標準分頁圖示 (建議 32x32) -->
+    <link rel="icon" href="https://lh3.googleusercontent.com/d/1JyR9w7pQdU9SXnI5RR1FhqtiBauiPm56=w32" type="image/png">
+    
+    <!-- 高解析度圖示 (建議 192x192) -->
+    <link rel="icon" sizes="192x192" href="https://lh3.googleusercontent.com/d/1JyR9w7pQdU9SXnI5RR1FhqtiBauiPm56=w192">
+    
+    <!-- Apple 裝置專用圖示 (建議 180x180) -->
+    <link rel="apple-touch-icon" href="https://lh3.googleusercontent.com/d/1JyR9w7pQdU9SXnI5RR1FhqtiBauiPm56=w180">
+
     <!-- 引入 Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Licorice&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -273,8 +290,7 @@
         <div class="sub-page-container text-center">
             <h2 class="text-7xl mb-6" style="font-family: 'Licorice', cursive; text-transform: none; letter-spacing: normal;">Jason Shih</h2>
             <div class="space-y-6 opacity-80 text-lg leading-relaxed mb-10">
-                <p>一個在新竹載浮載沉的研究生，在生活的風口浪尖，拿著相機進入觀景窗裡的桃花源。</p>
-                <p>光影流動之際，我試圖在喧囂的世界中尋找那份寧靜的平衡。</p>
+                <p>一個在新竹載浮載沉的研究生，在生活的風口浪尖，拿著相機進入觀景窗裡的桃花源。光影流動之際，我試圖在喧囂的世界中尋找那份寧靜的平衡。</p>
             </div>
             <div class="flex flex-wrap justify-center gap-x-8 gap-y-4 pt-8 border-t border-white/10">
                 <a href="https://www.instagram.com/picinview/" target="_blank" class="text-xs font-bold tracking-[0.3em] uppercase hover:text-gray-400 transition flex items-center">Instagram</a>
@@ -341,7 +357,6 @@
         };
 
         // --- 照片管理區 ---
-        // 以後只要在下面陣列裡貼上新的照片連結，網站就會自動適應
         const seedImages = [
             "https://lh3.googleusercontent.com/d/1-UvOc5AvCWzrAIxqSisJ51LYkHj7HoVR=w1000",
             "https://lh3.googleusercontent.com/d/1JyR9w7pQdU9SXnI5RR1FhqtiBauiPm56=w1000",
@@ -352,14 +367,7 @@
             "https://lh3.googleusercontent.com/d/1H2ZaDAxYoj0owaoP0LNPKW-HqToaKx7W=w1000",
             "https://lh3.googleusercontent.com/d/1wzzYrcM_BWrxACQGvjB8tXBUmpHvn8BE=w1000",
             "https://lh3.googleusercontent.com/d/1lN6nzJ45A2TcAshEyDW2UtSRTNBwRq0A=w1000",
-            "https://lh3.googleusercontent.com/d/15yjw7MIFzxhwlCEUejaCtlExjXtHv9xF=w1000",
-            "https://lh3.googleusercontent.com/d/1Noutcdiz3jGvXPHt-utjUWlioAdXCIyi=w1000",
-            "https://lh3.googleusercontent.com/d/1AXhO0dy_k4Aj3aFTIqzz84a6hLQCIi-4=w1000",
-            "https://lh3.googleusercontent.com/d/1fBcqt6ft5KTqmB-5dpX8Ulc-FzDhINpS=w1000",
-            "https://lh3.googleusercontent.com/d/1opWTuoKIs7s49Bj9XON7g6yYlyJ9sKYU=w1000",
-            "https://lh3.googleusercontent.com/d/1a0xUILsyaIwpaidraaFUoPOSQWvqMkYI=w1000",
-            "https://lh3.googleusercontent.com/d/1G72sFGh6maIwsqbldvyh_ErjOjlFNMpu=w1000",
-            "https://lh3.googleusercontent.com/d/1Gu0kL62o7lqb_JjmMqSAMngBQvjLJf0a=w1000"
+            "https://lh3.googleusercontent.com/d/15yjw7MIFzxhwlCEUejaCtlExjXtHv9xF=w1000"
         ];
 
         const loadedImages = seedImages.map(src => {
@@ -368,7 +376,6 @@
             return img;
         });
 
-        // 動態隨機序列：根據照片總數自動計算網格填充
         const imageSequence = [];
         const COLS = 5;
         let totalGridSlots = 0;
@@ -377,16 +384,12 @@
         function initDynamicSequence() {
             imageSequence.length = 0;
             const imgCount = seedImages.length;
-            // 確保網格高度至少能涵蓋螢幕 (最小 30 格)
             totalGridSlots = Math.max(imgCount, 30);
-            // 補齊到 COLS 的倍數，確保矩陣整齊
             totalGridSlots = Math.ceil(totalGridSlots / COLS) * COLS;
-
             const pool = [];
             for (let i = 0; i < totalGridSlots; i++) {
                 pool.push(i % imgCount);
             }
-            // Shuffle
             for (let i = pool.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [pool[i], pool[j]] = [pool[j], pool[i]];
@@ -449,7 +452,6 @@
                 const r = Math.floor(i / COLS);
                 const imgIndex = imageSequence[i];
                 const img = loadedImages[imgIndex];
-
                 const x = gap + c * (imgW + gap);
                 let yBase = gap + r * (imgH + gap) + colVerticalOffsets[c];
                 let y = ((yBase - offset) % totalGridHeight + totalGridHeight) % totalGridHeight - imgH;
