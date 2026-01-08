@@ -3,22 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Photography Portfolio | picinview</title>
+    <title>Picinview</title>
     
-    <!-- 
-        網站分頁圖示 (Favicon) 設定 
-        1. 如果您有本地檔案，請將檔案放在與此 HTML 同一層級，並將 href 改為 "your-icon.png"
-        2. 如果您使用線上網址，請直接貼上連結。
-        3. 下面提供了三種常見的定義方式：
-    -->
-    
-    <!-- 標準分頁圖示 (建議 32x32) -->
+    <!-- 網站圖示 (Favicon) 設定 -->
     <link rel="icon" href="https://lh3.googleusercontent.com/d/1JyR9w7pQdU9SXnI5RR1FhqtiBauiPm56=w32" type="image/png">
-    
-    <!-- 高解析度圖示 (建議 192x192) -->
     <link rel="icon" sizes="192x192" href="https://lh3.googleusercontent.com/d/1JyR9w7pQdU9SXnI5RR1FhqtiBauiPm56=w192">
-    
-    <!-- Apple 裝置專用圖示 (建議 180x180) -->
     <link rel="apple-touch-icon" href="https://lh3.googleusercontent.com/d/1JyR9w7pQdU9SXnI5RR1FhqtiBauiPm56=w180">
 
     <!-- 引入 Google Fonts -->
@@ -43,6 +32,7 @@
 
         body {
             overflow-x: hidden;
+            overflow-y: auto;
         }
 
         #canvas-container {
@@ -79,6 +69,7 @@
 
         .page-content.active.fixed-page {
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
         }
@@ -163,7 +154,7 @@
             overflow: hidden;
             border-radius: 8px;
             cursor: pointer;
-            border: 1px solid rgba(255,255,255,0.05);
+            border: 1px solid rgba(255, 255, 255, 0.05);
             transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
         }
 
@@ -207,6 +198,9 @@
             border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 8px;
             box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         body { cursor: none; }
@@ -223,7 +217,85 @@
             transform: translate(-50%, -50%);
         }
 
-        input, textarea {
+        .page-label {
+            font-size: 10px;
+            letter-spacing: 0.6em;
+            text-transform: uppercase;
+            opacity: 0.4;
+            margin-bottom: 1rem;
+        }
+
+        .page-heading {
+            font-size: 1.875rem; 
+            font-weight: 900; 
+            margin-bottom: 3rem; 
+            text-transform: uppercase;
+            letter-spacing: 0.1em; 
+            text-align: center;
+        }
+
+        /* 相簿內頁網格修正：正方形容器 + 完整顯示圖片 */
+        .photo-gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2.5rem;
+            width: 100%;
+            padding: 2rem 0;
+        }
+
+        .gallery-item {
+            position: relative;
+            aspect-ratio: 1/1; /* 強制正方形佈局 */
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .gallery-item img {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain; /* 核心：長邊不超過容器，完整顯示 */
+            transition: transform 0.6s ease, opacity 0.4s ease;
+            opacity: 0.85;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.02);
+            opacity: 1;
+        }
+
+        /* 作品名稱標籤：預設無內容時不顯示 */
+        .item-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 1rem 0;
+            text-align: center;
+            pointer-events: none;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.4s ease;
+        }
+
+        .gallery-item:hover .item-info {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .item-name {
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            font-weight: 700;
+            color: rgba(255,255,255,0.6);
+        }
+
+        input, textarea, .standard-text {
             background: transparent;
             border-bottom: 1px solid rgba(255,255,255,0.2);
             width: 100%;
@@ -234,14 +306,9 @@
             font-size: 0.85rem;
             letter-spacing: 0.15em;
             transition: border-color 0.3s ease;
+            line-height: 2;
         }
         input:focus, textarea:focus { border-bottom-color: white; }
-        textarea { margin-bottom: 3rem; }
-
-        .submit-btn {
-            margin-top: 1.5rem;
-            display: inline-block;
-        }
     </style>
 </head>
 <body>
@@ -257,7 +324,7 @@
 
     <div class="custom-cursor" id="cursor"></div>
 
-    <!-- 頁面 1: Portfolio -->
+    <!-- 頁面 1: Portfolio 主頁 -->
     <div id="page-portfolio" class="page-content active">
         <section class="hero-section">
             <div class="hero-text">
@@ -270,32 +337,42 @@
         </section>
 
         <section class="galleries-section">
-            <div class="gallery-folder">
+            <div class="gallery-folder" onclick="openGallery('None / Life')">
+                <img src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1200&q=80" class="folder-image" alt="None / Life">
+                <div class="folder-info"><p class="page-label">Category 01</p><h3 class="folder-title">None / Life</h3></div>
+            </div>
+            <div class="gallery-folder" onclick="openGallery('Landscape')">
                 <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80" class="folder-image" alt="Landscape">
-                <div class="folder-info"><p class="text-xs tracking-[0.4em] opacity-60 mb-2">Category 01</p><h3 class="folder-title">Landscapes</h3></div>
+                <div class="folder-info"><p class="page-label">Category 02</p><h3 class="folder-title">Landscape</h3></div>
             </div>
-            <div class="gallery-folder">
-                <img src="https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?auto=format&fit=crop&w=1200&q=80" class="folder-image" alt="Street">
-                <div class="folder-info"><p class="text-xs tracking-[0.4em] opacity-60 mb-2">Category 02</p><h3 class="folder-title">Urban Stories</h3></div>
+            <div class="gallery-folder" onclick="openGallery('Street Snap')">
+                <img src="https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?auto=format&fit=crop&w=1200&q=80" class="folder-image" alt="Street Snap">
+                <div class="folder-info"><p class="page-label">Category 03</p><h3 class="folder-title">Street Snap</h3></div>
             </div>
-            <div class="gallery-folder">
-                <img src="https://lh3.googleusercontent.com/d/1JyR9w7pQdU9SXnI5RR1FhqtiBauiPm56=w10000" class="folder-image" alt="Portrait">
-                <div class="folder-info"><p class="text-xs tracking-[0.4em] opacity-60 mb-2">Category 03</p><h3 class="folder-title">Portraiture</h3></div>
+            <div class="gallery-folder" onclick="openGallery('Anima')">
+                <img src="https://images.unsplash.com/photo-1493238792040-81564986bbac?auto=format&fit=crop&w=1200&q=80" class="folder-image" alt="Anima">
+                <div class="folder-info"><p class="page-label">Category 04</p><h3 class="folder-title">Anima</h3></div>
+            </div>
+            <div class="gallery-folder" onclick="openGallery('Film Documentary')">
+                <img src="https://images.unsplash.com/photo-1475924156734-496f6acc671e?auto=format&fit=crop&w=1200&q=80" class="folder-image" alt="Film Documentary">
+                <div class="folder-info"><p class="page-label">Category 05</p><h3 class="folder-title">Film Documentary</h3></div>
             </div>
         </section>
     </div>
 
     <!-- 頁面 2: About Me -->
     <div id="page-about" class="page-content fixed-page">
-        <div class="sub-page-container text-center">
-            <h2 class="text-7xl mb-6" style="font-family: 'Licorice', cursive; text-transform: none; letter-spacing: normal;">Jason Shih</h2>
-            <div class="space-y-6 opacity-80 text-lg leading-relaxed mb-10">
-                <p>一個在新竹載浮載沉的研究生，在生活的風口浪尖，拿著相機進入觀景窗裡的桃花源。光影流動之際，我試圖在喧囂的世界中尋找那份寧靜的平衡。</p>
+        <div class="sub-page-container">
+            <p class="page-label">About Me</p>
+            <h3 class="text-7xl mb-8" style="font-family: 'Licorice', cursive; text-transform: none; letter-spacing: normal;">Jason Shih</h3>
+            <div class="text-center opacity-80 text-[0.85rem] tracking-[0.15em] leading-[2.5] mb-12 max-w-[500px]">
+                <p class="mb-4 border-b border-white/10 pb-4">一個在新竹載浮載沉的研究生，在生活的風口浪尖，拿著相機進入觀景窗裡的桃花源。</p>
+                <p>光影流動之際，我試圖在喧囂的世界中尋找那份寧靜的平衡。</p>
             </div>
-            <div class="flex flex-wrap justify-center gap-x-8 gap-y-4 pt-8 border-t border-white/10">
-                <a href="https://www.instagram.com/picinview/" target="_blank" class="text-xs font-bold tracking-[0.3em] uppercase hover:text-gray-400 transition flex items-center">Instagram</a>
-                <a href="https://www.threads.net/@picinview" target="_blank" class="text-xs font-bold tracking-[0.3em] uppercase hover:text-gray-400 transition flex items-center">Threads</a>
-                <a href="https://www.youtube.com/@picinview" target="_blank" class="text-xs font-bold tracking-[0.3em] uppercase hover:text-gray-400 transition flex items-center">YouTube</a>
+            <div class="flex flex-wrap justify-center gap-x-12 gap-y-4 pt-8 border-t border-white/10 w-full">
+                <a href="https://www.instagram.com/picinview/" target="_blank" class="text-[10px] font-bold tracking-[0.3em] uppercase hover:text-gray-400 transition">Instagram</a>
+                <a href="https://www.threads.net/@picinview" target="_blank" class="text-[10px] font-bold tracking-[0.3em] uppercase hover:text-gray-400 transition">Threads</a>
+                <a href="https://www.youtube.com/@picinview" target="_blank" class="text-[10px] font-bold tracking-[0.3em] uppercase hover:text-gray-400 transition">YouTube</a>
             </div>
         </div>
     </div>
@@ -303,7 +380,7 @@
     <!-- 頁面 3: Contact -->
     <div id="page-contact" class="page-content fixed-page">
         <div class="sub-page-container">
-            <h2 class="text-3xl font-black mb-12 uppercase tracking-widest text-center">Contact</h2>
+            <h2 class="page-heading">Contact</h2>
             <form id="contactForm" class="w-full" onsubmit="handleMailSend(event)">
                 <input type="text" id="senderName" placeholder="YOUR NAME" required>
                 <input type="email" id="senderEmail" placeholder="YOUR EMAIL" required>
@@ -312,6 +389,21 @@
                     <button type="submit" class="border border-white px-10 py-4 text-[10px] tracking-[0.3em] uppercase hover:bg-white hover:text-black transition pointer-events-auto">Send Message</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- 頁面 4: Gallery View -->
+    <div id="page-gallery" class="page-content py-24 px-12">
+        <div class="max-w-6xl mx-auto">
+            <div class="flex flex-col items-center mb-16">
+                <p class="page-label" id="gallery-label">Category 00</p>
+                <h2 class="page-heading mb-4" id="gallery-title">Album Name</h2>
+                <button onclick="switchPage('portfolio')" class="text-[10px] tracking-[0.3em] uppercase opacity-40 hover:opacity-100 transition border-b border-white/20 pb-1">← Back to Portfolio</button>
+            </div>
+            
+            <div id="gallery-grid" class="photo-gallery-grid">
+                <!-- 由 JS 動態生成相片 -->
+            </div>
         </div>
     </div>
 
@@ -331,7 +423,6 @@
         let scrollOffset = 0;
         const scrollSpeed = 0.3; 
 
-        // 頁面切換與捲動管理
         window.switchPage = (pageId) => {
             document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
             const targetPage = document.getElementById(`page-${pageId}`);
@@ -339,11 +430,78 @@
             window.scrollTo(0, 0);
             if (pageId !== 'portfolio') {
                 canvasContainer.style.opacity = "0.2";
-                document.body.style.overflow = "hidden";
+                if (pageId === 'about' || pageId === 'contact') {
+                    document.body.style.overflow = "hidden";
+                } else {
+                    document.body.style.overflowY = "auto"; 
+                }
             } else {
                 canvasContainer.style.opacity = "1";
-                document.body.style.overflowY = "scroll"; 
+                document.body.style.overflowY = "auto";
             }
+        };
+
+        // --- 相簿資料結構更新 ---
+        // 支援物件格式： { src: "網址", title: "作品名(選填)" }
+        const galleryData = {
+            'None / Life': [
+                { src: "https://lh3.googleusercontent.com/d/1-UvOc5AvCWzrAIxqSisJ51LYkHj7HoVR=w1000", title: "Morning Light" },
+                { src: "https://lh3.googleusercontent.com/d/1ZXW6sCMj-hf3UU8gnYGFMNTIVBuMrF49=w1000", title: "" } // 預設無標題
+            ],
+            'Landscape': [
+                "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1000&q=80",
+                "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1000&q=80"
+            ],
+            'Street Snap': [
+                "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?auto=format&fit=crop&w=1000&q=80"
+            ],
+            'Anima': [
+                "https://lh3.googleusercontent.com/d/1JyR9w7pQdU9SXnI5RR1FhqtiBauiPm56=w1000",
+                "https://images.unsplash.com/photo-1493238792040-81564986bbac?auto=format&fit=crop&w=1000&q=80"
+            ],
+            'Film Documentary': [
+                "https://images.unsplash.com/photo-1475924156734-496f6acc671e?auto=format&fit=crop&w=1000&q=80"
+            ]
+        };
+
+        const categoryMapping = {
+            'None / Life': '01',
+            'Landscape': '02',
+            'Street Snap': '03',
+            'Anima': '04',
+            'Film Documentary': '05'
+        };
+
+        window.openGallery = (category) => {
+            const grid = document.getElementById('gallery-grid');
+            const title = document.getElementById('gallery-title');
+            const label = document.getElementById('gallery-label');
+            
+            grid.innerHTML = '';
+            title.innerText = category;
+            const categoryNumber = categoryMapping[category] || '00';
+            label.innerText = `Category ${categoryNumber}`;
+            
+            const photos = galleryData[category] || [];
+            photos.forEach(photo => {
+                // 相容性處理：支援純字串或物件
+                const src = typeof photo === 'object' ? photo.src : photo;
+                const workTitle = (typeof photo === 'object' && photo.title) ? photo.title : "";
+
+                const item = document.createElement('div');
+                item.className = 'gallery-item';
+                
+                // 渲染圖片與標題層
+                item.innerHTML = `
+                    <img src="${src}" alt="Work" loading="lazy">
+                    <div class="item-info">
+                        <p class="item-name">${workTitle}</p>
+                    </div>
+                `;
+                grid.appendChild(item);
+            });
+            
+            switchPage('gallery');
         };
 
         window.handleMailSend = (e) => {
@@ -356,7 +514,7 @@
             window.location.href = `mailto:picinview.offical@gmail.com?subject=${subject}&body=${body}`;
         };
 
-        // --- 照片管理區 ---
+        // --- 背景捲動邏輯 ---
         const seedImages = [
             "https://lh3.googleusercontent.com/d/1-UvOc5AvCWzrAIxqSisJ51LYkHj7HoVR=w1000",
             "https://lh3.googleusercontent.com/d/1JyR9w7pQdU9SXnI5RR1FhqtiBauiPm56=w1000",
@@ -369,27 +527,22 @@
             "https://lh3.googleusercontent.com/d/1lN6nzJ45A2TcAshEyDW2UtSRTNBwRq0A=w1000",
             "https://lh3.googleusercontent.com/d/15yjw7MIFzxhwlCEUejaCtlExjXtHv9xF=w1000"
         ];
-
         const loadedImages = seedImages.map(src => {
             const img = new Image();
             img.crossOrigin = "anonymous"; img.src = src;
             return img;
         });
-
         const imageSequence = [];
         const COLS = 5;
         let totalGridSlots = 0;
         const colVerticalOffsets = [0, 120, -80, 200, 40];
-
         function initDynamicSequence() {
             imageSequence.length = 0;
             const imgCount = seedImages.length;
             totalGridSlots = Math.max(imgCount, 30);
             totalGridSlots = Math.ceil(totalGridSlots / COLS) * COLS;
             const pool = [];
-            for (let i = 0; i < totalGridSlots; i++) {
-                pool.push(i % imgCount);
-            }
+            for (let i = 0; i < totalGridSlots; i++) pool.push(i % imgCount);
             for (let i = pool.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [pool[i], pool[j]] = [pool[j], pool[i]];
@@ -397,14 +550,12 @@
             imageSequence.push(...pool);
         }
         initDynamicSequence();
-
         function resize() {
             width = canvas.width = window.innerWidth;
             height = canvas.height = window.innerHeight;
         }
         window.addEventListener('resize', () => { resize(); initDynamicSequence(); });
         resize();
-
         window.addEventListener('mousemove', e => {
             mouse.px = mouse.x; mouse.py = mouse.y;
             mouse.x = e.clientX; mouse.y = e.clientY;
@@ -419,23 +570,17 @@
                 });
             }
         });
-
         function drawCoverImage(ctx, img, dx, dy, dw, dh) {
-            const imgW = img.naturalWidth;
-            const imgH = img.naturalHeight;
-            const imgAspect = imgW / imgH;
-            const destAspect = dw / dh;
+            const imgW = img.naturalWidth; const imgH = img.naturalHeight;
+            const imgAspect = imgW / imgH; const destAspect = dw / dh;
             let sx, sy, sw, sh;
             if (imgAspect > destAspect) {
-                sh = imgH; sw = imgH * destAspect;
-                sx = (imgW - sw) / 2; sy = 0;
+                sh = imgH; sw = imgH * destAspect; sx = (imgW - sw) / 2; sy = 0;
             } else {
-                sw = imgW; sh = imgW / destAspect;
-                sx = 0; sy = (imgH - sh) / 2;
+                sw = imgW; sh = imgW / destAspect; sx = 0; sy = (imgH - sh) / 2;
             }
             ctx.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh);
         }
-
         function drawGrid(isColor, offset) {
             if (loadedImages.length === 0) return;
             const gap = 15; 
@@ -443,34 +588,24 @@
             const imgH = imgW * 1.1; 
             const totalRows = totalGridSlots / COLS;
             const totalGridHeight = totalRows * (imgH + gap);
-
             ctx.save();
             if (!isColor) ctx.filter = 'grayscale(100%) brightness(15%)';
-            
             for (let i = 0; i < totalGridSlots; i++) {
-                const c = i % COLS;
-                const r = Math.floor(i / COLS);
-                const imgIndex = imageSequence[i];
-                const img = loadedImages[imgIndex];
+                const c = i % COLS; const r = Math.floor(i / COLS);
+                const imgIndex = imageSequence[i]; const img = loadedImages[imgIndex];
                 const x = gap + c * (imgW + gap);
                 let yBase = gap + r * (imgH + gap) + colVerticalOffsets[c];
                 let y = ((yBase - offset) % totalGridHeight + totalGridHeight) % totalGridHeight - imgH;
-
                 const drawImg = (posY) => {
                     if (posY + imgH > -imgH && posY < height + imgH) {
-                        if (img && img.complete && img.naturalWidth !== 0) {
-                            drawCoverImage(ctx, img, x, posY, imgW, imgH);
-                        } else {
-                            ctx.fillStyle = isColor ? "rgba(40,40,40,1)" : "rgba(10,10,10,1)";
-                            ctx.fillRect(x, posY, imgW, imgH);
-                        }
+                        if (img && img.complete && img.naturalWidth !== 0) drawCoverImage(ctx, img, x, posY, imgW, imgH);
+                        else { ctx.fillStyle = isColor ? "rgba(40,40,40,1)" : "rgba(10,10,10,1)"; ctx.fillRect(x, posY, imgW, imgH); }
                     }
                 };
                 drawImg(y); drawImg(y + totalGridHeight); drawImg(y - totalGridHeight);
             }
             ctx.restore();
         }
-
         function render() {
             scrollOffset += scrollSpeed;
             ctx.fillStyle = "#050505"; ctx.fillRect(0, 0, width, height);
@@ -478,15 +613,11 @@
             if (points.length > 0) {
                 ctx.save(); ctx.beginPath();
                 for (let i = points.length - 1; i >= 0; i--) {
-                    const p = points[i];
-                    p.x += p.vx; p.y += p.vy; p.vx *= 0.96; p.vy *= 0.96; p.age++;
+                    const p = points[i]; p.x += p.vx; p.y += p.vy; p.vx *= 0.96; p.vy *= 0.96; p.age++;
                     const scaleIn = Math.min(p.age / p.growthAge, 1);
                     const scaleOut = Math.max(1 - p.age / p.maxAge, 0);
-                    const easedIn = -(Math.cos(Math.PI * scaleIn) - 1) / 2;
-                    const size = easedIn * scaleOut * 260; 
-                    if (size > 0.1) {
-                        ctx.moveTo(p.x + size, p.y); ctx.arc(p.x, p.y, size, 0, Math.PI * 2);
-                    }
+                    const size = (-(Math.cos(Math.PI * scaleIn) - 1) / 2) * scaleOut * 260; 
+                    if (size > 0.1) { ctx.moveTo(p.x + size, p.y); ctx.arc(p.x, p.y, size, 0, Math.PI * 2); }
                     if (p.age > p.maxAge) points.splice(i, 1);
                 }
                 ctx.clip(); drawGrid(true, scrollOffset); ctx.restore();
