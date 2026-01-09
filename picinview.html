@@ -15,165 +15,89 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #050505;
-            color: white;
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background-color: #050505; color: white;
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            scrollbar-width: none; 
-            -ms-overflow-style: none; 
+            scrollbar-width: none; -ms-overflow-style: none; 
         }
-
         body::-webkit-scrollbar { display: none; }
-
         body { overflow-x: hidden; overflow-y: auto; }
 
         #canvas-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            transition: opacity 0.8s ease;
-            pointer-events: none;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1; transition: opacity 0.8s ease; pointer-events: none;
         }
-
         canvas { display: block; width: 100%; height: 100%; }
 
         .page-content {
-            position: relative;
-            width: 100%;
-            min-height: 100vh;
-            z-index: 10;
-            display: none; 
-            opacity: 0;
-            transition: opacity 0.5s ease;
+            position: relative; width: 100%; min-height: 100vh; z-index: 10;
+            display: none; opacity: 0; transition: opacity 0.5s ease;
         }
-
         .page-content.active { display: block; opacity: 1; }
-
-        .page-content.active.fixed-page {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
+        .page-content.active.fixed-page { display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .fixed-page { height: 100vh; width: 100%; overflow: hidden; }
 
         nav {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            padding: 2.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            pointer-events: auto;
-            z-index: 100;
+            position: fixed; top: 0; width: 100%; padding: 2.5rem;
+            display: flex; justify-content: space-between; align-items: center;
+            pointer-events: auto; z-index: 100;
         }
-
         .logo { font-size: 1.2rem; font-weight: 900; letter-spacing: 0.3em; text-transform: uppercase; cursor: pointer; }
         .nav-link { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; cursor: pointer; transition: opacity 0.3s; }
         .nav-link:hover { opacity: 0.5; }
 
         .hero-section { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; pointer-events: none; }
-
         .hero-text {
-            text-align: center;
-            text-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            background: rgba(0,0,0,0.3);
-            padding: 2.5rem 4rem;
-            backdrop-filter: blur(8px);
-            border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.1);
-            pointer-events: auto;
+            text-align: center; text-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.3); padding: 2.5rem 4rem;
+            backdrop-filter: blur(8px); border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.1); pointer-events: auto;
         }
-
         .hero-title { font-size: clamp(2rem, 8vw, 6rem); line-height: 1; font-weight: 900; margin-bottom: 1rem; letter-spacing: -0.02em; }
 
         .galleries-section { padding: 10vh 5vw; background: linear-gradient(to bottom, transparent, #050505 20%); }
-
         .gallery-folder {
-            position: relative;
-            width: 100%;
-            height: 60vh;
-            margin-bottom: 10vh;
-            overflow: hidden;
-            border-radius: 8px;
-            cursor: pointer;
+            position: relative; width: 100%; height: 60vh; margin-bottom: 10vh;
+            overflow: hidden; border-radius: 8px; cursor: pointer;
             border: 1px solid rgba(255, 255, 255, 0.05);
             transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
         }
-
         .gallery-folder:hover { transform: scale(0.98); }
-
         .folder-image { width: 100%; height: 100%; object-fit: cover; opacity: 0.6; transition: transform 1.2s ease, opacity 0.6s ease; }
-
         .gallery-folder:hover .folder-image { transform: scale(1.1); opacity: 0.8; }
-
         .folder-info { position: absolute; bottom: 4rem; left: 4rem; pointer-events: none; }
-
         .folder-title { font-size: 3rem; font-weight: 900; text-transform: uppercase; letter-spacing: -0.02em; }
 
         .sub-page-container {
-            max-width: 800px;
-            width: 90%;
-            background: rgba(10, 10, 10, 0.9);
-            padding: 4rem;
-            backdrop-filter: blur(25px);
+            max-width: 800px; width: 90%; background: rgba(10, 10, 10, 0.9);
+            padding: 4rem; backdrop-filter: blur(25px); border-radius: 8px;
             border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 8px;
             box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            display: flex; flex-direction: column; align-items: center;
         }
 
         body { cursor: none; }
         .custom-cursor {
-            position: fixed;
-            width: 10px;
-            height: 10px;
-            background: white;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 5000; 
-            mix-blend-mode: difference;
-            transform: translate(-50%, -50%);
+            position: fixed; width: 10px; height: 10px; background: white;
+            border-radius: 50%; pointer-events: none; z-index: 5000; 
+            mix-blend-mode: difference; transform: translate(-50%, -50%);
         }
 
         .page-label { font-size: 10px; letter-spacing: 0.6em; text-transform: uppercase; opacity: 0.4; margin-bottom: 1rem; }
         .page-heading { font-size: 1.875rem; font-weight: 900; margin-bottom: 3rem; text-transform: uppercase; letter-spacing: 0.1em; text-align: center; }
 
         .photo-gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 2.5rem;
-            width: 100%;
-            padding: 2rem 0;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2.5rem; width: 100%; padding: 2rem 0;
         }
-
         .gallery-item {
-            position: relative;
-            aspect-ratio: 1/1; 
-            background: transparent;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            cursor: pointer;
+            position: relative; aspect-ratio: 1/1; display: flex; align-items: center;
+            justify-content: center; overflow: hidden; cursor: pointer;
         }
-
         .gallery-item img {
             max-width: 100%; max-height: 100%; width: auto; height: auto;
-            object-fit: contain; transition: transform 0.6s ease, opacity 0.4s ease;
-            opacity: 0.85;
+            object-fit: contain; transition: transform 0.6s ease, opacity 0.4s ease; opacity: 0.85;
         }
-
         .gallery-item:hover img { transform: scale(1.02); opacity: 1; }
 
         .item-info {
@@ -181,69 +105,34 @@
             text-align: center; pointer-events: none; opacity: 0;
             transform: translateY(10px); transition: all 0.4s ease;
         }
-
         .gallery-item:hover .item-info { opacity: 1; transform: translateY(0); }
         .item-name { font-size: 9px; text-transform: uppercase; letter-spacing: 0.3em; font-weight: 700; color: rgba(255,255,255,0.6); }
 
-        /* --- Lightbox 佈局 --- */
         #lightbox-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0); z-index: 2000;
             display: none; justify-content: center; align-items: center;
-            transition: background 0.6s ease;
-            cursor: pointer; /* 提示使用者可以點擊任意處關閉 */
+            transition: background 0.6s ease; cursor: pointer;
         }
-
         #lightbox-overlay.active { background: rgba(0,0,0,0.98); backdrop-filter: blur(25px); }
-
         #lightbox-content-wrapper {
             display: flex; flex-direction: row; align-items: center; justify-content: center;
-            width: 90vw; height: 85vh; max-width: 1400px; opacity: 0;
-            transition: opacity 0.5s ease;
+            width: 90vw; height: 85vh; max-width: 1400px; opacity: 0; transition: opacity 0.5s ease;
         }
-
         #lightbox-overlay.active #lightbox-content-wrapper { opacity: 1; transition-delay: 0.3s; }
-
-        #lightbox-img-container {
-            flex: 1.5; height: 100%; display: flex; align-items: center; justify-content: center;
-            position: relative;
-            pointer-events: none; /* 讓點擊穿透到背景層 */
-        }
-
-        /* 核心：移動的照片載體 */
-        #lightbox-img {
-            position: fixed; object-fit: contain;
-            box-shadow: 0 0 60px rgba(0,0,0,0.8);
-            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-            z-index: 2001; 
-            pointer-events: none;
-        }
-
-        #lightbox-info-pane {
-            flex: 1; padding-left: 5rem; text-align: left; display: flex;
-            flex-direction: column; justify-content: center; 
-            max-width: 500px; height: 100%;
-            pointer-events: none; /* 讓點擊穿透到背景層 */
-        }
-
-        #lb-title {
-            font-size: 1.5rem; font-weight: 900; letter-spacing: 0.2em;
-            margin-bottom: 2rem; text-transform: uppercase; color: white;
-        }
-
-        #lb-description {
-            font-size: 0.85rem; line-height: 2.2; letter-spacing: 0.12em;
-            color: rgba(255,255,255,0.6); white-space: pre-line;
-        }
+        #lightbox-img-container { flex: 1.5; height: 100%; display: flex; align-items: center; justify-content: center; position: relative; pointer-events: none; }
+        #lightbox-img { position: fixed; object-fit: contain; box-shadow: 0 0 60px rgba(0,0,0,0.8); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); z-index: 2001; pointer-events: none; }
+        #lightbox-info-pane { flex: 1; padding-left: 5rem; text-align: left; display: flex; flex-direction: column; justify-content: center; max-width: 500px; height: 100%; pointer-events: none; }
+        #lb-title { font-size: 1.5rem; font-weight: 900; letter-spacing: 0.2em; margin-bottom: 2rem; text-transform: uppercase; color: white; }
+        #lb-description { font-size: 0.85rem; line-height: 2.2; letter-spacing: 0.12em; color: rgba(255,255,255,0.6); white-space: pre-line; }
 
         .close-lightbox {
-            position: absolute; top: 3rem; right: 3rem; color: white;
-            font-size: 10px; letter-spacing: 0.4em; text-transform: uppercase;
-            cursor: pointer; opacity: 0.4; transition: opacity 0.3s; z-index: 2005;
+            position: absolute; top: 3rem; right: 3rem; color: white; font-size: 10px;
+            letter-spacing: 0.4em; text-transform: uppercase; cursor: pointer; opacity: 0.4; transition: opacity 0.3s; z-index: 2005;
         }
         .close-lightbox:hover { opacity: 1; }
 
-        input, textarea, .standard-text {
+        input, textarea {
             background: transparent; border-bottom: 1px solid rgba(255,255,255,0.2);
             width: 100%; padding: 1.2rem 0; margin-bottom: 4.5rem;
             color: white; outline: none; font-size: 0.85rem; letter-spacing: 0.15em;
@@ -264,11 +153,8 @@
 
     <div class="custom-cursor" id="cursor"></div>
 
-    <!-- 點擊任意處呼叫 closeLightbox() -->
     <div id="lightbox-overlay" onclick="closeLightbox()">
         <span class="close-lightbox">Click anywhere to close</span>
-        
-        <!-- 內容包裹層不再阻斷冒泡，點擊文字也能關閉 -->
         <div id="lightbox-content-wrapper">
             <div id="lightbox-img-container"></div>
             <div id="lightbox-info-pane">
@@ -276,7 +162,6 @@
                 <p id="lb-description"></p>
             </div>
         </div>
-
         <img id="lightbox-img" src="" alt="Full view">
     </div>
 
@@ -310,7 +195,7 @@
                 <div class="folder-info"><p class="page-label">Category 04</p><h3 class="folder-title">Game Day</h3></div>
             </div>
             <div class="gallery-folder" onclick="openGallery('Film Documentary')">
-                <img src="https://lh3.googleusercontent.com/d/1ZXW6sCMj-hf3UU8gnYGFMNTIVBuMrF49=w10000" class="folder-image" alt="Film Documentary">
+                <img src="https://lh3.googleusercontent.com/d/1ZXW6sCMj-hf3UU8gnYGFMNTIVBuMrF49=w1000" class="folder-image" alt="Film Documentary">
                 <div class="folder-info"><p class="page-label">Category 05</p><h3 class="folder-title">Film Documentary</h3></div>
             </div>
         </section>
@@ -346,7 +231,7 @@
         </div>
     </div>
 
-    <!-- 頁面 4: Gallery View -->
+    <!-- 頁面 4: Gallery View (相簿內頁模板) -->
     <div id="page-gallery" class="page-content py-24 px-12">
         <div class="max-w-6xl mx-auto">
             <div class="flex flex-col items-center mb-16">
@@ -363,6 +248,76 @@
     </div>
 
     <script type="module">
+        /* ==========================================================================
+        【全站照片與配置區】 - 您可以在此新增或移除相片
+        ==========================================================================
+        */
+
+        // 0. 聯絡收件信箱設定
+        const CONTACT_EMAIL = "picinview@gmail.com";
+
+        // 1. 首頁底層流體圖片 (背景捲動牆)
+        const BACKGROUND_IMAGES = [
+            "https://lh3.googleusercontent.com/d/1-UvOc5AvCWzrAIxqSisJ51LYkHj7HoVR=w1000",
+            "https://lh3.googleusercontent.com/d/1JyR9w7pQdU9SXnI5RR1FhqtiBauiPm56=w1000",
+            "https://lh3.googleusercontent.com/d/1ZXW6sCMj-hf3UU8gnYGFMNTIVBuMrF49=w1000",
+            "https://lh3.googleusercontent.com/d/1mM6UXA6h8ZsgdQx1SXtGc7Hx03_t9nGs=w1000",
+            "https://lh3.googleusercontent.com/d/1UbX_JDP4lfLfFMRtPdPaG75TEsyXnnX9=w1000",
+            "https://lh3.googleusercontent.com/d/1xkUyRhAjcqKeHinO087Z_-zny0b9jrOA=w1000",
+            "https://lh3.googleusercontent.com/d/1H2ZaDAxYoj0owaoP0LNPKW-HqToaKx7W=w1000",
+            "https://lh3.googleusercontent.com/d/1wzzYrcM_BWrxACQGvjB8tXBUmpHvn8BE=w1000",
+            "https://lh3.googleusercontent.com/d/1lN6nzJ45A2TcAshEyDW2UtSRTNBwRq0A=w1000",
+            "https://lh3.googleusercontent.com/d/15yjw7MIFzxhwlCEUejaCtlExjXtHv9xF=w1000"
+        ];
+
+        // 2. 各相簿內容資料庫 (Category 內容)
+        const CATEGORY_GALLERIES = {
+            'Landscape': [
+                "https://lh3.googleusercontent.com/d/1lN6nzJ45A2TcAshEyDW2UtSRTNBwRq0A=w1000",
+                "https://lh3.googleusercontent.com/d/1ObUaqBNzDlns8Qy-OuXjDCooI_8oNwZy=w1000"
+            ],
+            'Street Snap': [
+                "https://lh3.googleusercontent.com/d/1UbX_JDP4lfLfFMRtPdPaG75TEsyXnnX9=w1000"
+            ],
+            'Anima': [
+                "https://lh3.googleusercontent.com/d/1JyR9w7pQdU9SXnI5RR1FhqtiBauiPm56=w1000",
+                "https://lh3.googleusercontent.com/d/1xkUyRhAjcqKeHinO087Z_-zny0b9jrOA=w1000",
+                "https://lh3.googleusercontent.com/d/1a0xUILsyaIwpaidraaFUoPOSQWvqMkYI=w1000"
+            ],
+            'Game Day': [
+                "https://lh3.googleusercontent.com/d/1wzzYrcM_BWrxACQGvjB8tXBUmpHvn8BE=w1000",
+                "https://lh3.googleusercontent.com/d/1VHFXEifmaMLF_moUvKkwXKDj8rhFi0B2=w1000"
+            ],
+            'Film Documentary': [
+                { 
+                    src: "https://lh3.googleusercontent.com/d/1Gu0kL62o7lqb_JjmMqSAMngBQvjLJf0a=w1000", 
+                    title: "鍋貼 30", 
+                    description: `其實在拍下這些照片的時候，還沒特別注意到台灣感性這個議題，只能算是略有耳聞吧。其實就只是喜歡，所以把這個畫面拍下來。
+                    .
+                    比起日本的街道，要把這種帶有點懷舊生活感的巷弄拍的好看，真的好難好難。但底片洗出來看到一些不錯的照片，好像突然有點理解為什麼會吹起台灣感性了。`
+                },
+                { 
+                    src: "https://lh3.googleusercontent.com/d/1ZXW6sCMj-hf3UU8gnYGFMNTIVBuMrF49=w1000", 
+                    title: "関西空港駅" 
+                },
+                "https://lh3.googleusercontent.com/d/1kZ2u1nCO5RtFgUnpQK3QFRiG-1pJaOHY=w1000"
+            ]
+        };
+
+        // 3. 相簿編號映照
+        const CATEGORY_MAPPING = {
+            'Landscape': '01',
+            'Street Snap': '02',
+            'Anima': '03',
+            'Game Day': '04',
+            'Film Documentary': '05'
+        };
+
+        /* ==========================================================================
+        【核心引擎區】
+        ==========================================================================
+        */
+
         const canvas = document.getElementById('fluid-canvas');
         const cursor = document.getElementById('cursor');
         const canvasContainer = document.getElementById('canvas-container');
@@ -373,8 +328,6 @@
         let points = [];
         let scrollOffset = 0;
         const scrollSpeed = 0.3; 
-
-        // 用於追蹤最後點擊的縮圖，以便執行反向動畫
         let lastThumbElement = null;
 
         window.switchPage = (pageId) => {
@@ -392,28 +345,27 @@
             }
         };
 
-        const galleryData = {
-            'Landscape': ["https://lh3.googleusercontent.com/d/1lN6nzJ45A2TcAshEyDW2UtSRTNBwRq0A=w1000", "https://lh3.googleusercontent.com/d/1ObUaqBNzDlns8Qy-OuXjDCooI_8oNwZy=w1000"],
-            'Street Snap': ["https://lh3.googleusercontent.com/d/1UbX_JDP4lfLfFMRtPdPaG75TEsyXnnX9=w1000"],
-            'Anima': ["https://lh3.googleusercontent.com/d/1JyR9w7pQdU9SXnI5RR1FhqtiBauiPm56=w1000", "https://lh3.googleusercontent.com/d/1xkUyRhAjcqKeHinO087Z_-zny0b9jrOA=w1000"],
-            'Game Day': ["https://lh3.googleusercontent.com/d/1wzzYrcM_BWrxACQGvjB8tXBUmpHvn8BE=w1000"],
-            'Film Documentary': [
-                { 
-                    src: "https://lh3.googleusercontent.com/d/1Gu0kL62o7lqb_JjmMqSAMngBQvjLJf0a=w1000", 
-                    title: "鍋貼 30", 
-                    description: `其實在拍下這些照片的時候，還沒特別注意到台灣感性這個議題，只能算是略有耳聞吧。其實就只是喜歡，所以把這個畫面拍下來。
-                    .
-                    比起日本的街道，要把這種帶有點懷舊生活感的巷弄拍的好看，真的好難好難。但底片洗出來看到一些不錯的照片，好像突然有點理解為什麼會吹起台灣感性了。`
-                },
-                { src: "https://lh3.googleusercontent.com/d/1ZXW6sCMj-hf3UU8gnYGFMNTIVBuMrF49=w1000", title: "関西空港駅" }
-            ]
+        // 聯絡功能核心修復
+        window.handleMailSend = (e) => {
+            e.preventDefault();
+            const name = document.getElementById('senderName').value;
+            const email = document.getElementById('senderEmail').value;
+            const message = document.getElementById('senderMessage').value;
+
+            // 格式化標題與內容
+            const subject = `[Picinview Photolife Contact] ${name}`;
+            const body = `Mail: ${email}\n\n${message}`;
+
+            // 透過 mailto 開啟預填郵件
+            // 使用 encodeURIComponent 確保中文與換行符號正確解析
+            const mailtoUrl = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            
+            // 執行跳轉
+            window.location.href = mailtoUrl;
         };
 
-        const categoryMapping = {'Landscape': '01', 'Street Snap': '02', 'Anima': '03', 'Game Day': '04', 'Film Documentary': '05'};
-
-        // --- 強化版 Lightbox 邏輯 ---
         window.openLightbox = (photoData, thumbElement) => {
-            lastThumbElement = thumbElement; // 記錄縮圖位置
+            lastThumbElement = thumbElement;
             const lightbox = document.getElementById('lightbox-overlay');
             const lbImg = document.getElementById('lightbox-img');
             const lbTitle = document.getElementById('lb-title');
@@ -429,7 +381,6 @@
             lbDesc.innerText = desc;
             infoPane.style.display = (!title && !desc) ? 'none' : 'flex';
 
-            // 1. 起點：縮圖座標
             const rect = thumbElement.getBoundingClientRect();
             lbImg.style.transition = 'none';
             lbImg.style.top = `${rect.top}px`;
@@ -440,9 +391,8 @@
             
             lbImg.src = src;
             lightbox.style.display = 'flex';
-            lbImg.offsetHeight; // Force reflow
+            lbImg.offsetHeight; 
             
-            // 2. 目標：移動並放大到左側顯示區中心
             lightbox.classList.add('active');
             lbImg.style.transition = 'all 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
             
@@ -456,38 +406,30 @@
             lbImg.style.height = `${targetH}px`;
             lbImg.style.transform = 'translate(-50%, -50%)';
 
-            // 3. 高畫質加載
             const highRes = new Image();
             highRes.src = src + '0';
             highRes.onload = () => { if(lightbox.classList.contains('active')) lbImg.src = highRes.src; };
-            
             document.body.style.overflow = "hidden";
         };
 
         window.closeLightbox = () => {
             const lightbox = document.getElementById('lightbox-overlay');
             const lbImg = document.getElementById('lightbox-img');
-            
             if (!lastThumbElement) return;
-
-            // 反向動畫：飛回原始縮圖位置
             const rect = lastThumbElement.getBoundingClientRect();
-            
             lightbox.classList.remove('active');
             lbImg.style.transition = 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
             lbImg.style.top = `${rect.top}px`;
             lbImg.style.left = `${rect.left}px`;
             lbImg.style.width = `${rect.width}px`;
             lbImg.style.height = `${rect.height}px`;
-            lbImg.style.transform = 'translate(0, 0)'; // 取消中央置中
-
+            lbImg.style.transform = 'translate(0, 0)'; 
             setTimeout(() => {
                 if (!lightbox.classList.contains('active')) {
                     lightbox.style.display = 'none';
-                    lbImg.src = ''; // 清除圖片以重置狀態
+                    lbImg.src = ''; 
                 }
             }, 600);
-            
             const activePage = document.querySelector('.page-content.active').id;
             if (activePage === 'page-portfolio' || activePage === 'page-gallery') document.body.style.overflowY = "auto";
         };
@@ -498,8 +440,8 @@
             const label = document.getElementById('gallery-label');
             grid.innerHTML = '';
             title.innerText = category;
-            label.innerText = `Category ${categoryMapping[category] || '00'}`;
-            const photos = galleryData[category] || [];
+            label.innerText = `Category ${CATEGORY_MAPPING[category] || '00'}`;
+            const photos = CATEGORY_GALLERIES[category] || [];
             photos.forEach(photo => {
                 const src = typeof photo === 'object' ? photo.src : photo;
                 const workTitle = (typeof photo === 'object' && photo.title) ? photo.title : "";
@@ -512,23 +454,12 @@
             switchPage('gallery');
         };
 
-        window.handleMailSend = (e) => {
-            e.preventDefault();
-            const name = document.getElementById('senderName').value;
-            const email = document.getElementById('senderEmail').value;
-            const message = document.getElementById('senderMessage').value;
-            const subject = encodeURIComponent(`Contact from ${name} - picinview`);
-            const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`);
-            window.location.href = `mailto:picinview.offical@gmail.com?subject=${subject}&body=${body}`;
-        };
-
-        // 背景渲染
-        const seedImages = ["https://lh3.googleusercontent.com/d/1-UvOc5AvCWzrAIxqSisJ51LYkHj7HoVR=w1000", "https://lh3.googleusercontent.com/d/1JyR9w7pQdU9SXnI5RR1FhqtiBauiPm56=w1000", "https://lh3.googleusercontent.com/d/1ZXW6sCMj-hf3UU8gnYGFMNTIVBuMrF49=w1000", "https://lh3.googleusercontent.com/d/1mM6UXA6h8ZsgdQx1SXtGc7Hx03_t9nGs=w1000", "https://lh3.googleusercontent.com/d/1UbX_JDP4lfLfFMRtPdPaG75TEsyXnnX9=w1000", "https://lh3.googleusercontent.com/d/1xkUyRhAjcqKeHinO087Z_-zny0b9jrOA=w1000", "https://lh3.googleusercontent.com/d/1H2ZaDAxYoj0owaoP0LNPKW-HqToaKx7W=w1000", "https://lh3.googleusercontent.com/d/1wzzYrcM_BWrxACQGvjB8tXBUmpHvn8BE=w1000", "https://lh3.googleusercontent.com/d/1lN6nzJ45A2TcAshEyDW2UtSRTNBwRq0A=w1000", "https://lh3.googleusercontent.com/d/15yjw7MIFzxhwlCEUejaCtlExjXtHv9xF=w1000"];
-        const loadedImages = seedImages.map(src => { const img = new Image(); img.crossOrigin = "anonymous"; img.src = src; return img; });
+        // --- 背景流體渲染邏輯 ---
+        const loadedImages = BACKGROUND_IMAGES.map(src => { const img = new Image(); img.crossOrigin = "anonymous"; img.src = src; return img; });
         const imageSequence = [];
         const COLS = 5; let totalGridSlots = 0; const colVerticalOffsets = [0, 120, -80, 200, 40];
         function initDynamicSequence() {
-            imageSequence.length = 0; const imgCount = seedImages.length;
+            imageSequence.length = 0; const imgCount = BACKGROUND_IMAGES.length;
             totalGridSlots = Math.max(imgCount, 30); totalGridSlots = Math.ceil(totalGridSlots / COLS) * COLS;
             const pool = []; for (let i = 0; i < totalGridSlots; i++) pool.push(i % imgCount);
             for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [pool[i], pool[j]] = [pool[j], pool[i]]; }
@@ -551,7 +482,7 @@
             let sx, sy, sw, sh;
             if (imgAspect > destAspect) { sh = imgH; sw = imgH * destAspect; sx = (imgW - sw) / 2; sy = 0; }
             else { sw = imgW; sh = imgW / destAspect; sx = 0; sy = (imgH - sh) / 2; }
-            ctx.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh);
+            if (img.complete && img.naturalWidth !== 0) ctx.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh);
         }
         function drawGrid(isColor, offset) {
             if (loadedImages.length === 0) return;
@@ -566,7 +497,7 @@
                 let y = ((yBase - offset) % totalGridHeight + totalGridHeight) % totalGridHeight - imgH;
                 const drawImg = (posY) => {
                     if (posY + imgH > -imgH && posY < height + imgH) {
-                        if (img && img.complete && img.naturalWidth !== 0) drawCoverImage(ctx, img, x, posY, imgW, imgH);
+                        if (img) drawCoverImage(ctx, img, x, posY, imgW, imgH);
                         else { ctx.fillStyle = isColor ? "rgba(40,40,40,1)" : "rgba(10,10,10,1)"; ctx.fillRect(x, posY, imgW, imgH); }
                     }
                 };
@@ -594,4 +525,3 @@
     </script>
 </body>
 </html>
-
