@@ -5,23 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Picinview Photolife</title>
 
-    <!-- 網頁簡介與社交分享設定 -->
+    <!-- 網頁簡介與社交分享設定 (Metadata) -->
     <meta name="description" content="Pick the evanescent in view">
+    
+    <!-- Open Graph (OG) 協定 - 用於 Line, FB, Discord 分享 -->
     <meta property="og:title" content="Picinview Photolife">
     <meta property="og:description" content="Pick the evanescent in view">
     <meta property="og:type" content="website">
     <meta property="og:image" content="https://lh3.googleusercontent.com/d/1JyR9w7pQdU9SXnI5RR1FhqtiBauiPm56=w1200">
     <meta property="og:url" content="https://picinview.com">
+
+    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Picinview Photolife">
     <meta name="twitter:description" content="Pick the evanescent in view">
     <meta name="twitter:image" content="https://lh3.googleusercontent.com/d/1JyR9w7pQdU9SXnI5RR1FhqtiBauiPm56=w1200">
     
-    <!-- 網站圖示 -->
+    <!-- 網站圖示 (Favicon) 設定 -->
     <link rel="icon" href="https://lh3.googleusercontent.com/d/1JyR9w7pQdU9SXnI5RR1FhqtiBauiPm56=w32" type="image/png">
     <link rel="icon" sizes="192x192" href="https://lh3.googleusercontent.com/d/1JyR9w7pQdU9SXnI5RR1FhqtiBauiPm56=w192">
     <link rel="apple-touch-icon" href="https://lh3.googleusercontent.com/d/1JyR9w7pQdU9SXnI5RR1FhqtiBauiPm56=w180">
 
+    <!-- 引入 Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Licorice&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -73,15 +78,15 @@
             margin-bottom: 0.5rem; letter-spacing: -0.02em; 
         }
 
-        /* 移除額外修正，回歸自然置中 */
         .hero-subtitle {
             font-size: 0.9rem;
-            letter-spacing: 0.5em; /* 使用標準較寬的字距維持氛圍感 */
+            letter-spacing: 0.5em; 
             text-transform: uppercase; 
             opacity: 0.7;
             width: 100%;
             text-align: center;
-            /* 移除了 margin-right 負值補償 */
+            /* 視覺修正：補償 letter-spacing 導致的偏右感 */
+            padding-left: 0.5em; 
         }
 
         .galleries-section { padding: 10vh 5vw; background: linear-gradient(to bottom, transparent, #050505 20%); }
@@ -123,7 +128,7 @@
         .gallery-item {
             position: relative; aspect-ratio: 1/1; display: flex; align-items: center;
             justify-content: center; overflow: hidden; cursor: pointer;
-            background: transparent;
+            background: transparent !important;
         }
         .gallery-item img {
             max-width: 100%; max-height: 100%; width: auto; height: auto;
@@ -142,6 +147,7 @@
             font-weight: 700; color: white; text-shadow: 0 2px 8px rgba(0,0,0,1); 
         }
 
+        /* Lightbox Overlay */
         #lightbox-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0); z-index: 2000;
@@ -149,6 +155,7 @@
             transition: background 0.6s ease; cursor: pointer;
         }
         #lightbox-overlay.active { background: rgba(0,0,0,0.98); backdrop-filter: blur(25px); }
+        
         #lightbox-content-wrapper {
             display: flex; flex-direction: row; align-items: center; justify-content: center;
             width: 90vw; height: 85vh; max-width: 1400px; opacity: 0; transition: opacity 0.5s ease;
@@ -159,6 +166,7 @@
             flex: 1.5; height: 100%; display: flex; align-items: center; 
             justify-content: center; position: relative; pointer-events: none;
             background: transparent !important;
+            border: none !important;
         }
         
         #lightbox-img { 
@@ -167,7 +175,7 @@
             transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); 
             z-index: 2001; pointer-events: none;
             background: transparent !important;
-            border: none;
+            border: none !important;
         }
 
         #lightbox-info-pane { flex: 1; padding-left: 5rem; text-align: left; display: flex; flex-direction: column; justify-content: center; max-width: 500px; height: 100%; pointer-events: none; }
@@ -223,7 +231,7 @@
             
             .hero-text { width: 88%; padding: 2rem 1.5rem; }
             .hero-title { font-size: 2.2rem; }
-            .hero-subtitle { font-size: 0.6rem; letter-spacing: 0.12em; }
+            .hero-subtitle { font-size: 0.6rem; letter-spacing: 0.12em; padding-left: 0.12em; }
 
             .sub-page-container { padding: 2.5rem 1.5rem; width: 92%; margin: auto 0; }
             #page-about h3.text-7xl { font-size: 3.5rem; } 
@@ -232,17 +240,30 @@
             .folder-info { left: 1.5rem; bottom: 1.5rem; }
             .folder-title { font-size: 1.8rem; }
 
+            /* Lightbox 手機版佈局重構 */
             #lightbox-content-wrapper {
-                flex-direction: column; width: 100%; height: 100%;
-                justify-content: flex-start; padding-top: 50px; overflow-y: auto; 
+                flex-direction: column; 
+                width: 100%; height: 100%;
+                padding-top: 60px; 
+                overflow-y: auto; 
             }
             
             #lightbox-img-container { 
-                flex: none; width: 100%; height: 30vh;
-                margin-bottom: 0.5rem; background: transparent !important;
+                flex: none; 
+                width: 100%; 
+                height: auto; 
+                min-height: 200px;
+                margin-bottom: 1.5rem; 
+                background: transparent !important;
+                border: none !important;
             }
             #lightbox-info-pane {
-                flex: none; width: 100%; padding: 1.5rem 1.5rem 5rem 1.5rem; text-align: center;
+                flex: none; 
+                width: 100%; 
+                padding: 0 1.5rem 6rem 1.5rem; 
+                text-align: center;
+                justify-content: flex-start;
+                background: transparent !important;
             }
             #lb-title { font-size: 1.1rem; margin-bottom: 0.8rem; }
             #lb-description { font-size: 0.85rem; line-height: 1.8; text-align: center; }
@@ -399,7 +420,8 @@
             "https://lh3.googleusercontent.com/d/15yjw7MIFzxhwlCEUejaCtlExjXtHv9xF=w1000"
         ];
         const CATEGORY_GALLERIES = {
-            'Landscape': ["https://lh3.googleusercontent.com/d/1lN6nzJ45A2TcAshEyDW2UtSRTNBwRq0A=w1000",
+            'Landscape': [
+                "https://lh3.googleusercontent.com/d/1lN6nzJ45A2TcAshEyDW2UtSRTNBwRq0A=w1000",
                 { src: "https://lh3.googleusercontent.com/d/1ObUaqBNzDlns8Qy-OuXjDCooI_8oNwZy=w1000", title: "大濛", description: `大自然送給天文社幹部訓練最完美的句點。\n.\n自從愛上星空攝影，開始背上裝備上山，就鮮少看見天空在夜裡敞開，總羞澀的用雲朵遮著臉。\n.\n一張茫茫雲海，反而成為這趟旅程最令我最難忘的作品。` }
             ],
             'Street Snap': ["https://lh3.googleusercontent.com/d/1UbX_JDP4lfLfFMRtPdPaG75TEsyXnnX9=w1000"],
@@ -450,14 +472,11 @@
             document.body.appendChild(textArea);
             textArea.select();
             textArea.setSelectionRange(0, 99999);
-
             try {
-                const successful = document.execCommand('copy');
-                if (successful) {
-                    const toast = document.getElementById('copy-toast');
-                    toast.classList.add('show');
-                    setTimeout(() => toast.classList.remove('show'), 2000);
-                }
+                document.execCommand('copy');
+                const toast = document.getElementById('copy-toast');
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 2000);
             } catch (err) {}
             document.body.removeChild(textArea);
         };
@@ -510,29 +529,45 @@
             lightbox.classList.add('active');
             lbImg.style.transition = 'all 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
             
-            const containerRect = imgContainer.getBoundingClientRect();
             const isMobile = window.innerWidth <= 768;
+            const containerRect = imgContainer.getBoundingClientRect();
             
             if (isMobile) {
-                if (!title && !desc) {
+                // 手機版內容感知排版
+                if (!desc) {
+                    contentWrapper.style.justifyContent = 'center';
                     lbImg.style.top = '50%';
                     lbImg.style.left = '50%';
-                    lbImg.style.width = '92vw'; /* 留邊 4% */
+                    lbImg.style.width = '92vw';
                     lbImg.style.height = 'auto';
-                    lbImg.style.maxHeight = '80vh';
+                    lbImg.style.maxHeight = '75vh';
                 } else {
-                    lbImg.style.top = `${containerRect.top + containerRect.height/2}px`;
+                    contentWrapper.style.justifyContent = 'flex-start';
+                    lbImg.style.top = '25%'; 
                     lbImg.style.left = '50%';
                     lbImg.style.width = '92vw'; 
-                    lbImg.style.height = '30vh'; /* 縮小容器佔位，讓橫式照片與文字更緊湊 */
-                    lbImg.style.maxHeight = 'none';
+                    lbImg.style.height = 'auto'; 
+                    lbImg.style.maxHeight = '40vh'; 
                 }
             } else {
-                lbImg.style.top = `${containerRect.top + containerRect.height/2}px`;
-                lbImg.style.left = `${containerRect.left + containerRect.width/2}px`;
-                lbImg.style.width = `${containerRect.width * 0.95}px`;
-                lbImg.style.height = `${containerRect.height * 0.9}px`;
-                lbImg.style.maxHeight = 'none';
+                // 電腦版修正：根據內容調整座標與尺寸
+                if (!title && !desc) {
+                    // 無文字：絕對置中
+                    lbImg.style.top = '50%';
+                    lbImg.style.left = '50%';
+                    lbImg.style.width = 'auto';
+                    lbImg.style.height = 'auto';
+                    lbImg.style.maxWidth = '90vw';
+                    lbImg.style.maxHeight = '85vh';
+                } else {
+                    // 有文字：精準飛往左側佔位容器中心，防止覆蓋文字
+                    lbImg.style.top = `${containerRect.top + containerRect.height / 2}px`;
+                    lbImg.style.left = `${containerRect.left + containerRect.width / 2}px`;
+                    lbImg.style.width = 'auto';
+                    lbImg.style.height = 'auto';
+                    lbImg.style.maxWidth = `${containerRect.width * 0.9}px`;
+                    lbImg.style.maxHeight = `${containerRect.height * 0.9}px`;
+                }
             }
             lbImg.style.transform = 'translate(-50%, -50%)';
 
@@ -647,4 +682,3 @@
     </script>
 </body>
 </html>
-
