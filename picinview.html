@@ -45,37 +45,43 @@
             display: none; opacity: 0; transition: opacity 0.5s ease;
         }
         .page-content.active { display: block; opacity: 1; }
-
         .page-content.active.fixed-page { 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
         }
-        .fixed-page { 
-            min-height: 100vh; width: 100%; 
-            overflow-y: auto; 
-        }
+        .fixed-page { min-height: 100vh; width: 100%; overflow-y: auto; }
 
         nav {
             position: fixed; top: 0; width: 100%; padding: 2.5rem;
             display: flex; justify-content: space-between; align-items: center;
             pointer-events: auto; z-index: 100;
-            transition: padding 0.3s ease;
         }
         .logo { font-size: 1.2rem; font-weight: 900; letter-spacing: 0.3em; text-transform: uppercase; cursor: pointer; }
-        
-        .nav-link { 
-            font-size: 0.75rem; font-weight: 700; letter-spacing: 0.2em; 
-            text-transform: uppercase; cursor: pointer; transition: opacity 0.3s; 
-        }
+        .nav-link { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; cursor: pointer; transition: opacity 0.3s; }
         .nav-link:hover { opacity: 0.5; }
 
         .hero-section { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; pointer-events: none; }
         .hero-text {
+            display: inline-flex; flex-direction: column; align-items: center;
             text-align: center; text-shadow: 0 10px 30px rgba(0,0,0,0.5);
             background: rgba(0,0,0,0.3); padding: 2.5rem 4rem;
             backdrop-filter: blur(8px); border-radius: 12px;
             border: 1px solid rgba(255,255,255,0.1); pointer-events: auto;
         }
-        .hero-title { font-size: clamp(2rem, 8vw, 6rem); line-height: 1; font-weight: 900; margin-bottom: 1rem; letter-spacing: -0.02em; }
+        .hero-title { 
+            font-size: clamp(2rem, 8vw, 6rem); line-height: 1; font-weight: 900; 
+            margin-bottom: 0.5rem; letter-spacing: -0.02em; 
+        }
+
+        /* 副標題對齊優化：修正 P 字母靠右問題，達到左右邊界精確切齊 */
+        .hero-subtitle {
+            font-size: 0.9rem; /* 字體加大 */
+            letter-spacing: 0.165em; /* 精確計算字距 */
+            text-transform: uppercase; 
+            opacity: 0.7;
+            width: 100%;
+            text-align: center;
+            margin-right: -0.165em; /* 補償機制：確保最後一個字元後方不留白，實現完美置中 */
+        }
 
         .galleries-section { padding: 10vh 5vw; background: linear-gradient(to bottom, transparent, #050505 20%); }
         .gallery-folder {
@@ -96,7 +102,6 @@
             border: 1px solid rgba(255, 255, 255, 0.08);
             box-shadow: 0 20px 50px rgba(0,0,0,0.5);
             display: flex; flex-direction: column; align-items: center;
-            transition: padding 0.3s ease;
             margin: 2rem 0; 
         }
 
@@ -118,29 +123,21 @@
             position: relative; aspect-ratio: 1/1; display: flex; align-items: center;
             justify-content: center; overflow: hidden; cursor: pointer;
         }
-        
-        /* 圖片透明度修正：預設 1，避免看起來灰灰的 */
         .gallery-item img {
             max-width: 100%; max-height: 100%; width: auto; height: auto;
-            object-fit: contain; transition: transform 0.6s ease, opacity 0.4s ease; 
-            opacity: 1; /* 修正：從 0.85 改為 1 */
+            object-fit: contain; transition: transform 0.6s ease, opacity 0.4s ease; opacity: 1;
         }
         .gallery-item:hover img { transform: scale(1.02); }
 
-        /* 相片內文位置修正 */
         .item-info {
-            position: absolute; bottom: 0; left: 0; width: 100%; 
-            padding: 0 0 1.5rem 0; /* 修正：增加底部 padding，讓文字往上 */
+            position: absolute; bottom: 0; left: 0; width: 100%; padding: 0 0 2rem 0;
             text-align: center; pointer-events: none; opacity: 0;
             transform: translateY(10px); transition: all 0.4s ease;
-            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); /* 選配：加一點點漸層讓文字清楚，但如果不需要可移除 */
         }
         .gallery-item:hover .item-info { opacity: 1; transform: translateY(0); }
         .item-name { 
-            font-size: 10px; /* 稍微加大字體 */
-            text-transform: uppercase; letter-spacing: 0.3em; 
-            font-weight: 700; color: white; /* 修正：使用純白 */
-            text-shadow: 0 2px 4px rgba(0,0,0,0.8); /* 增加陰影提升可讀性 */
+            font-size: 10px; text-transform: uppercase; letter-spacing: 0.3em; 
+            font-weight: 700; color: white; text-shadow: 0 2px 8px rgba(0,0,0,1); 
         }
 
         #lightbox-overlay {
@@ -177,29 +174,23 @@
         .contact-icon { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 1.5; }
         .contact-text { font-size: 0.9rem; font-weight: 400; letter-spacing: 0.15em; }
 
-        /* Copy Toast 優化：電腦版靠右，手機版靠下 */
         #copy-toast {
-            position: absolute; 
-            /* 電腦版預設位置：右側 */
-            left: 100%; top: 50%; transform: translateY(-50%);
-            margin-left: 1rem; margin-top: 0;
-            
-            font-size: 9px; text-transform: uppercase; letter-spacing: 0.2em;
+            position: absolute; left: 100%; top: 50%; transform: translateY(-50%);
+            margin-left: 1rem; font-size: 9px; text-transform: uppercase; letter-spacing: 0.2em;
             color: #4ade80; opacity: 0; transition: opacity 0.3s; pointer-events: none;
             white-space: nowrap;
         }
         #copy-toast.show { opacity: 1; }
 
-        /* 手機疊合選單樣式 */
         #mobile-menu {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.95);
-            backdrop-filter: blur(20px); z-index: 2000;
+            position: fixed; inset: 0; background: rgba(0,0,0,0.96);
+            backdrop-filter: blur(25px); z-index: 2000;
             display: none; flex-direction: column; align-items: center; justify-content: center;
-            gap: 3rem; opacity: 0; transition: opacity 0.3s ease;
+            gap: 1.5rem; opacity: 0; transition: opacity 0.4s ease;
         }
         #mobile-menu.active { display: flex; opacity: 1; }
         .mobile-nav-link {
-            font-size: 1.2rem; font-weight: 700; letter-spacing: 0.4em;
+            font-size: 1rem; font-weight: 700; letter-spacing: 0.4em;
             text-transform: uppercase; color: white; opacity: 0.6;
             transition: opacity 0.3s; cursor: pointer;
         }
@@ -211,10 +202,13 @@
         @media (max-width: 768px) {
             .custom-cursor { display: none; }
             body { cursor: auto; }
-
             nav { padding: 1.5rem; }
             .logo { font-size: 1rem; letter-spacing: 0.2em; }
             
+            .hero-text { width: 90%; padding: 2rem 1.5rem; }
+            .hero-title { font-size: 2.5rem; }
+            .hero-subtitle { font-size: 0.6rem; letter-spacing: 0.15em; margin-right: -0.15em; }
+
             .sub-page-container { padding: 2.5rem 1.5rem; width: 92%; margin: auto 0; }
             #page-about h3.text-7xl { font-size: 3.5rem; } 
 
@@ -224,25 +218,24 @@
 
             #lightbox-content-wrapper {
                 flex-direction: column; width: 100%; height: 100%;
-                justify-content: flex-start; padding-top: 60px; overflow-y: auto; 
+                justify-content: flex-start; padding-top: 50px; overflow-y: auto; 
             }
-            #lightbox-img-container { flex: none; width: 100%; height: 50vh; margin-bottom: 1rem; }
+            #lightbox-img-container { flex: none; width: 100%; height: 40vh; margin-bottom: 0.5rem; }
             #lightbox-info-pane {
-                flex: none; width: 100%; padding-left: 0;
-                padding: 0 2rem 4rem 2rem; text-align: center;
+                flex: none; width: 100%; padding: 0 1.5rem 5rem 1.5rem; text-align: center;
             }
-            #lb-title { font-size: 1.2rem; margin-bottom: 1.5rem; }
-            #lb-description { font-size: 0.85rem; line-height: 2; text-align: left; }
+            #lb-title { font-size: 1.1rem; margin-bottom: 1rem; }
+            #lb-description { font-size: 0.8rem; line-height: 1.8; text-align: center; }
             
             .close-lightbox { top: 1.2rem; right: 1.2rem; font-size: 8px; }
-
             .photo-gallery-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 1rem; }
 
-            /* 手機版 Copy Toast：改至下方 */
-            #copy-toast {
+            /* 修正：手機版 Copy Toast 提示位置與間距 */
+            #copy-toast { 
                 left: 50%; top: 100%; 
-                margin-left: 0; margin-top: 0.8rem;
-                transform: translateX(-50%);
+                margin-left: 0; 
+                margin-top: 0.2rem; /* 再縮小一點，使其緊貼 */
+                transform: translateX(-50%); 
             }
         }
     </style>
@@ -251,21 +244,16 @@
 
     <nav>
         <div class="logo" onclick="switchPage('portfolio')">PICINVIEW</div>
-        
-        <!-- 桌面版選單 (使用 Tailwind hidden md:flex) -->
         <div class="hidden md:flex space-x-8">
             <div class="nav-link" onclick="switchPage('portfolio')">Portfolio</div>
             <div class="nav-link" onclick="switchPage('about')">About Me</div>
             <div class="nav-link" onclick="switchPage('contact')">Contact</div>
         </div>
-
-        <!-- 手機版觸發按鈕 (使用 Tailwind md:hidden) -->
-        <div class="md:hidden flex cursor-pointer" onclick="toggleMobileMenu()">
+        <div class="md:hidden flex cursor-pointer z-[2100]" onclick="toggleMobileMenu()">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
         </div>
     </nav>
 
-    <!-- 手機疊合選單 -->
     <div id="mobile-menu">
         <div class="absolute top-6 right-6 p-2 cursor-pointer" onclick="toggleMobileMenu()">
             <svg class="w-8 h-8 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -293,8 +281,8 @@
     <div id="page-portfolio" class="page-content active">
         <section class="hero-section">
             <div class="hero-text">
-                <h1 class="hero-title uppercase">picinview</h1>
-                <p class="text-[10px] md:text-sm tracking-[0.3em] md:tracking-[0.5em] uppercase opacity-70">Pick the evanescent in view</p>
+                <h1 class="hero-title">PICINVIEW</h1>
+                <p class="hero-subtitle">Pick the evanescent in view</p>
                 <div class="mt-8 animate-bounce opacity-40">
                     <svg class="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                 </div>
@@ -374,8 +362,6 @@
         <canvas id="fluid-canvas"></canvas>
     </div>
 
-    <textarea id="copy-helper" style="position: absolute; left: -9999px; top: -9999px;"></textarea>
-
     <script type="module">
         /* ==========================================================================
         【全站照片與配置區】
@@ -420,12 +406,12 @@
         const scrollSpeed = 0.3; 
         let lastThumbElement = null;
 
-        // 手機選單切換
+        // 漢堡選單邏輯
         window.toggleMobileMenu = () => {
             const menu = document.getElementById('mobile-menu');
             if (menu.style.display === 'flex') {
                 menu.style.opacity = '0';
-                setTimeout(() => menu.style.display = 'none', 300);
+                setTimeout(() => menu.style.display = 'none', 400);
             } else {
                 menu.style.display = 'flex';
                 menu.offsetHeight;
@@ -433,14 +419,30 @@
             }
         };
 
+        // 核心修正：改用動態 Textarea 複製法，確保 iframe 內 100% 成功且不彈鍵盤
         window.copyEmail = (element) => {
-            const helper = document.getElementById('copy-helper');
-            const toast = document.getElementById('copy-toast');
-            helper.value = CONTACT_EMAIL;
-            helper.select();
-            document.execCommand('copy');
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 2000);
+            const text = CONTACT_EMAIL;
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            // 確保元素完全隱藏且不影響捲動
+            textArea.style.position = "fixed";
+            textArea.style.left = "-9999px";
+            textArea.style.top = "0";
+            document.body.appendChild(textArea);
+            textArea.select();
+            textArea.setSelectionRange(0, 99999); // 針對手機設備
+
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    const toast = document.getElementById('copy-toast');
+                    toast.classList.add('show');
+                    setTimeout(() => toast.classList.remove('show'), 2000);
+                }
+            } catch (err) {
+                console.error('Copy failed', err);
+            }
+            document.body.removeChild(textArea);
         };
 
         window.switchPage = (pageId) => {
@@ -450,7 +452,6 @@
             window.scrollTo(0, 0);
             if (pageId !== 'portfolio') {
                 canvasContainer.style.opacity = "0.2";
-                // 手機版優化：允許 body 捲動以便 fixed-page 超過時可以滑動
                 document.body.style.overflowY = "auto";
             } else {
                 canvasContainer.style.opacity = "1";
@@ -467,12 +468,10 @@
             const imgContainer = document.getElementById('lightbox-img-container');
             const infoPane = document.getElementById('lightbox-info-pane');
             const contentWrapper = document.getElementById('lightbox-content-wrapper');
-
             const src = typeof photoData === 'object' ? photoData.src : photoData;
             lbTitle.innerText = typeof photoData === 'object' ? photoData.title : "";
             lbDesc.innerText = typeof photoData === 'object' ? (photoData.description || "") : "";
             infoPane.style.display = (!lbTitle.innerText && !lbDesc.innerText) ? 'none' : 'flex';
-
             const rect = thumbElement.getBoundingClientRect();
             lbImg.style.transition = 'none';
             lbImg.style.top = `${rect.top}px`;
@@ -482,21 +481,17 @@
             lbImg.style.transform = 'none';
             lbImg.src = src;
             lightbox.style.display = 'flex';
-            
             contentWrapper.scrollTop = 0;
             lbImg.offsetHeight; 
-
             lightbox.classList.add('active');
             lbImg.style.transition = 'all 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
-            
             const containerRect = imgContainer.getBoundingClientRect();
             const isMobile = window.innerWidth <= 768;
-            
             if (isMobile) {
                 lbImg.style.top = `${containerRect.top + containerRect.height/2}px`;
                 lbImg.style.left = '50%';
                 lbImg.style.width = '90vw';
-                lbImg.style.height = '45vh';
+                lbImg.style.height = '35vh'; 
             } else {
                 lbImg.style.top = `${containerRect.top + containerRect.height/2}px`;
                 lbImg.style.left = `${containerRect.left + containerRect.width/2}px`;
@@ -504,7 +499,6 @@
                 lbImg.style.height = `${containerRect.height * 0.9}px`;
             }
             lbImg.style.transform = 'translate(-50%, -50%)';
-
             const highRes = new Image();
             highRes.src = src + '0';
             highRes.onload = () => { if(lightbox.classList.contains('active')) lbImg.src = highRes.src; };
