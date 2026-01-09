@@ -13,9 +13,9 @@
     <meta property="og:description" content="Pick the evanescent in view">
     <meta property="og:type" content="website">
     <meta property="og:image" content="https://lh3.googleusercontent.com/d/1JyR9w7pQdU9SXnI5RR1FhqtiBauiPm56=w1200">
-    <meta property="og:url" content="https://picinview.com"> <!-- 建議填入您的實際網址 -->
+    <meta property="og:url" content="https://picinview.com">
 
-    <!-- Twitter Card - 用於 X (Twitter) 分享 -->
+    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Picinview Photolife">
     <meta name="twitter:description" content="Pick the evanescent in view">
@@ -35,6 +35,7 @@
             background-color: #050505; color: white;
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             scrollbar-width: none; -ms-overflow-style: none; 
+            overscroll-behavior: none; 
         }
         body::-webkit-scrollbar { display: none; }
         body { overflow-x: hidden; overflow-y: auto; }
@@ -50,13 +51,20 @@
             display: none; opacity: 0; transition: opacity 0.5s ease;
         }
         .page-content.active { display: block; opacity: 1; }
-        .page-content.active.fixed-page { display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .fixed-page { height: 100vh; width: 100%; overflow: hidden; }
+
+        .page-content.active.fixed-page { 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+        }
+        .fixed-page { 
+            min-height: 100vh; width: 100%; 
+            overflow-y: auto; 
+        }
 
         nav {
             position: fixed; top: 0; width: 100%; padding: 2.5rem;
             display: flex; justify-content: space-between; align-items: center;
             pointer-events: auto; z-index: 100;
+            transition: padding 0.3s ease;
         }
         .logo { font-size: 1.2rem; font-weight: 900; letter-spacing: 0.3em; text-transform: uppercase; cursor: pointer; }
         .nav-link { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; cursor: pointer; transition: opacity 0.3s; }
@@ -90,6 +98,8 @@
             border: 1px solid rgba(255, 255, 255, 0.08);
             box-shadow: 0 20px 50px rgba(0,0,0,0.5);
             display: flex; flex-direction: column; align-items: center;
+            transition: padding 0.3s ease;
+            margin: 2rem 0; 
         }
 
         body { cursor: none; }
@@ -124,6 +134,7 @@
         .gallery-item:hover .item-info { opacity: 1; transform: translateY(0); }
         .item-name { font-size: 9px; text-transform: uppercase; letter-spacing: 0.3em; font-weight: 700; color: rgba(255,255,255,0.6); }
 
+        /* --- Lightbox 佈局 --- */
         #lightbox-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0); z-index: 2000;
@@ -148,12 +159,7 @@
         }
         .close-lightbox:hover { opacity: 1; }
 
-        /* Contact 頁面專用樣式 */
-        .contact-list {
-            display: flex; flex-direction: column; align-items: center; 
-            gap: 1.5rem;
-            margin-top: 0; 
-        }
+        .contact-list { display: flex; flex-direction: column; align-items: center; gap: 1.5rem; margin-top: 0; }
         .contact-item {
             display: flex; align-items: center; gap: 1.5rem;
             color: rgba(255,255,255,0.6); transition: all 0.3s ease;
@@ -163,29 +169,111 @@
         .contact-icon { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 1.5; }
         .contact-text { font-size: 0.9rem; font-weight: 400; letter-spacing: 0.15em; }
 
-        /* 複製成功的 Toast 提示 */
         #copy-toast {
-            position: absolute; bottom: -25px; left: 50%; transform: translateX(-50%);
-            font-size: 9px; text-transform: uppercase; letter-spacing: 0.2em;
+            position: absolute; left: 100%; top: 50%; transform: translateY(-50%);
+            margin-left: 1rem; font-size: 9px; text-transform: uppercase; letter-spacing: 0.2em;
             color: #4ade80; opacity: 0; transition: opacity 0.3s; pointer-events: none;
+            white-space: nowrap;
         }
         #copy-toast.show { opacity: 1; }
+
+        /* ==========================================================================
+           【手機版優化 (Mobile Optimization)】
+           ========================================================================== */
+        @media (max-width: 768px) {
+            .custom-cursor { display: none; }
+            body { cursor: auto; }
+
+            nav { padding: 1.5rem; }
+            .logo { font-size: 1rem; letter-spacing: 0.2em; }
+            
+            /* 隱藏手機端水平選單，顯示漢堡按鈕 */
+            .nav-links-desktop { display: none; }
+            .nav-toggle-mobile { display: flex; }
+
+            .sub-page-container { 
+                padding: 2.5rem 1.5rem; 
+                width: 92%; 
+                margin: auto 0; 
+            }
+            #page-about h3.text-7xl { font-size: 3.5rem; } 
+
+            .gallery-folder { height: 40vh; }
+            .folder-info { left: 1.5rem; bottom: 1.5rem; }
+            .folder-title { font-size: 1.8rem; }
+
+            #lightbox-content-wrapper {
+                flex-direction: column;
+                width: 100%; height: 100%;
+                justify-content: flex-start;
+                padding-top: 60px;
+                overflow-y: auto; 
+            }
+            #lightbox-img-container {
+                flex: none; width: 100%; height: 50vh; 
+                margin-bottom: 1rem;
+            }
+            #lightbox-info-pane {
+                flex: none; width: 100%; padding-left: 0;
+                padding: 0 2rem 4rem 2rem;
+                text-align: center;
+            }
+            #lb-title { font-size: 1.2rem; margin-bottom: 1.5rem; }
+            #lb-description { font-size: 0.85rem; line-height: 2; text-align: left; }
+            
+            .close-lightbox { top: 1.2rem; right: 1.2rem; font-size: 8px; }
+
+            .photo-gallery-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 1rem; }
+        }
+
+        /* 手機疊合選單樣式 */
+        #mobile-menu {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.95);
+            backdrop-filter: blur(20px); z-index: 2000;
+            display: none; flex-direction: column; align-items: center; justify-content: center;
+            gap: 3rem; opacity: 0; transition: opacity 0.5s ease;
+        }
+        #mobile-menu.active { display: flex; opacity: 1; }
+        .mobile-nav-link {
+            font-size: 1.2rem; font-weight: 700; letter-spacing: 0.4em;
+            text-transform: uppercase; color: white; opacity: 0.6;
+            transition: opacity 0.3s;
+        }
+        .mobile-nav-link:hover { opacity: 1; }
     </style>
 </head>
 <body>
 
     <nav>
         <div class="logo" onclick="switchPage('portfolio')">PICINVIEW</div>
-        <div class="flex space-x-8">
+        
+        <!-- 桌面版選單 -->
+        <div class="nav-links-desktop flex space-x-8">
             <div class="nav-link" onclick="switchPage('portfolio')">Portfolio</div>
             <div class="nav-link" onclick="switchPage('about')">About Me</div>
             <div class="nav-link" onclick="switchPage('contact')">Contact</div>
         </div>
+
+        <!-- 手機版觸發按鈕 (預設隱藏) -->
+        <div class="nav-toggle-mobile hidden cursor-pointer" onclick="toggleMobileMenu()">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+        </div>
     </nav>
+
+    <!-- 手機疊合選單 (Overlay Menu) -->
+    <div id="mobile-menu">
+        <div class="absolute top-6 right-6 p-2" onclick="toggleMobileMenu()">
+            <svg class="w-8 h-8 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </div>
+        <div class="mobile-nav-link" onclick="switchPage('portfolio'); toggleMobileMenu()">Portfolio</div>
+        <div class="mobile-nav-link" onclick="switchPage('about'); toggleMobileMenu()">About Me</div>
+        <div class="mobile-nav-link" onclick="switchPage('contact'); toggleMobileMenu()">Contact</div>
+    </div>
 
     <div class="custom-cursor" id="cursor"></div>
 
     <div id="lightbox-overlay" onclick="closeLightbox()">
+        <!-- 恢復文字標籤 -->
         <span class="close-lightbox">Click anywhere to close</span>
         <div id="lightbox-content-wrapper">
             <div id="lightbox-img-container"></div>
@@ -202,7 +290,7 @@
         <section class="hero-section">
             <div class="hero-text">
                 <h1 class="hero-title uppercase">picinview</h1>
-                <p class="text-sm tracking-[0.5em] uppercase opacity-70">Pick the evanescent in view</p>
+                <p class="text-[10px] md:text-sm tracking-[0.3em] md:tracking-[0.5em] uppercase opacity-70">Pick the evanescent in view</p>
                 <div class="mt-8 animate-bounce opacity-40">
                     <svg class="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                 </div>
@@ -237,10 +325,10 @@
     <div id="page-about" class="page-content fixed-page">
         <div class="sub-page-container">
             <h3 class="text-7xl mb-10" style="font-family: 'Licorice', cursive; text-transform: none; letter-spacing: normal;">Jason Shih</h3>
-            <div class="text-center opacity-80 text-[0.85rem] tracking-[0.15em] leading-[2.5] mb-12 max-w-[550px]">
+            <div class="text-center opacity-80 text-[0.8rem] md:text-[0.85rem] tracking-[0.12em] md:tracking-[0.15em] leading-[2.2] md:leading-[2.5] mb-8 md:mb-12 max-w-[550px]">
                 <p>一個在新竹載浮載沉的研究生，在生活的風口浪尖，拿著相機進入觀景窗裡的桃花源。光影流動之際，我試圖在喧囂的世界中尋找那份寧靜的平衡。</p>
             </div>
-            <div class="flex flex-wrap justify-center gap-x-12 gap-y-4 pt-8 border-t border-white/10 w-full">
+            <div class="flex flex-wrap justify-center gap-x-8 md:gap-x-12 gap-y-4 pt-8 border-t border-white/10 w-full">
                 <a href="https://www.instagram.com/picinview/" target="_blank" class="text-[10px] font-bold tracking-[0.3em] uppercase hover:text-gray-400 transition">Instagram</a>
                 <a href="https://www.threads.net/@picinview" target="_blank" class="text-[10px] font-bold tracking-[0.3em] uppercase hover:text-gray-400 transition">Threads</a>
                 <a href="https://www.youtube.com/@picinview" target="_blank" class="text-[10px] font-bold tracking-[0.3em] uppercase hover:text-gray-400 transition">YouTube</a>
@@ -252,35 +340,27 @@
     <div id="page-contact" class="page-content fixed-page">
         <div class="sub-page-container">
             <h2 class="page-heading">Contact</h2>
-            
             <div class="contact-list">
-                <!-- Mail -->
                 <div class="contact-item" onclick="copyEmail(this)">
                     <svg class="contact-icon" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"></path></svg>
-                    <span class="contact-text">picinview.offical@gmail.com</span>
+                    <span class="contact-text text-xs md:text-sm">picinview.offical@gmail.com</span>
                     <span id="copy-toast">Copied!</span>
                 </div>
-
-                <!-- IG -->
                 <a href="https://www.instagram.com/picinview/" target="_blank" class="contact-item">
-                    <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                    </svg>
-                    <span class="contact-text">picinview</span>
+                    <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                    <span class="contact-text text-xs md:text-sm">picinview</span>
                 </a>
             </div>
         </div>
     </div>
 
-    <!-- 頁面 4: Gallery View (相簿內頁模板) -->
-    <div id="page-gallery" class="page-content py-24 px-12">
+    <!-- 頁面 4: Gallery View -->
+    <div id="page-gallery" class="page-content py-16 md:py-24 px-6 md:px-12">
         <div class="max-w-6xl mx-auto">
-            <div class="flex flex-col items-center mb-16">
+            <div class="flex flex-col items-center mb-8 md:mb-16">
                 <p class="page-label" id="gallery-label">Category 00</p>
                 <h2 class="page-heading mb-4" id="gallery-title">Album Name</h2>
-                <button onclick="switchPage('portfolio')" class="text-[10px] tracking-[0.3em] uppercase opacity-40 hover:opacity-100 transition border-b border-white/20 pb-1">← Back to Portfolio</button>
+                <button onclick="switchPage('portfolio')" class="text-[9px] md:text-[10px] tracking-[0.3em] uppercase opacity-40 hover:opacity-100 transition border-b border-white/20 pb-1">← Back to Portfolio</button>
             </div>
             <div id="gallery-grid" class="photo-gallery-grid"></div>
         </div>
@@ -295,11 +375,8 @@
     <script type="module">
         /* ==========================================================================
         【全站照片與配置區】
-        ==========================================================================
-        */
-
+        ========================================================================== */
         const CONTACT_EMAIL = "picinview.offical@gmail.com";
-
         const BACKGROUND_IMAGES = [
             "https://lh3.googleusercontent.com/d/1-UvOc5AvCWzrAIxqSisJ51LYkHj7HoVR=w1000",
             "https://lh3.googleusercontent.com/d/1JyR9w7pQdU9SXnI5RR1FhqtiBauiPm56=w1000",
@@ -312,43 +389,46 @@
             "https://lh3.googleusercontent.com/d/1lN6nzJ45A2TcAshEyDW2UtSRTNBwRq0A=w1000",
             "https://lh3.googleusercontent.com/d/15yjw7MIFzxhwlCEUejaCtlExjXtHv9xF=w1000"
         ];
-
         const CATEGORY_GALLERIES = {
             'Landscape': ["https://lh3.googleusercontent.com/d/1lN6nzJ45A2TcAshEyDW2UtSRTNBwRq0A=w1000", "https://lh3.googleusercontent.com/d/1ObUaqBNzDlns8Qy-OuXjDCooI_8oNwZy=w1000"],
             'Street Snap': ["https://lh3.googleusercontent.com/d/1UbX_JDP4lfLfFMRtPdPaG75TEsyXnnX9=w1000"],
             'Anima': ["https://lh3.googleusercontent.com/d/1JyR9w7pQdU9SXnI5RR1FhqtiBauiPm56=w1000", "https://lh3.googleusercontent.com/d/1xkUyRhAjcqKeHinO087Z_-zny0b9jrOA=w1000", "https://lh3.googleusercontent.com/d/1a0xUILsyaIwpaidraaFUoPOSQWvqMkYI=w1000"],
             'Game Day': ["https://lh3.googleusercontent.com/d/1wzzYrcM_BWrxACQGvjB8tXBUmpHvn8BE=w1000", "https://lh3.googleusercontent.com/d/1VHFXEifmaMLF_moUvKkwXKDj8rhFi0B2=w1000"],
             'Film Documentary': [
-                { 
-                    src: "https://lh3.googleusercontent.com/d/1Gu0kL62o7lqb_JjmMqSAMngBQvjLJf0a=w1000", 
-                    title: "鍋貼 30", 
-                    description: `其實在拍下這些照片的時候，還沒特別注意到台灣感性這個議題，只能算是略有耳聞吧。其實就只是喜歡，所以把這個畫面拍下來。
-                    .
-                    比起日本的街道，要把這種帶有點懷舊生活感的巷弄拍的好看，真的好難好難。但底片洗出來看到一些不錯的照片，好像突然有點理解為什麼會吹起台灣感性了。`
-                },
+                { src: "https://lh3.googleusercontent.com/d/1Gu0kL62o7lqb_JjmMqSAMngBQvjLJf0a=w1000", title: "鍋貼 30", description: `其實在拍下這些照片的時候，還沒特別注意到台灣感性這個議題，只能算是略有耳聞吧。其實就只是喜歡，所以把這個畫面拍下來。\n.\n比起日本的街道，要把這種帶有點懷舊生活感的巷弄拍的好看，真的好難好難。但底片洗出來看到一些不錯的照片，好像突然有點理解為什麼會吹起台灣感性了。` },
                 { src: "https://lh3.googleusercontent.com/d/1ZXW6sCMj-hf3UU8gnYGFMNTIVBuMrF49=w1000", title: "関西空港駅" },
                 "https://lh3.googleusercontent.com/d/1kZ2u1nCO5RtFgUnpQK3QFRiG-1pJaOHY=w1000"
             ]
         };
-
         const CATEGORY_MAPPING = {'Landscape': '01', 'Street Snap': '02', 'Anima': '03', 'Game Day': '04', 'Film Documentary': '05'};
 
         /* ==========================================================================
         【核心引擎區】
-        ==========================================================================
-        */
-
+        ========================================================================== */
         const canvas = document.getElementById('fluid-canvas');
         const cursor = document.getElementById('cursor');
         const canvasContainer = document.getElementById('canvas-container');
         const ctx = canvas.getContext('2d', { alpha: false }); 
-        
         let width, height;
         let mouse = { x: 0, y: 0, px: 0, py: 0 };
         let points = [];
         let scrollOffset = 0;
         const scrollSpeed = 0.3; 
         let lastThumbElement = null;
+
+        // 手機選單切換
+        window.toggleMobileMenu = () => {
+            const menu = document.getElementById('mobile-menu');
+            if (menu.style.display === 'flex') {
+                menu.style.opacity = '0';
+                setTimeout(() => menu.style.display = 'none', 500);
+            } else {
+                menu.style.display = 'flex';
+                // Force reflow
+                menu.offsetHeight;
+                menu.style.opacity = '1';
+            }
+        };
 
         window.copyEmail = (element) => {
             const helper = document.getElementById('copy-helper');
@@ -367,8 +447,7 @@
             window.scrollTo(0, 0);
             if (pageId !== 'portfolio') {
                 canvasContainer.style.opacity = "0.2";
-                if (pageId === 'about' || pageId === 'contact') document.body.style.overflow = "hidden";
-                else document.body.style.overflowY = "auto"; 
+                document.body.style.overflowY = "auto";
             } else {
                 canvasContainer.style.opacity = "1";
                 document.body.style.overflowY = "auto";
@@ -383,6 +462,8 @@
             const lbDesc = document.getElementById('lb-description');
             const imgContainer = document.getElementById('lightbox-img-container');
             const infoPane = document.getElementById('lightbox-info-pane');
+            const contentWrapper = document.getElementById('lightbox-content-wrapper');
+
             const src = typeof photoData === 'object' ? photoData.src : photoData;
             lbTitle.innerText = typeof photoData === 'object' ? photoData.title : "";
             lbDesc.innerText = typeof photoData === 'object' ? (photoData.description || "") : "";
@@ -397,14 +478,27 @@
             lbImg.style.transform = 'none';
             lbImg.src = src;
             lightbox.style.display = 'flex';
+            
+            contentWrapper.scrollTop = 0;
             lbImg.offsetHeight; 
+
             lightbox.classList.add('active');
             lbImg.style.transition = 'all 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
+            
             const containerRect = imgContainer.getBoundingClientRect();
-            lbImg.style.top = `${containerRect.top + containerRect.height/2}px`;
-            lbImg.style.left = `${containerRect.left + containerRect.width/2}px`;
-            lbImg.style.width = `${containerRect.width * 0.95}px`;
-            lbImg.style.height = `${containerRect.height * 0.9}px`;
+            const isMobile = window.innerWidth <= 768;
+            
+            if (isMobile) {
+                lbImg.style.top = `${containerRect.top + containerRect.height/2}px`;
+                lbImg.style.left = '50%';
+                lbImg.style.width = '90vw';
+                lbImg.style.height = '45vh';
+            } else {
+                lbImg.style.top = `${containerRect.top + containerRect.height/2}px`;
+                lbImg.style.left = `${containerRect.left + containerRect.width/2}px`;
+                lbImg.style.width = `${containerRect.width * 0.95}px`;
+                lbImg.style.height = `${containerRect.height * 0.9}px`;
+            }
             lbImg.style.transform = 'translate(-50%, -50%)';
 
             const highRes = new Image();
@@ -426,8 +520,7 @@
             lbImg.style.height = `${rect.height}px`;
             lbImg.style.transform = 'translate(0, 0)'; 
             setTimeout(() => { if (!lightbox.classList.contains('active')) { lightbox.style.display = 'none'; lbImg.src = ''; } }, 600);
-            const activePage = document.querySelector('.page-content.active').id;
-            if (activePage === 'page-portfolio' || activePage === 'page-gallery') document.body.style.overflowY = "auto";
+            document.body.style.overflowY = "auto";
         };
 
         window.openGallery = (category) => {
