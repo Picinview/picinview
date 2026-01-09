@@ -4,6 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Picinview Photolife</title>
+
+    <!-- 網頁簡介與社交分享設定 (Metadata) -->
+    <meta name="description" content="Pick the evanescent in view">
+    
+    <!-- Open Graph (OG) 協定 - 用於 Line, FB, Discord 分享 -->
+    <meta property="og:title" content="Picinview Photolife">
+    <meta property="og:description" content="Pick the evanescent in view">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://lh3.googleusercontent.com/d/1JyR9w7pQdU9SXnI5RR1FhqtiBauiPm56=w1200">
+    <meta property="og:url" content="https://picinview.com"> <!-- 建議填入您的實際網址 -->
+
+    <!-- Twitter Card - 用於 X (Twitter) 分享 -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Picinview Photolife">
+    <meta name="twitter:description" content="Pick the evanescent in view">
+    <meta name="twitter:image" content="https://lh3.googleusercontent.com/d/1JyR9w7pQdU9SXnI5RR1FhqtiBauiPm56=w1200">
     
     <!-- 網站圖示 (Favicon) 設定 -->
     <link rel="icon" href="https://lh3.googleusercontent.com/d/1JyR9w7pQdU9SXnI5RR1FhqtiBauiPm56=w32" type="image/png">
@@ -84,7 +100,7 @@
         }
 
         .page-label { font-size: 10px; letter-spacing: 0.6em; text-transform: uppercase; opacity: 0.4; margin-bottom: 1rem; }
-        .page-heading { font-size: 1.875rem; font-weight: 900; margin-bottom: 3rem; text-transform: uppercase; letter-spacing: 0.1em; text-align: center; }
+        .page-heading { font-size: 1.875rem; font-weight: 900; margin-bottom: 2rem; text-transform: uppercase; letter-spacing: 0.1em; text-align: center; }
 
         .photo-gallery-grid {
             display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -132,12 +148,28 @@
         }
         .close-lightbox:hover { opacity: 1; }
 
-        input, textarea {
-            background: transparent; border-bottom: 1px solid rgba(255,255,255,0.2);
-            width: 100%; padding: 1.2rem 0; margin-bottom: 4.5rem;
-            color: white; outline: none; font-size: 0.85rem; letter-spacing: 0.15em;
-            transition: border-color 0.3s ease; line-height: 2.2;
+        /* Contact 頁面專用樣式 */
+        .contact-list {
+            display: flex; flex-direction: column; align-items: center; 
+            gap: 1.5rem;
+            margin-top: 0; 
         }
+        .contact-item {
+            display: flex; align-items: center; gap: 1.5rem;
+            color: rgba(255,255,255,0.6); transition: all 0.3s ease;
+            cursor: pointer; position: relative;
+        }
+        .contact-item:hover { color: white; transform: translateY(-3px); }
+        .contact-icon { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 1.5; }
+        .contact-text { font-size: 0.9rem; font-weight: 400; letter-spacing: 0.15em; }
+
+        /* 複製成功的 Toast 提示 */
+        #copy-toast {
+            position: absolute; bottom: -25px; left: 50%; transform: translateX(-50%);
+            font-size: 9px; text-transform: uppercase; letter-spacing: 0.2em;
+            color: #4ade80; opacity: 0; transition: opacity 0.3s; pointer-events: none;
+        }
+        #copy-toast.show { opacity: 1; }
     </style>
 </head>
 <body>
@@ -220,14 +252,25 @@
     <div id="page-contact" class="page-content fixed-page">
         <div class="sub-page-container">
             <h2 class="page-heading">Contact</h2>
-            <form id="contactForm" class="w-full" onsubmit="handleMailSend(event)">
-                <input type="text" id="senderName" placeholder="YOUR NAME" required>
-                <input type="email" id="senderEmail" placeholder="YOUR EMAIL" required>
-                <textarea id="senderMessage" rows="4" placeholder="YOUR MESSAGE" required></textarea>
-                <div class="submit-btn w-full text-center">
-                    <button type="submit" class="border border-white px-10 py-4 text-[10px] tracking-[0.3em] uppercase hover:bg-white hover:text-black transition pointer-events-auto">Send Message</button>
+            
+            <div class="contact-list">
+                <!-- Mail -->
+                <div class="contact-item" onclick="copyEmail(this)">
+                    <svg class="contact-icon" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"></path></svg>
+                    <span class="contact-text">picinview.offical@gmail.com</span>
+                    <span id="copy-toast">Copied!</span>
                 </div>
-            </form>
+
+                <!-- IG -->
+                <a href="https://www.instagram.com/picinview/" target="_blank" class="contact-item">
+                    <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                    </svg>
+                    <span class="contact-text">picinview</span>
+                </a>
+            </div>
         </div>
     </div>
 
@@ -247,16 +290,16 @@
         <canvas id="fluid-canvas"></canvas>
     </div>
 
+    <textarea id="copy-helper" style="position: absolute; left: -9999px; top: -9999px;"></textarea>
+
     <script type="module">
         /* ==========================================================================
-        【全站照片與配置區】 - 您可以在此新增或移除相片
+        【全站照片與配置區】
         ==========================================================================
         */
 
-        // 0. 聯絡收件信箱設定
-        const CONTACT_EMAIL = "picinview@gmail.com";
+        const CONTACT_EMAIL = "picinview.offical@gmail.com";
 
-        // 1. 首頁底層流體圖片 (背景捲動牆)
         const BACKGROUND_IMAGES = [
             "https://lh3.googleusercontent.com/d/1-UvOc5AvCWzrAIxqSisJ51LYkHj7HoVR=w1000",
             "https://lh3.googleusercontent.com/d/1JyR9w7pQdU9SXnI5RR1FhqtiBauiPm56=w1000",
@@ -270,24 +313,11 @@
             "https://lh3.googleusercontent.com/d/15yjw7MIFzxhwlCEUejaCtlExjXtHv9xF=w1000"
         ];
 
-        // 2. 各相簿內容資料庫 (Category 內容)
         const CATEGORY_GALLERIES = {
-            'Landscape': [
-                "https://lh3.googleusercontent.com/d/1lN6nzJ45A2TcAshEyDW2UtSRTNBwRq0A=w1000",
-                "https://lh3.googleusercontent.com/d/1ObUaqBNzDlns8Qy-OuXjDCooI_8oNwZy=w1000"
-            ],
-            'Street Snap': [
-                "https://lh3.googleusercontent.com/d/1UbX_JDP4lfLfFMRtPdPaG75TEsyXnnX9=w1000"
-            ],
-            'Anima': [
-                "https://lh3.googleusercontent.com/d/1JyR9w7pQdU9SXnI5RR1FhqtiBauiPm56=w1000",
-                "https://lh3.googleusercontent.com/d/1xkUyRhAjcqKeHinO087Z_-zny0b9jrOA=w1000",
-                "https://lh3.googleusercontent.com/d/1a0xUILsyaIwpaidraaFUoPOSQWvqMkYI=w1000"
-            ],
-            'Game Day': [
-                "https://lh3.googleusercontent.com/d/1wzzYrcM_BWrxACQGvjB8tXBUmpHvn8BE=w1000",
-                "https://lh3.googleusercontent.com/d/1VHFXEifmaMLF_moUvKkwXKDj8rhFi0B2=w1000"
-            ],
+            'Landscape': ["https://lh3.googleusercontent.com/d/1lN6nzJ45A2TcAshEyDW2UtSRTNBwRq0A=w1000", "https://lh3.googleusercontent.com/d/1ObUaqBNzDlns8Qy-OuXjDCooI_8oNwZy=w1000"],
+            'Street Snap': ["https://lh3.googleusercontent.com/d/1UbX_JDP4lfLfFMRtPdPaG75TEsyXnnX9=w1000"],
+            'Anima': ["https://lh3.googleusercontent.com/d/1JyR9w7pQdU9SXnI5RR1FhqtiBauiPm56=w1000", "https://lh3.googleusercontent.com/d/1xkUyRhAjcqKeHinO087Z_-zny0b9jrOA=w1000", "https://lh3.googleusercontent.com/d/1a0xUILsyaIwpaidraaFUoPOSQWvqMkYI=w1000"],
+            'Game Day': ["https://lh3.googleusercontent.com/d/1wzzYrcM_BWrxACQGvjB8tXBUmpHvn8BE=w1000", "https://lh3.googleusercontent.com/d/1VHFXEifmaMLF_moUvKkwXKDj8rhFi0B2=w1000"],
             'Film Documentary': [
                 { 
                     src: "https://lh3.googleusercontent.com/d/1Gu0kL62o7lqb_JjmMqSAMngBQvjLJf0a=w1000", 
@@ -296,22 +326,12 @@
                     .
                     比起日本的街道，要把這種帶有點懷舊生活感的巷弄拍的好看，真的好難好難。但底片洗出來看到一些不錯的照片，好像突然有點理解為什麼會吹起台灣感性了。`
                 },
-                { 
-                    src: "https://lh3.googleusercontent.com/d/1ZXW6sCMj-hf3UU8gnYGFMNTIVBuMrF49=w1000", 
-                    title: "関西空港駅" 
-                },
+                { src: "https://lh3.googleusercontent.com/d/1ZXW6sCMj-hf3UU8gnYGFMNTIVBuMrF49=w1000", title: "関西空港駅" },
                 "https://lh3.googleusercontent.com/d/1kZ2u1nCO5RtFgUnpQK3QFRiG-1pJaOHY=w1000"
             ]
         };
 
-        // 3. 相簿編號映照
-        const CATEGORY_MAPPING = {
-            'Landscape': '01',
-            'Street Snap': '02',
-            'Anima': '03',
-            'Game Day': '04',
-            'Film Documentary': '05'
-        };
+        const CATEGORY_MAPPING = {'Landscape': '01', 'Street Snap': '02', 'Anima': '03', 'Game Day': '04', 'Film Documentary': '05'};
 
         /* ==========================================================================
         【核心引擎區】
@@ -330,6 +350,16 @@
         const scrollSpeed = 0.3; 
         let lastThumbElement = null;
 
+        window.copyEmail = (element) => {
+            const helper = document.getElementById('copy-helper');
+            const toast = document.getElementById('copy-toast');
+            helper.value = CONTACT_EMAIL;
+            helper.select();
+            document.execCommand('copy');
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        };
+
         window.switchPage = (pageId) => {
             document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
             const targetPage = document.getElementById(`page-${pageId}`);
@@ -345,25 +375,6 @@
             }
         };
 
-        // 聯絡功能核心修復
-        window.handleMailSend = (e) => {
-            e.preventDefault();
-            const name = document.getElementById('senderName').value;
-            const email = document.getElementById('senderEmail').value;
-            const message = document.getElementById('senderMessage').value;
-
-            // 格式化標題與內容
-            const subject = `[Picinview Photolife Contact] ${name}`;
-            const body = `Mail: ${email}\n\n${message}`;
-
-            // 透過 mailto 開啟預填郵件
-            // 使用 encodeURIComponent 確保中文與換行符號正確解析
-            const mailtoUrl = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-            
-            // 執行跳轉
-            window.location.href = mailtoUrl;
-        };
-
         window.openLightbox = (photoData, thumbElement) => {
             lastThumbElement = thumbElement;
             const lightbox = document.getElementById('lightbox-overlay');
@@ -372,14 +383,10 @@
             const lbDesc = document.getElementById('lb-description');
             const imgContainer = document.getElementById('lightbox-img-container');
             const infoPane = document.getElementById('lightbox-info-pane');
-            
             const src = typeof photoData === 'object' ? photoData.src : photoData;
-            const title = typeof photoData === 'object' ? photoData.title : "";
-            const desc = typeof photoData === 'object' ? (photoData.description || "") : "";
-
-            lbTitle.innerText = title;
-            lbDesc.innerText = desc;
-            infoPane.style.display = (!title && !desc) ? 'none' : 'flex';
+            lbTitle.innerText = typeof photoData === 'object' ? photoData.title : "";
+            lbDesc.innerText = typeof photoData === 'object' ? (photoData.description || "") : "";
+            infoPane.style.display = (!lbTitle.innerText && !lbDesc.innerText) ? 'none' : 'flex';
 
             const rect = thumbElement.getBoundingClientRect();
             lbImg.style.transition = 'none';
@@ -388,22 +395,16 @@
             lbImg.style.width = `${rect.width}px`;
             lbImg.style.height = `${rect.height}px`;
             lbImg.style.transform = 'none';
-            
             lbImg.src = src;
             lightbox.style.display = 'flex';
             lbImg.offsetHeight; 
-            
             lightbox.classList.add('active');
             lbImg.style.transition = 'all 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
-            
             const containerRect = imgContainer.getBoundingClientRect();
-            const targetW = containerRect.width * 0.95;
-            const targetH = containerRect.height * 0.9;
-            
             lbImg.style.top = `${containerRect.top + containerRect.height/2}px`;
             lbImg.style.left = `${containerRect.left + containerRect.width/2}px`;
-            lbImg.style.width = `${targetW}px`;
-            lbImg.style.height = `${targetH}px`;
+            lbImg.style.width = `${containerRect.width * 0.95}px`;
+            lbImg.style.height = `${containerRect.height * 0.9}px`;
             lbImg.style.transform = 'translate(-50%, -50%)';
 
             const highRes = new Image();
@@ -424,12 +425,7 @@
             lbImg.style.width = `${rect.width}px`;
             lbImg.style.height = `${rect.height}px`;
             lbImg.style.transform = 'translate(0, 0)'; 
-            setTimeout(() => {
-                if (!lightbox.classList.contains('active')) {
-                    lightbox.style.display = 'none';
-                    lbImg.src = ''; 
-                }
-            }, 600);
+            setTimeout(() => { if (!lightbox.classList.contains('active')) { lightbox.style.display = 'none'; lbImg.src = ''; } }, 600);
             const activePage = document.querySelector('.page-content.active').id;
             if (activePage === 'page-portfolio' || activePage === 'page-gallery') document.body.style.overflowY = "auto";
         };
@@ -443,18 +439,16 @@
             label.innerText = `Category ${CATEGORY_MAPPING[category] || '00'}`;
             const photos = CATEGORY_GALLERIES[category] || [];
             photos.forEach(photo => {
-                const src = typeof photo === 'object' ? photo.src : photo;
-                const workTitle = (typeof photo === 'object' && photo.title) ? photo.title : "";
                 const item = document.createElement('div');
                 item.className = 'gallery-item';
-                item.onclick = (e) => openLightbox(photo, item);
-                item.innerHTML = `<img src="${src}" alt="Work" loading="lazy"><div class="item-info"><p class="item-name">${workTitle}</p></div>`;
+                item.onclick = () => openLightbox(photo, item);
+                const workTitle = (typeof photo === 'object' && photo.title) ? photo.title : "";
+                item.innerHTML = `<img src="${typeof photo === 'object' ? photo.src : photo}" alt="Work" loading="lazy"><div class="item-info"><p class="item-name">${workTitle}</p></div>`;
                 grid.appendChild(item);
             });
             switchPage('gallery');
         };
 
-        // --- 背景流體渲染邏輯 ---
         const loadedImages = BACKGROUND_IMAGES.map(src => { const img = new Image(); img.crossOrigin = "anonymous"; img.src = src; return img; });
         const imageSequence = [];
         const COLS = 5; let totalGridSlots = 0; const colVerticalOffsets = [0, 120, -80, 200, 40];
