@@ -5,28 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Picinview Photolife</title>
 
-    <!-- 網頁簡介與社交分享設定 (Metadata) -->
+    <!-- 網頁簡介與社交分享設定 -->
     <meta name="description" content="Pick the evanescent in view">
-    
-    <!-- Open Graph (OG) 協定 - 用於 Line, FB, Discord 分享 -->
     <meta property="og:title" content="Picinview Photolife">
     <meta property="og:description" content="Pick the evanescent in view">
     <meta property="og:type" content="website">
     <meta property="og:image" content="https://lh3.googleusercontent.com/d/1JyR9w7pQdU9SXnI5RR1FhqtiBauiPm56=w1200">
     <meta property="og:url" content="https://picinview.com">
-
-    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Picinview Photolife">
     <meta name="twitter:description" content="Pick the evanescent in view">
     <meta name="twitter:image" content="https://lh3.googleusercontent.com/d/1JyR9w7pQdU9SXnI5RR1FhqtiBauiPm56=w1200">
     
-    <!-- 網站圖示 (Favicon) 設定 -->
+    <!-- 網站圖示 -->
     <link rel="icon" href="https://lh3.googleusercontent.com/d/1JyR9w7pQdU9SXnI5RR1FhqtiBauiPm56=w32" type="image/png">
     <link rel="icon" sizes="192x192" href="https://lh3.googleusercontent.com/d/1JyR9w7pQdU9SXnI5RR1FhqtiBauiPm56=w192">
     <link rel="apple-touch-icon" href="https://lh3.googleusercontent.com/d/1JyR9w7pQdU9SXnI5RR1FhqtiBauiPm56=w180">
 
-    <!-- 引入 Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Licorice&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -78,15 +73,16 @@
             margin-bottom: 0.5rem; letter-spacing: -0.02em; 
         }
 
+        /* 標題對齊：回歸自然置中，移除所有修正邊距 */
         .hero-subtitle {
             font-size: 0.9rem;
-            letter-spacing: 0.5em; 
+            letter-spacing: 0.4em; 
             text-transform: uppercase; 
             opacity: 0.7;
             width: 100%;
             text-align: center;
-            /* 視覺修正：補償 letter-spacing 導致的偏右感 */
-            padding-left: 0.5em; 
+            padding-left: 0;
+            margin-right: 0;
         }
 
         .galleries-section { padding: 10vh 5vw; background: linear-gradient(to bottom, transparent, #050505 20%); }
@@ -162,6 +158,7 @@
         }
         #lightbox-overlay.active #lightbox-content-wrapper { opacity: 1; transition-delay: 0.3s; }
         
+        /* 佔位容器：徹底透明化 */
         #lightbox-img-container { 
             flex: 1.5; height: 100%; display: flex; align-items: center; 
             justify-content: center; position: relative; pointer-events: none;
@@ -231,7 +228,7 @@
             
             .hero-text { width: 88%; padding: 2rem 1.5rem; }
             .hero-title { font-size: 2.2rem; }
-            .hero-subtitle { font-size: 0.6rem; letter-spacing: 0.12em; padding-left: 0.12em; }
+            .hero-subtitle { font-size: 0.6rem; letter-spacing: 0.12em; }
 
             .sub-page-container { padding: 2.5rem 1.5rem; width: 92%; margin: auto 0; }
             #page-about h3.text-7xl { font-size: 3.5rem; } 
@@ -240,32 +237,23 @@
             .folder-info { left: 1.5rem; bottom: 1.5rem; }
             .folder-title { font-size: 1.8rem; }
 
-            /* Lightbox 手機版佈局重構 */
+            /* Lightbox 手機版排版 */
             #lightbox-content-wrapper {
-                flex-direction: column; 
-                width: 100%; height: 100%;
-                padding-top: 60px; 
-                overflow-y: auto; 
+                flex-direction: column; width: 100%; height: 100%;
+                justify-content: flex-start; padding-top: 60px; overflow-y: auto; 
             }
             
             #lightbox-img-container { 
-                flex: none; 
-                width: 100%; 
-                height: auto; 
+                flex: none; width: 100%; height: auto;
                 min-height: 200px;
                 margin-bottom: 1.5rem; 
                 background: transparent !important;
-                border: none !important;
             }
             #lightbox-info-pane {
-                flex: none; 
-                width: 100%; 
-                padding: 0 1.5rem 6rem 1.5rem; 
-                text-align: center;
-                justify-content: flex-start;
-                background: transparent !important;
+                flex: none; width: 100%; padding: 0 1.5rem 6rem 1.5rem; text-align: center;
+                justify-content: flex-start; background: transparent !important;
             }
-            #lb-title { font-size: 1.1rem; margin-bottom: 0.8rem; }
+            #lb-title { font-size: 1.1rem; margin-bottom: 1rem; }
             #lb-description { font-size: 0.85rem; line-height: 1.8; text-align: center; }
             
             .close-lightbox { top: 1.2rem; right: 1.2rem; font-size: 8px; }
@@ -274,7 +262,7 @@
             #copy-toast { 
                 left: 50%; top: 100%; 
                 margin-left: 0; 
-                margin-top: 0.3rem;
+                margin-top: 2px;
                 transform: translateX(-50%); 
             }
         }
@@ -368,7 +356,7 @@
         </div>
     </div>
 
-    <!-- 頁面 3: Contact -->
+    <!-- 頁頁 3: Contact -->
     <div id="page-contact" class="page-content fixed-page">
         <div class="sub-page-container">
             <h2 class="page-heading">Contact</h2>
@@ -461,6 +449,7 @@
             }
         };
 
+        // 複製功能：電腦與手機全相容，靜默複製不彈鍵盤
         window.copyEmail = (element) => {
             const text = CONTACT_EMAIL;
             const textArea = document.createElement("textarea");
@@ -533,26 +522,31 @@
             const containerRect = imgContainer.getBoundingClientRect();
             
             if (isMobile) {
-                // 手機版內容感知排版
+                // 智慧內容感知排版：手機版
                 if (!desc) {
+                    // 情境 A：僅有題目 -> 垂直置中
                     contentWrapper.style.justifyContent = 'center';
-                    lbImg.style.top = '50%';
+                    // 為了給下方題目留出空間，照片中心點設為 45%
+                    lbImg.style.top = '45%';
                     lbImg.style.left = '50%';
                     lbImg.style.width = '92vw';
                     lbImg.style.height = 'auto';
-                    lbImg.style.maxHeight = '75vh';
+                    lbImg.style.maxHeight = '70vh';
+                    // 題目加入明顯上邊距，確保在照片下方
+                    lbTitle.style.marginTop = '2rem';
                 } else {
+                    // 情境 B：含有內文 -> 頂部對齊
                     contentWrapper.style.justifyContent = 'flex-start';
                     lbImg.style.top = '25%'; 
                     lbImg.style.left = '50%';
                     lbImg.style.width = '92vw'; 
                     lbImg.style.height = 'auto'; 
                     lbImg.style.maxHeight = '40vh'; 
+                    lbTitle.style.marginTop = '1.5rem';
                 }
             } else {
-                // 電腦版修正：根據內容調整座標與尺寸
+                // 電腦版修正
                 if (!title && !desc) {
-                    // 無文字：絕對置中
                     lbImg.style.top = '50%';
                     lbImg.style.left = '50%';
                     lbImg.style.width = 'auto';
@@ -560,7 +554,6 @@
                     lbImg.style.maxWidth = '90vw';
                     lbImg.style.maxHeight = '85vh';
                 } else {
-                    // 有文字：精準飛往左側佔位容器中心，防止覆蓋文字
                     lbImg.style.top = `${containerRect.top + containerRect.height / 2}px`;
                     lbImg.style.left = `${containerRect.left + containerRect.width / 2}px`;
                     lbImg.style.width = 'auto';
@@ -568,6 +561,7 @@
                     lbImg.style.maxWidth = `${containerRect.width * 0.9}px`;
                     lbImg.style.maxHeight = `${containerRect.height * 0.9}px`;
                 }
+                lbTitle.style.marginTop = '0';
             }
             lbImg.style.transform = 'translate(-50%, -50%)';
 
