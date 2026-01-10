@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Picinview Photolife</title>
 
-    <!-- 網頁簡介與社交分享設定 -->
+    <!-- 網頁簡介與社交分享設定 (Metadata) -->
     <meta name="description" content="Pick the evanescent in view">
     <meta property="og:title" content="Picinview Photolife">
     <meta property="og:description" content="Pick the evanescent in view">
@@ -145,7 +145,7 @@
         }
         #lightbox-overlay.active #lightbox-content-wrapper { opacity: 1; transition-delay: 0.3s; }
         
-        /* 電腦版黃金比例 */
+        /* 電腦版還原 1.5 : 1 比例 */
         #lightbox-img-container { 
             flex: 1.5; height: 100%; display: flex; align-items: center; 
             justify-content: center; position: relative; pointer-events: none;
@@ -160,7 +160,6 @@
             background: transparent !important;
         }
 
-        /* 文字面板間距還原 */
         #lightbox-info-pane { 
             flex: 1; padding-left: 5rem; text-align: left; display: flex; 
             flex-direction: column; justify-content: center; max-width: 500px; 
@@ -197,13 +196,19 @@
             .logo { font-size: 1rem; letter-spacing: 0.2em; }
             .hero-text { width: 88%; padding: 2rem 1.5rem; }
             .hero-title { font-size: 2.2rem; }
-            
-            /* 縮小手機版首頁副標題字體 */
             .hero-subtitle { font-size: 0.5rem; letter-spacing: 0.2em; }
 
             .sub-page-container { padding: 2.5rem 1.5rem; width: 92%; margin: auto 0; }
             #page-about h3.text-7xl { font-size: 3.5rem; } 
             .gallery-folder { height: 38vh; }
+            
+            /* 修改處：手機相簿入口文字靠右顯示 */
+            .folder-info { 
+                left: auto; 
+                right: 1.5rem; 
+                bottom: 1.5rem; 
+                text-align: right; 
+            }
             .folder-title { font-size: 1.8rem; }
 
             #lightbox-content-wrapper {
@@ -279,7 +284,7 @@
         <img id="lightbox-img" src="" alt="Full view">
     </div>
 
-    <!-- 頁面內容結構 -->
+    <!-- 頁面 1: Portfolio -->
     <div id="page-portfolio" class="page-content active">
         <section class="hero-section">
             <div class="hero-text">
@@ -314,6 +319,7 @@
         </section>
     </div>
 
+    <!-- 頁面 2: About Me (還原版本) -->
     <div id="page-about" class="page-content fixed-page">
         <div class="sub-page-container">
             <h3 class="text-7xl mb-10" style="font-family: 'Licorice', cursive; text-transform: none; letter-spacing: normal;">Jason Shih</h3>
@@ -328,6 +334,7 @@
         </div>
     </div>
 
+    <!-- 頁面 3: Contact -->
     <div id="page-contact" class="page-content fixed-page">
         <div class="sub-page-container">
             <h2 class="page-heading">Contact</h2>
@@ -411,7 +418,7 @@
             document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
             document.getElementById(`page-${pageId}`).classList.add('active');
             window.scrollTo(0, 0);
-            // 核心修正：還原背景切換透明度邏輯
+            // 修正處：只有首頁 portfolio 時透明度為 1，其餘頁面（如 gallery）還原為 0.2
             canvasContainer.style.opacity = (pageId === 'portfolio') ? "1" : "0.2";
             document.body.style.overflowY = "auto";
         };
@@ -479,13 +486,15 @@
                 lbImg.style.height = 'auto';
                 lbImg.style.maxHeight = '70vh';
             } else {
-                // 電腦版座標與尺寸邏輯
+                // 修改處：還原電腦版座標與尺寸邏輯，確保圖片確實放大
                 if (!title && !desc) {
+                    // 無文字：置中放大
                     lbImg.style.top = '50%';
                     lbImg.style.left = '50%';
                     lbImg.style.maxWidth = '90vw';
-                    lbImg.style.maxHeight = '85vh';
+                    lbImg.style.maxHeight = '90vh';
                 } else {
+                    // 有文字：精準飛往左側佔位容器中心，並佔滿左側 1.5 比例的空間
                     lbImg.style.top = `${containerRect.top + containerRect.height / 2}px`;
                     lbImg.style.left = `${containerRect.left + containerRect.width / 2}px`;
                     lbImg.style.maxWidth = `${containerRect.width * 0.95}px`;
