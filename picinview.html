@@ -67,19 +67,8 @@
             backdrop-filter: blur(8px); border-radius: 12px;
             border: 1px solid rgba(255,255,255,0.1); pointer-events: auto;
         }
-        .hero-title { 
-            font-size: clamp(2rem, 8vw, 6rem); line-height: 1; font-weight: 900; 
-            margin-bottom: 0.5rem; letter-spacing: -0.02em; 
-        }
-
-        .hero-subtitle {
-            font-size: 0.9rem;
-            letter-spacing: 0.4em; 
-            text-transform: uppercase; 
-            opacity: 0.7;
-            width: 100%;
-            text-align: center;
-        }
+        .hero-title { font-size: clamp(2rem, 8vw, 6rem); line-height: 1; font-weight: 900; margin-bottom: 0.5rem; letter-spacing: -0.02em; }
+        .hero-subtitle { font-size: 0.9rem; letter-spacing: 0.4em; text-transform: uppercase; opacity: 0.7; width: 100%; text-align: center; }
 
         .galleries-section { padding: 10vh 5vw; background: linear-gradient(to bottom, transparent, #050505 20%); }
         .gallery-folder {
@@ -153,12 +142,10 @@
         }
         #lightbox-overlay.active #lightbox-content-wrapper { opacity: 1; transition-delay: 0.3s; }
         
-        /* 影像包廂容器：純淨透明，用於手機版錨定 */
         #lightbox-img-container { 
             flex: 1.5; height: 100%; display: flex; align-items: center; 
             justify-content: center; position: relative; pointer-events: none;
             background: transparent !important;
-            border: none !important;
         }
         
         #lightbox-img { 
@@ -167,7 +154,6 @@
             transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); 
             z-index: 2001; pointer-events: none;
             background: transparent !important;
-            border: none !important;
         }
 
         #lightbox-info-pane { 
@@ -231,36 +217,48 @@
 
             .sub-page-container { padding: 2.5rem 1.5rem; width: 92%; margin: auto 0; }
             #page-about h3.text-7xl { font-size: 3.5rem; } 
-
             .gallery-folder { height: 38vh; }
             .folder-info { left: 1.5rem; bottom: 1.5rem; }
             .folder-title { font-size: 1.8rem; }
 
-            /* Lightbox 手機版佈局：頂部內邊距確保影像不衝頂 */
+            /* Lightbox 手機版重構 */
             #lightbox-content-wrapper {
                 flex-direction: column; width: 100%; height: 100%;
-                padding-top: 60px; overflow-y: auto; 
+                justify-content: center; /* 始終垂直居中 */
+                padding-top: 0; overflow: hidden; /* 內文由層疊層處理 */
             }
             
             #lightbox-img-container { 
-                flex: none; width: 100%; 
-                /* 使用高度佔位，確保下方文字不會被 fixed 影像蓋過 */
-                height: 35vh; 
-                margin-bottom: 0.5rem; 
-                background: transparent !important;
-                display: flex; align-items: center; justify-content: center;
+                flex: none; width: 100%; height: auto;
+                min-height: auto; margin-bottom: 0;
             }
+            
+            /* 手機版內文覆蓋層樣式 */
             #lightbox-info-pane {
-                flex: none; width: 100%; padding: 0 1.5rem 6rem 1.5rem; text-align: center;
-                justify-content: flex-start; background: transparent !important;
-                z-index: 2002;
+                position: absolute; inset: 0; 
+                flex: none; width: 100%; height: 100%;
+                padding: 2rem; text-align: center;
+                justify-content: center; align-items: center;
+                background: rgba(0,0,0,0.6);
+                backdrop-filter: blur(15px);
+                opacity: 0; pointer-events: none;
+                transition: opacity 0.5s ease;
+                z-index: 2005;
             }
+            #lightbox-overlay.info-active #lightbox-info-pane { opacity: 1; pointer-events: auto; }
+            #lightbox-overlay.info-active #lightbox-img { filter: blur(20px) brightness(0.3); }
+
+            /* 只有題目時顯示在下方 */
             #lb-title { 
                 font-size: 1.1rem; 
-                margin-top: 2rem; /* 核心修正：增加上邊距，確保在照片下方 */
-                margin-bottom: 1rem; 
+                margin-top: 2rem; 
+                margin-bottom: 0; 
+                color: white;
+                opacity: 1;
+                transition: transform 0.4s ease;
             }
-            #lb-description { font-size: 0.85rem; line-height: 1.8; text-align: center; }
+            /* 當啟動內文層時，標題與內文一起顯示 */
+            #lb-description { font-size: 0.85rem; line-height: 2; text-align: center; margin-top: 1rem; color: rgba(255,255,255,0.9); }
             
             .close-lightbox { top: 1.2rem; right: 1.2rem; font-size: 8px; }
             .photo-gallery-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 1rem; }
@@ -294,7 +292,7 @@
 
     <div class="custom-cursor" id="cursor"></div>
 
-    <div id="lightbox-overlay" onclick="closeLightbox()">
+    <div id="lightbox-overlay" onclick="handleLightboxClick(event)">
         <span class="close-lightbox">Click anywhere to close</span>
         <div id="lightbox-content-wrapper">
             <div id="lightbox-img-container"></div>
@@ -306,6 +304,7 @@
         <img id="lightbox-img" src="" alt="Full view">
     </div>
 
+    <!-- 頁面結構保持不變 (Portfolio, About Me, Contact, Gallery View) -->
     <!-- 頁面 1: Portfolio -->
     <div id="page-portfolio" class="page-content active">
         <section class="hero-section">
@@ -342,7 +341,7 @@
         </section>
     </div>
 
-    <!-- 頁面 2: About Me -->
+    <!-- 頁面 2, 3, 4 省略細節以保持結構清晰，保持原本功能 -->
     <div id="page-about" class="page-content fixed-page">
         <div class="sub-page-container">
             <h3 class="text-7xl mb-10" style="font-family: 'Licorice', cursive; text-transform: none; letter-spacing: normal;">Jason Shih</h3>
@@ -357,7 +356,6 @@
         </div>
     </div>
 
-    <!-- 頁面 3: Contact -->
     <div id="page-contact" class="page-content fixed-page">
         <div class="sub-page-container">
             <h2 class="page-heading">Contact</h2>
@@ -375,7 +373,6 @@
         </div>
     </div>
 
-    <!-- 頁面 4: Gallery View -->
     <div id="page-gallery" class="page-content py-16 md:py-24 px-6 md:px-12">
         <div class="max-w-6xl mx-auto">
             <div class="flex flex-col items-center mb-8 md:mb-16">
@@ -409,18 +406,11 @@
             "https://lh3.googleusercontent.com/d/15yjw7MIFzxhwlCEUejaCtlExjXtHv9xF=w1000"
         ];
         const CATEGORY_GALLERIES = {
-            'Landscape': [
-                "https://lh3.googleusercontent.com/d/1lN6nzJ45A2TcAshEyDW2UtSRTNBwRq0A=w1000",
-                { src: "https://lh3.googleusercontent.com/d/1ObUaqBNzDlns8Qy-OuXjDCooI_8oNwZy=w1000", title: "大濛", description: `大自然送給天文社幹部訓練最完美的句點。\n.\n自從愛上星空攝影，開始背上裝備上山，就鮮少看見天空在夜裡敞開，總羞澀的用雲朵遮著臉。\n.\n一張茫茫雲海，反而成為這趟旅程最令我最難忘的作品。` }
-            ],
+            'Landscape': ["https://lh3.googleusercontent.com/d/1lN6nzJ45A2TcAshEyDW2UtSRTNBwRq0A=w1000", { src: "https://lh3.googleusercontent.com/d/1ObUaqBNzDlns8Qy-OuXjDCooI_8oNwZy=w1000", title: "大濛", description: `大自然送給天文社幹部訓練最完美的句點。\n.\n自從愛上星空攝影，開始背上裝備上山，就鮮少看見天空在夜裡敞開，總羞澀的用雲朵遮著臉。\n.\n一張茫茫雲海，反而成為這趟旅程最令我最難忘的作品。` }],
             'Street Snap': ["https://lh3.googleusercontent.com/d/1UbX_JDP4lfLfFMRtPdPaG75TEsyXnnX9=w1000"],
             'Anima': ["https://lh3.googleusercontent.com/d/1JyR9w7pQdU9SXnI5RR1FhqtiBauiPm56=w1000", "https://lh3.googleusercontent.com/d/1xkUyRhAjcqKeHinO087Z_-zny0b9jrOA=w1000", "https://lh3.googleusercontent.com/d/1a0xUILsyaIwpaidraaFUoPOSQWvqMkYI=w1000"],
             'Game Day': ["https://lh3.googleusercontent.com/d/1wzzYrcM_BWrxACQGvjB8tXBUmpHvn8BE=w1000", "https://lh3.googleusercontent.com/d/1VHFXEifmaMLF_moUvKkwXKDj8rhFi0B2=w1000"],
-            'Film Documentary': [
-                { src: "https://lh3.googleusercontent.com/d/1Gu0kL62o7lqb_JjmMqSAMngBQvjLJf0a=w1000", title: "鍋貼 30", description: `其實在拍下這些照片的時候，還沒特別注意到台灣感性這個議題，只能算是略有耳聞吧。其實就只是喜歡，所以把這個畫面拍下來。\n.\n比起日本的街道，要把這種帶有點懷舊生活感的巷弄拍的好看，真的好難好難。但底片洗出來看到一些不錯的照片，好像突然有點理解為什麼會吹起台灣感性了。` },
-                { src: "https://lh3.googleusercontent.com/d/1ZXW6sCMj-hf3UU8gnYGFMNTIVBuMrF49=w1000", title: "関西空港駅" },
-                "https://lh3.googleusercontent.com/d/1kZ2u1nCO5RtFgUnpQK3QFRiG-1pJaOHY=w1000"
-            ]
+            'Film Documentary': [{ src: "https://lh3.googleusercontent.com/d/1Gu0kL62o7lqb_JjmMqSAMngBQvjLJf0a=w1000", title: "鍋貼 30", description: `其實在拍下這些照片的時候，還沒特別注意到台灣感性這個議題，只能算是略有耳聞吧。其實就只是喜歡，所以把這個畫面拍下來。\n.\n比起日本的街道，要把這種帶有點懷舊生活感的巷弄拍的好看，真的好難好難。但底片洗出來看到一些不錯的照片，好像突然有點理解為什麼會吹起台灣感性了。` }, { src: "https://lh3.googleusercontent.com/d/1ZXW6sCMj-hf3UU8gnYGFMNTIVBuMrF49=w1000", title: "関西空港駅" }, "https://lh3.googleusercontent.com/d/1kZ2u1nCO5RtFgUnpQK3QFRiG-1pJaOHY=w1000"]
         };
         const CATEGORY_MAPPING = {'Landscape': '01', 'Street Snap': '02', 'Anima': '03', 'Game Day': '04', 'Film Documentary': '05'};
 
@@ -437,6 +427,7 @@
         let scrollOffset = 0;
         const scrollSpeed = 0.3; 
         let lastThumbElement = null;
+        let isMobileDescActive = false;
 
         window.toggleMobileMenu = () => {
             const menu = document.getElementById('mobile-menu');
@@ -444,28 +435,20 @@
                 menu.style.opacity = '0';
                 setTimeout(() => menu.style.display = 'none', 400);
             } else {
-                menu.style.display = 'flex';
-                menu.offsetHeight;
-                menu.style.opacity = '1';
+                menu.style.display = 'flex'; menu.offsetHeight; menu.style.opacity = '1';
             }
         };
 
         window.copyEmail = (element) => {
             const text = CONTACT_EMAIL;
             const textArea = document.createElement("textarea");
-            textArea.value = text;
-            textArea.style.position = "fixed";
-            textArea.style.left = "-9999px";
-            textArea.style.top = "0";
-            textArea.setAttribute('readonly', ''); 
-            document.body.appendChild(textArea);
-            textArea.select();
-            textArea.setSelectionRange(0, 99999);
+            textArea.value = text; textArea.style.position = "fixed"; textArea.style.left = "-9999px"; textArea.style.top = "0";
+            textArea.setAttribute('readonly', ''); document.body.appendChild(textArea);
+            textArea.select(); textArea.setSelectionRange(0, 99999);
             try {
                 document.execCommand('copy');
                 const toast = document.getElementById('copy-toast');
-                toast.classList.add('show');
-                setTimeout(() => toast.classList.remove('show'), 2000);
+                toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 2000);
             } catch (err) {}
             document.body.removeChild(textArea);
         };
@@ -475,24 +458,37 @@
             const targetPage = document.getElementById(`page-${pageId}`);
             if (targetPage) targetPage.classList.add('active');
             window.scrollTo(0, 0);
-            if (pageId !== 'portfolio') {
-                canvasContainer.style.opacity = "0.2";
-                document.body.style.overflowY = "auto";
+            canvasContainer.style.opacity = (pageId !== 'portfolio') ? "0.2" : "1";
+            document.body.style.overflowY = "auto";
+        };
+
+        // 核心邏輯：手機版 Lightbox 點擊處理
+        window.handleLightboxClick = (e) => {
+            const overlay = document.getElementById('lightbox-overlay');
+            const hasDesc = document.getElementById('lb-description').innerText.trim().length > 0;
+            const isMobile = window.innerWidth <= 768;
+
+            if (isMobile && hasDesc && !isMobileDescActive) {
+                // 第一下點擊：顯示內文
+                overlay.classList.add('info-active');
+                isMobileDescActive = true;
             } else {
-                canvasContainer.style.opacity = "1";
-                document.body.style.overflowY = "auto";
+                // 第二下點擊或點擊無內文的照片：關閉
+                closeLightbox();
             }
         };
 
         window.openLightbox = (photoData, thumbElement) => {
             lastThumbElement = thumbElement;
+            isMobileDescActive = false; // 重置狀態
             const lightbox = document.getElementById('lightbox-overlay');
             const lbImg = document.getElementById('lightbox-img');
             const lbTitle = document.getElementById('lb-title');
             const lbDesc = document.getElementById('lb-description');
             const imgContainer = document.getElementById('lightbox-img-container');
-            const infoPane = document.getElementById('lightbox-info-pane');
             const contentWrapper = document.getElementById('lightbox-content-wrapper');
+
+            lightbox.classList.remove('info-active'); // 確保初始無內文層
 
             const src = typeof photoData === 'object' ? photoData.src : photoData;
             const title = typeof photoData === 'object' ? photoData.title : "";
@@ -500,8 +496,7 @@
 
             lbTitle.innerText = title;
             lbDesc.innerText = desc;
-            infoPane.style.display = (!title && !desc) ? 'none' : 'flex';
-
+            
             const rect = thumbElement.getBoundingClientRect();
             lbImg.style.transition = 'none';
             lbImg.style.top = `${rect.top}px`;
@@ -509,6 +504,7 @@
             lbImg.style.width = `${rect.width}px`;
             lbImg.style.height = `${rect.height}px`;
             lbImg.style.transform = 'none';
+            lbImg.style.filter = 'none'; // 重置濾鏡
             lbImg.src = src;
             lightbox.style.display = 'flex';
             
@@ -522,33 +518,22 @@
             const containerRect = imgContainer.getBoundingClientRect();
             
             if (isMobile) {
-                // 手機版內容感知排版
-                if (!desc) {
-                    contentWrapper.style.justifyContent = 'center';
-                } else {
-                    contentWrapper.style.justifyContent = 'flex-start';
-                }
-                
-                // 核心修正：影像目標始終為佈局容器的幾何中心點，不論是置中還是靠頂
+                // 手機版一律採用垂直居中佈局邏輯
                 lbImg.style.top = `${containerRect.top + containerRect.height / 2}px`;
                 lbImg.style.left = `${containerRect.left + containerRect.width / 2}px`;
                 lbImg.style.width = '92vw';
                 lbImg.style.height = 'auto';
                 lbImg.style.maxHeight = '70vh';
             } else {
-                // 電腦版修正
+                // 電腦版維持原樣
                 if (!title && !desc) {
-                    lbImg.style.top = '50%';
-                    lbImg.style.left = '50%';
-                    lbImg.style.width = 'auto';
-                    lbImg.style.height = 'auto';
-                    lbImg.style.maxWidth = '90vw';
-                    lbImg.style.maxHeight = '85vh';
+                    lbImg.style.top = '50%'; lbImg.style.left = '50%';
+                    lbImg.style.width = 'auto'; lbImg.style.height = 'auto';
+                    lbImg.style.maxWidth = '90vw'; lbImg.style.maxHeight = '85vh';
                 } else {
                     lbImg.style.top = `${containerRect.top + containerRect.height / 2}px`;
                     lbImg.style.left = `${containerRect.left + containerRect.width / 2}px`;
-                    lbImg.style.width = 'auto';
-                    lbImg.style.height = 'auto';
+                    lbImg.style.width = 'auto'; lbImg.style.height = 'auto';
                     lbImg.style.maxWidth = `${containerRect.width * 0.9}px`;
                     lbImg.style.maxHeight = `${containerRect.height * 0.9}px`;
                 }
@@ -567,7 +552,9 @@
             if (!lastThumbElement) return;
             const rect = lastThumbElement.getBoundingClientRect();
             lightbox.classList.remove('active');
+            lightbox.classList.remove('info-active');
             lbImg.style.transition = 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+            lbImg.style.filter = 'none';
             lbImg.style.top = `${rect.top}px`;
             lbImg.style.left = `${rect.left}px`;
             lbImg.style.width = `${rect.width}px`;
@@ -596,9 +583,9 @@
             switchPage('gallery');
         };
 
+        // 背景動畫引擎 (保持原本效能與美感)
         const loadedImages = BACKGROUND_IMAGES.map(src => { const img = new Image(); img.crossOrigin = "anonymous"; img.src = src; return img; });
-        const imageSequence = [];
-        const COLS = 5; let totalGridSlots = 0; const colVerticalOffsets = [0, 120, -80, 200, 40];
+        const imageSequence = []; const COLS = 5; let totalGridSlots = 0; const colVerticalOffsets = [0, 120, -80, 200, 40];
         function initDynamicSequence() {
             imageSequence.length = 0; const imgCount = BACKGROUND_IMAGES.length;
             totalGridSlots = Math.max(imgCount, 30); totalGridSlots = Math.ceil(totalGridSlots / COLS) * COLS;
