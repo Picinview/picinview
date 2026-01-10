@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Picinview Photolife</title>
 
-    <!-- 網頁簡介與社交分享設定 (Metadata) -->
+    <!-- 網頁簡介與社交分享設定 -->
     <meta name="description" content="Pick the evanescent in view">
     <meta property="og:title" content="Picinview Photolife">
     <meta property="og:description" content="Pick the evanescent in view">
@@ -145,7 +145,7 @@
         }
         #lightbox-overlay.active #lightbox-content-wrapper { opacity: 1; transition-delay: 0.3s; }
         
-        /* 電腦版還原 1.5 : 1 比例 */
+        /* 電腦版黃金比例 1.5 : 1 */
         #lightbox-img-container { 
             flex: 1.5; height: 100%; display: flex; align-items: center; 
             justify-content: center; position: relative; pointer-events: none;
@@ -202,12 +202,12 @@
             #page-about h3.text-7xl { font-size: 3.5rem; } 
             .gallery-folder { height: 38vh; }
             
-            /* 修改處：手機相簿入口文字靠右顯示 */
+            /* 修改處：手機版文字改回靠左顯示 */
             .folder-info { 
-                left: auto; 
-                right: 1.5rem; 
+                left: 1.5rem; 
+                right: auto; 
                 bottom: 1.5rem; 
-                text-align: right; 
+                text-align: left; 
             }
             .folder-title { font-size: 1.8rem; }
 
@@ -284,7 +284,7 @@
         <img id="lightbox-img" src="" alt="Full view">
     </div>
 
-    <!-- 頁面 1: Portfolio -->
+    <!-- 頁面結構保持 -->
     <div id="page-portfolio" class="page-content active">
         <section class="hero-section">
             <div class="hero-text">
@@ -319,7 +319,6 @@
         </section>
     </div>
 
-    <!-- 頁面 2: About Me (還原版本) -->
     <div id="page-about" class="page-content fixed-page">
         <div class="sub-page-container">
             <h3 class="text-7xl mb-10" style="font-family: 'Licorice', cursive; text-transform: none; letter-spacing: normal;">Jason Shih</h3>
@@ -334,7 +333,6 @@
         </div>
     </div>
 
-    <!-- 頁面 3: Contact -->
     <div id="page-contact" class="page-content fixed-page">
         <div class="sub-page-container">
             <h2 class="page-heading">Contact</h2>
@@ -418,7 +416,6 @@
             document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
             document.getElementById(`page-${pageId}`).classList.add('active');
             window.scrollTo(0, 0);
-            // 修正處：只有首頁 portfolio 時透明度為 1，其餘頁面（如 gallery）還原為 0.2
             canvasContainer.style.opacity = (pageId === 'portfolio') ? "1" : "0.2";
             document.body.style.overflowY = "auto";
         };
@@ -486,19 +483,19 @@
                 lbImg.style.height = 'auto';
                 lbImg.style.maxHeight = '70vh';
             } else {
-                // 修改處：還原電腦版座標與尺寸邏輯，確保圖片確實放大
+                // 修改處：積極的偵測電腦包廂空間，達成最大化放大效果
                 if (!title && !desc) {
-                    // 無文字：置中放大
+                    // 無文字：偵測視窗大小，極致放大
                     lbImg.style.top = '50%';
                     lbImg.style.left = '50%';
-                    lbImg.style.maxWidth = '90vw';
-                    lbImg.style.maxHeight = '90vh';
+                    lbImg.style.maxWidth = '92vw';
+                    lbImg.style.maxHeight = '92vh';
                 } else {
-                    // 有文字：精準飛往左側佔位容器中心，並佔滿左側 1.5 比例的空間
+                    // 有文字：精準飛往左側佔位容器中心，寬高擴張至 98% 與 95%
                     lbImg.style.top = `${containerRect.top + containerRect.height / 2}px`;
                     lbImg.style.left = `${containerRect.left + containerRect.width / 2}px`;
-                    lbImg.style.maxWidth = `${containerRect.width * 0.95}px`;
-                    lbImg.style.maxHeight = `${containerRect.height * 0.9}px`;
+                    lbImg.style.maxWidth = `${containerRect.width * 0.98}px`;
+                    lbImg.style.maxHeight = `${containerRect.height * 0.95}px`;
                 }
             }
             lbImg.style.transform = 'translate(-50%, -50%)';
