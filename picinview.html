@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Picinview Photolife</title>
 
-    <!-- 網頁簡介與社交分享設定 -->
+    <!-- 網頁簡介與社交分享設定 (Metadata) -->
     <meta name="description" content="Pick the evanescent in view">
     <meta property="og:title" content="Picinview Photolife">
     <meta property="og:description" content="Pick the evanescent in view">
@@ -17,10 +17,12 @@
     <meta name="twitter:description" content="Pick the evanescent in view">
     <meta name="twitter:image" content="https://lh3.googleusercontent.com/d/1JyR9w7pQdU9SXnI5RR1FhqtiBauiPm56=w1200">
     
+    <!-- 網站圖示 (Favicon) 設定 -->
     <link rel="icon" href="https://lh3.googleusercontent.com/d/1JyR9w7pQdU9SXnI5RR1FhqtiBauiPm56=w32" type="image/png">
     <link rel="icon" sizes="192x192" href="https://lh3.googleusercontent.com/d/1JyR9w7pQdU9SXnI5RR1FhqtiBauiPm56=w192">
     <link rel="apple-touch-icon" href="https://lh3.googleusercontent.com/d/1JyR9w7pQdU9SXnI5RR1FhqtiBauiPm56=w180">
 
+    <!-- 引入 Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Licorice&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -139,12 +141,12 @@
         
         #lightbox-content-wrapper {
             display: flex; flex-direction: row; align-items: center; justify-content: center;
-            width: 90vw; height: 85vh; max-width: 1400px; opacity: 0; transition: opacity 0.5s ease;
+            width: 95vw; height: 92vh; max-width: 1800px; opacity: 0; transition: opacity 0.5s ease;
         }
         #lightbox-overlay.active #lightbox-content-wrapper { opacity: 1; transition-delay: 0.3s; }
         
         #lightbox-img-container { 
-            flex: 1.5; height: 100%; display: flex; align-items: center; 
+            flex: 1.8; height: 100%; display: flex; align-items: center; 
             justify-content: center; position: relative; pointer-events: none;
             background: transparent !important;
         }
@@ -193,11 +195,12 @@
             .logo { font-size: 1rem; letter-spacing: 0.2em; }
             .hero-text { width: 88%; padding: 2rem 1.5rem; }
             .hero-title { font-size: 2.2rem; }
-            .sub-page-container { padding: 2.5rem 1.5rem; width: 92%; margin: auto 0; }
             
-            /*還原 About Me 簽名樣式*/
-            #page-about h3.text-7xl { font-size: 3.5rem; } 
+            /* 修改處：縮小手機版首頁副標題字體 */
+            .hero-subtitle { font-size: 0.5rem; letter-spacing: 0.2em; }
 
+            .sub-page-container { padding: 2.5rem 1.5rem; width: 92%; margin: auto 0; }
+            #page-about h3.text-7xl { font-size: 3.5rem; } 
             .gallery-folder { height: 38vh; }
             .folder-title { font-size: 1.8rem; }
 
@@ -342,7 +345,6 @@
         </div>
     </div>
 
-    <!-- 頁面 4: Gallery View -->
     <div id="page-gallery" class="page-content py-16 px-6">
         <div class="max-w-6xl mx-auto">
             <div class="flex flex-col items-center mb-8">
@@ -361,12 +363,26 @@
     <script type="module">
         const CONTACT_EMAIL = "picinview.offical@gmail.com";
         const BACKGROUND_IMAGES = ["https://lh3.googleusercontent.com/d/1-UvOc5AvCWzrAIxqSisJ51LYkHj7HoVR=w1000","https://lh3.googleusercontent.com/d/1JyR9w7pQdU9SXnI5RR1FhqtiBauiPm56=w1000","https://lh3.googleusercontent.com/d/1ZXW6sCMj-hf3UU8gnYGFMNTIVBuMrF49=w1000","https://lh3.googleusercontent.com/d/1mM6UXA6h8ZsgdQx1SXtGc7Hx03_t9nGs=w1000","https://lh3.googleusercontent.com/d/1UbX_JDP4lfLfFMRtPdPaG75TEsyXnnX9=w1000","https://lh3.googleusercontent.com/d/1xkUyRhAjcqKeHinO087Z_-zny0b9jrOA=w1000","https://lh3.googleusercontent.com/d/1H2ZaDAxYoj0owaoP0LNPKW-HqToaKx7W=w1000","https://lh3.googleusercontent.com/d/1wzzYrcM_BWrxACQGvjB8tXBUmpHvn8BE=w1000","https://lh3.googleusercontent.com/d/1lN6nzJ45A2TcAshEyDW2UtSRTNBwRq0A=w1000","https://lh3.googleusercontent.com/d/15yjw7MIFzxhwlCEUejaCtlExjXtHv9xF=w1000"];
+        
+        // 修復：正確定義 loadedImages 與背景動畫引擎
+        const loadedImages = BACKGROUND_IMAGES.map(src => { const img = new Image(); img.crossOrigin = "anonymous"; img.src = src; return img; });
+        const imageSequence = []; const COLS = 5; let totalGridSlots = 0; const colVerticalOffsets = [0, 120, -80, 200, 40];
+        
+        function initDynamicSequence() {
+            imageSequence.length = 0; const imgCount = BACKGROUND_IMAGES.length;
+            totalGridSlots = 30; // 固定預算以確保效能
+            const pool = []; for (let i = 0; i < totalGridSlots; i++) pool.push(i % imgCount);
+            for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [pool[i], pool[j]] = [pool[j], pool[i]]; }
+            imageSequence.push(...pool);
+        }
+        initDynamicSequence();
+
         const CATEGORY_GALLERIES = {
             'Landscape': ["https://lh3.googleusercontent.com/d/1lN6nzJ45A2TcAshEyDW2UtSRTNBwRq0A=w1000", { src: "https://lh3.googleusercontent.com/d/1ObUaqBNzDlns8Qy-OuXjDCooI_8oNwZy=w1000", title: "大濛", description: "大自然送給天文社幹部訓練最完美的句點。\n.\n自從愛上星空攝影，開始背上裝備上山，就鮮少看見天空在夜裡敞開，總羞澀的用雲朵遮著臉。\n.\n一張茫茫雲海，反而成為這趟旅程最令我最難忘的作品。" }],
             'Street Snap': ["https://lh3.googleusercontent.com/d/1UbX_JDP4lfLfFMRtPdPaG75TEsyXnnX9=w1000"],
             'Anima': ["https://lh3.googleusercontent.com/d/1JyR9w7pQdU9SXnI5RR1FhqtiBauiPm56=w1000", "https://lh3.googleusercontent.com/d/1xkUyRhAjcqKeHinO087Z_-zny0b9jrOA=w1000", "https://lh3.googleusercontent.com/d/1a0xUILsyaIwpaidraaFUoPOSQWvqMkYI=w1000"],
             'Game Day': ["https://lh3.googleusercontent.com/d/1wzzYrcM_BWrxACQGvjB8tXBUmpHvn8BE=w1000", "https://lh3.googleusercontent.com/d/1VHFXEifmaMLF_moUvKkwXKDj8rhFi0B2=w1000"],
-            'Film Documentary': [{ src: "https://lh3.googleusercontent.com/d/1Gu0kL62o7lqb_JjmMqSAMngBQvjLJf0a=w1000", title: "鍋貼 30", description: "其實在拍下這些照片的時候，還沒特別注意到台灣感性這個議題，只能算是略有耳聞吧。\n.\n比起日本的街道，要把這種帶有點懷舊生活感的巷弄拍的好看，真的好難好難。但底片洗出來看到一些不錯的照片，好像突然有點理解為什麼會吹起台灣感性了。" }, { src: "https://lh3.googleusercontent.com/d/1ZXW6sCMj-hf3UU8gnYGFMNTIVBuMrF49=w1000", title: "関西空港駅" }, "https://lh3.googleusercontent.com/d/1kZ2u1nCO5RtFgUnpQK3QFRiG-1pJaOHY=w1000"]
+            'Film Documentary': [{ src: "https://lh3.googleusercontent.com/d/1Gu0kL62o7lqb_JjmMqSAMngBQvjLJf0a=w1000", title: "鍋貼 30", description: "其實在拍下這些照片的時候，還沒特別注意到台灣感性這個議題，只能算是略有耳聞吧。其實就只是喜歡，所以把這個畫面拍下來。\n.\n比起日本的街道，要把這種帶有點懷舊生活感的巷弄拍的好看，真的好難好難。但底片洗出來看到一些不錯的照片，好像突然有點理解為什麼會吹起台灣感性了。" }, { src: "https://lh3.googleusercontent.com/d/1ZXW6sCMj-hf3UU8gnYGFMNTIVBuMrF49=w1000", title: "関西空港駅" }, "https://lh3.googleusercontent.com/d/1kZ2u1nCO5RtFgUnpQK3QFRiG-1pJaOHY=w1000"]
         };
         const CATEGORY_MAPPING = {'Landscape': '01', 'Street Snap': '02', 'Anima': '03', 'Game Day': '04', 'Film Documentary': '05'};
 
@@ -464,14 +480,15 @@
                 lbImg.style.height = 'auto';
                 lbImg.style.maxHeight = '70vh';
             } else {
+                // 修改處：優化電腦版影像顯示大小至 95% 與 92% 比例
                 if (!title && !desc) {
                     lbImg.style.top = '50%'; lbImg.style.left = '50%';
-                    lbImg.style.maxWidth = '90vw'; lbImg.style.maxHeight = '85vh';
+                    lbImg.style.maxWidth = '95vw'; lbImg.style.maxHeight = '92vh';
                 } else {
                     lbImg.style.top = `${containerRect.top + containerRect.height / 2}px`;
                     lbImg.style.left = `${containerRect.left + containerRect.width / 2}px`;
-                    lbImg.style.maxWidth = `${containerRect.width * 0.9}px`;
-                    lbImg.style.maxHeight = `${containerRect.height * 0.9}px`;
+                    lbImg.style.maxWidth = `${containerRect.width * 0.98}px`;
+                    lbImg.style.maxHeight = '92vh';
                 }
             }
             lbImg.style.transform = 'translate(-50%, -50%)';
@@ -518,18 +535,8 @@
             switchPage('gallery');
         };
 
-        const loadedImages = BACKGROUND_IMAGES.map(src => { const img = new Image(); img.crossOrigin = "anonymous"; img.src = src; return img; });
-        const imageSequence = []; const COLS = 5; let totalGridSlots = 0; const colVerticalOffsets = [0, 120, -80, 200, 40];
-        function initDynamicSequence() {
-            imageSequence.length = 0; const imgCount = BACKGROUND_IMAGES.length;
-            totalGridSlots = Math.max(imgCount, 30); totalGridSlots = Math.ceil(totalGridSlots / COLS) * COLS;
-            const pool = []; for (let i = 0; i < totalGridSlots; i++) pool.push(i % imgCount);
-            for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [pool[i], pool[j]] = [pool[j], pool[i]]; }
-            imageSequence.push(...pool);
-        }
-        initDynamicSequence();
         function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; }
-        window.addEventListener('resize', () => { resize(); initDynamicSequence(); });
+        window.addEventListener('resize', () => { resize(); });
         resize();
         window.addEventListener('mousemove', e => {
             mouse.px = mouse.x; mouse.py = mouse.y; mouse.x = e.clientX; mouse.y = e.clientY;
@@ -553,7 +560,7 @@
             ctx.save(); if (!isColor) ctx.filter = 'grayscale(100%) brightness(15%)';
             for (let i = 0; i < totalGridSlots; i++) {
                 const c = i % COLS; const r = Math.floor(i / COLS);
-                const imgIndex = imageSequence[i]; const img = loadedImages[imgIndex];
+                const imgIndex = i % loadedImages.length; const img = loadedImages[imgIndex];
                 const x = gap + c * (imgW + gap);
                 let yBase = gap + r * (imgH + gap) + colVerticalOffsets[c];
                 let y = ((yBase - offset) % totalGridHeight + totalGridHeight) % totalGridHeight - imgH;
