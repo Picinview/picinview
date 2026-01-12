@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Picinview Photolife</title>
 
-    <!-- 網頁簡介與社交分享設定 (Metadata) -->
+    <!-- 網頁簡介與社交分享設定 -->
     <meta name="description" content="Pick the evanescent in view">
     <meta property="og:title" content="Picinview Photolife">
     <meta property="og:description" content="Pick the evanescent in view">
@@ -17,12 +17,10 @@
     <meta name="twitter:description" content="Pick the evanescent in view">
     <meta name="twitter:image" content="https://lh3.googleusercontent.com/d/1JyR9w7pQdU9SXnI5RR1FhqtiBauiPm56=w1200">
     
-    <!-- 網站圖示 (Favicon) 設定 -->
     <link rel="icon" href="https://lh3.googleusercontent.com/d/1JyR9w7pQdU9SXnI5RR1FhqtiBauiPm56=w32" type="image/png">
     <link rel="icon" sizes="192x192" href="https://lh3.googleusercontent.com/d/1JyR9w7pQdU9SXnI5RR1FhqtiBauiPm56=w192">
     <link rel="apple-touch-icon" href="https://lh3.googleusercontent.com/d/1JyR9w7pQdU9SXnI5RR1FhqtiBauiPm56=w180">
 
-    <!-- 引入 Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Licorice&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -130,7 +128,7 @@
             font-weight: 700; color: white; text-shadow: 0 2px 8px rgba(0,0,0,1); 
         }
 
-        /* Lightbox Overlay */
+        /* Lightbox Overlay: 強化居中邏輯 */
         #lightbox-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0); z-index: 2000;
@@ -141,16 +139,16 @@
         
         #lightbox-content-wrapper {
             display: flex; flex-direction: row; align-items: center; justify-content: center;
-            width: 95vw; height: 90vh; 
-            max-width: 1600px; /* 從 1400 提升至 1600 以提供更多寬度 */
+            width: 90vw; height: 85vh; 
+            max-width: 1400px; /* 建立穩定的劇場寬度，確保對稱感 */
             opacity: 0; transition: opacity 0.5s ease;
+            margin: 0 auto;
         }
         #lightbox-overlay.active #lightbox-content-wrapper { opacity: 1; transition-delay: 0.3s; }
         
-        /* 修改處：電腦版包廂比例優化，賦予文字區更多呼吸空間 */
+        /* 電腦版黃金展示比例 1.4 : 1 */
         #lightbox-img-container { 
-            flex: 1.2; /* 從 1.5 下調，讓文字區變寬 */
-            height: 100%; display: flex; align-items: center; 
+            flex: 1.4; height: 100%; display: flex; align-items: center; 
             justify-content: center; position: relative; pointer-events: none;
             background: transparent !important;
         }
@@ -164,11 +162,8 @@
         }
 
         #lightbox-info-pane { 
-            flex: 1; 
-            padding-left: 3rem; /* 從 5rem 縮減，讓圖文銜接更緊湊 */
-            text-align: left; display: flex; 
-            flex-direction: column; justify-content: center; 
-            max-width: 650px; /* 放寬文字區最大限制 */
+            flex: 1; padding-left: 4rem; text-align: left; display: flex; 
+            flex-direction: column; justify-content: center; max-width: 550px; 
             height: 100%; pointer-events: none; position: relative;
         }
         #lb-title { font-size: 1.5rem; font-weight: 900; letter-spacing: 0.2em; margin-bottom: 2rem; text-transform: uppercase; color: white; }
@@ -206,14 +201,13 @@
             .sub-page-container { padding: 2.5rem 1.5rem; width: 92%; margin: auto 0; }
             #page-about h3.text-7xl { font-size: 3.5rem; } 
             .gallery-folder { height: 38vh; }
-            
-            /* 手機版入口文字維持靠左 */
             .folder-info { left: 1.5rem; right: auto; bottom: 1.5rem; text-align: left; }
             .folder-title { font-size: 1.8rem; }
 
             #lightbox-content-wrapper {
                 flex-direction: column; width: 100%; height: 100%;
                 justify-content: center; padding-top: 0; overflow: hidden; 
+                max-width: none;
             }
             #lightbox-img-container { 
                 flex: none; width: 100%; height: auto;
@@ -274,7 +268,7 @@
         <img id="lightbox-img" src="" alt="Full view">
     </div>
 
-    <!-- 頁面結構保持 -->
+    <!-- 頁面 1: Portfolio -->
     <div id="page-portfolio" class="page-content active">
         <section class="hero-section">
             <div class="hero-text">
@@ -309,6 +303,7 @@
         </section>
     </div>
 
+    <!-- 頁面 2: About Me (完整還原版) -->
     <div id="page-about" class="page-content fixed-page">
         <div class="sub-page-container">
             <h3 class="text-7xl mb-10" style="font-family: 'Licorice', cursive; text-transform: none; letter-spacing: normal;">Jason Shih</h3>
@@ -323,6 +318,7 @@
         </div>
     </div>
 
+    <!-- 頁面 3: Contact -->
     <div id="page-contact" class="page-content fixed-page">
         <div class="sub-page-container">
             <h2 class="page-heading">Contact</h2>
@@ -340,6 +336,7 @@
         </div>
     </div>
 
+    <!-- 頁面 4: Gallery View -->
     <div id="page-gallery" class="page-content py-16 px-6">
         <div class="max-w-6xl mx-auto">
             <div class="flex flex-col items-center mb-8">
@@ -435,6 +432,7 @@
             const lbDesc = document.getElementById('lb-description');
             const hint = document.getElementById('close-hint');
             const imgContainer = document.getElementById('lightbox-img-container');
+            const contentWrapper = document.getElementById('lightbox-content-wrapper');
             const isMobile = window.innerWidth <= 768;
 
             const src = typeof photoData === 'object' ? photoData.src : photoData;
@@ -459,13 +457,17 @@
             lbImg.style.transform = 'none';
             lbImg.style.filter = 'none';
             lbImg.src = src;
+            
+            // 重要：先顯示燈箱，讓瀏覽器完成佈局計算
             lightbox.style.display = 'flex';
             lbImg.offsetHeight; 
 
             lightbox.classList.add('active');
             lbImg.style.transition = 'all 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
             
+            // 延遲獲取容器座標，確保在大視窗中探測到真實物理邊界
             const containerRect = imgContainer.getBoundingClientRect();
+            
             if (isMobile) {
                 lbImg.style.top = `${containerRect.top + containerRect.height / 2}px`;
                 lbImg.style.left = `${containerRect.left + containerRect.width / 2}px`;
@@ -473,20 +475,20 @@
                 lbImg.style.height = 'auto';
                 lbImg.style.maxHeight = '70vh';
             } else {
-                // 修改處：優化電腦版影像與內文區的動態縮放
+                // 修改處：電腦版放大邏輯修復
                 if (!title && !desc) {
-                    // 無文字：絕對置中大圖模式
+                    // 無文字：絕對螢幕居中，不設限 wrapper 寬度
                     lbImg.style.top = '50%';
                     lbImg.style.left = '50%';
-                    lbImg.style.maxWidth = '92vw';
-                    lbImg.style.maxHeight = '92vh';
+                    lbImg.style.maxWidth = '90vw';
+                    lbImg.style.maxHeight = '90vh';
                 } else {
-                    // 有文字：精準飛往調整後的左側大包廂中央，並確保寬度與高度充盈
+                    // 有文字：精準定位於左側劇場區，獲取最大的物理展示高度與寬度
                     lbImg.style.top = `${containerRect.top + containerRect.height / 2}px`;
                     lbImg.style.left = `${containerRect.left + containerRect.width / 2}px`;
-                    // 影像現在獲取 98% 容器寬度與 95% 容器高度
+                    // 影像現在會獲取容器的 98% 以達成「確實放大」感
                     lbImg.style.maxWidth = `${containerRect.width * 0.98}px`;
-                    lbImg.style.maxHeight = `${containerRect.height * 0.95}px`;
+                    lbImg.style.maxHeight = `${containerRect.height * 0.92}px`;
                 }
             }
             lbImg.style.transform = 'translate(-50%, -50%)';
