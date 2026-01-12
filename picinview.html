@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Picinview Photolife</title>
 
-    <!-- 網頁簡介與社交分享設定 -->
+    <!-- 網頁簡介與社交分享設定 (Metadata) -->
     <meta name="description" content="Pick the evanescent in view">
     <meta property="og:title" content="Picinview Photolife">
     <meta property="og:description" content="Pick the evanescent in view">
@@ -17,9 +17,11 @@
     <meta name="twitter:description" content="Pick the evanescent in view">
     <meta name="twitter:image" content="https://lh3.googleusercontent.com/d/1JyR9w7pQdU9SXnI5RR1FhqtiBauiPm56=w1200">
     
+    <!-- 網站圖示 (Favicon) 設定 -->
     <link rel="icon" href="https://lh3.googleusercontent.com/d/1JyR9w7pQdU9SXnI5RR1FhqtiBauiPm56=w32" type="image/png">
     <link rel="apple-touch-icon" href="https://lh3.googleusercontent.com/d/1JyR9w7pQdU9SXnI5RR1FhqtiBauiPm56=w180">
 
+    <!-- 引入 Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Licorice&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -106,18 +108,24 @@
             gap: 2.5rem; width: 100%; padding: 2rem 0;
         }
         .gallery-item {
-            position: relative; aspect-ratio: 1/1; display: flex; align-items: center;
-            justify-content: center; overflow: hidden; cursor: pointer;
+            position: relative; aspect-ratio: 1/1; 
+            display: flex; align-items: center; justify-content: center; 
+            overflow: hidden; cursor: pointer;
             background: transparent !important;
         }
         .gallery-item img {
-            max-width: 100%; max-height: 100%; width: auto; height: auto;
-            object-fit: contain; transition: transform 0.6s ease, opacity 0.4s ease; opacity: 1;
+            max-width: 100%; max-height: 100%; 
+            width: auto; height: auto;
+            object-fit: contain; 
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            opacity: 1;
         }
-        .gallery-item:hover img { transform: scale(1.02); }
+        /* 恢復放大動畫 */
+        .gallery-item:hover img { transform: scale(1.05); }
 
+        /* 還原標題設計：出現於照片下方容器底部 */
         .item-info {
-            position: absolute; bottom: 0; left: 0; width: 100%; padding: 0 0 2rem 0;
+            position: absolute; bottom: 0; left: 0; width: 100%; padding: 0 0 1.5rem 0;
             text-align: center; pointer-events: none; opacity: 0;
             transform: translateY(10px); transition: all 0.4s ease;
         }
@@ -125,6 +133,7 @@
         .item-name { 
             font-size: 10px; text-transform: uppercase; letter-spacing: 0.3em; 
             font-weight: 700; color: white; text-shadow: 0 2px 8px rgba(0,0,0,1); 
+            font-family: 'Inter', sans-serif;
         }
 
         /* Lightbox Overlay */
@@ -139,29 +148,45 @@
         #lightbox-content-wrapper {
             display: flex; flex-direction: row; align-items: center; justify-content: center;
             width: 90vw; height: 85vh; 
-            max-width: 1400px; 
+            max-width: 1500px; 
             opacity: 0; transition: opacity 0.5s ease;
             margin: 0 auto;
         }
         #lightbox-overlay.active #lightbox-content-wrapper { opacity: 1; transition-delay: 0.3s; }
         
         #lightbox-img-container { 
-            flex: 1.5; height: 100%; display: flex; align-items: center; 
+            flex: 1.5; height: 100%; display: flex; flex-direction: column; align-items: center; 
             justify-content: center; position: relative; pointer-events: none;
             background: transparent !important;
+            overflow: hidden; 
         }
         
         #lightbox-img { 
             position: fixed; object-fit: contain; 
             box-shadow: 0 0 60px rgba(0,0,0,0.8); 
-            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1), filter 0.5s ease; 
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); 
             z-index: 2001; pointer-events: none;
             background: transparent !important;
         }
 
+        /* 電腦版側邊導覽箭頭：移除背景與邊框，僅保留箭頭 */
+        .nav-arrow {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;
+            background: transparent; /* 移除圓圈背景 */
+            color: white; border-radius: 0;
+            cursor: pointer; opacity: 0; transition: all 0.4s ease;
+            pointer-events: auto; z-index: 2100;
+            border: none; /* 移除邊框 */
+        }
+        #lightbox-img-container:hover .nav-arrow { opacity: 0.6; } /* 預設不飽和 */
+        .nav-arrow:hover { opacity: 1 !important; scale: 1.2; }
+        .nav-arrow.left { left: 1rem; }
+        .nav-arrow.right { right: 1rem; }
+
         #lightbox-info-pane { 
-            flex: 1; padding-left: 5rem; text-align: left; display: flex; 
-            flex-direction: column; justify-content: center; max-width: 500px; 
+            flex: 0 0 450px; padding-left: 4rem; text-align: left; display: flex; 
+            flex-direction: column; justify-content: center; max-width: 450px; 
             height: 100%; pointer-events: none; position: relative;
         }
         #lb-title { font-size: 1.5rem; font-weight: 900; letter-spacing: 0.2em; margin-bottom: 2rem; text-transform: uppercase; color: white; }
@@ -172,18 +197,6 @@
             letter-spacing: 0.4em; text-transform: uppercase; cursor: pointer; opacity: 0.4; transition: opacity 0.3s, color 0.3s; z-index: 2005;
         }
         .close-lightbox:hover { opacity: 1; }
-
-        .contact-list { display: flex; flex-direction: column; align-items: center; gap: 1.5rem; }
-        .contact-item { display: flex; align-items: center; gap: 1.5rem; color: rgba(255,255,255,0.6); transition: all 0.3s ease; cursor: pointer; position: relative; }
-        .contact-item:hover { color: white; transform: translateY(-3px); }
-        .contact-icon { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 1.5; }
-        .contact-text { font-size: 0.9rem; font-weight: 400; letter-spacing: 0.15em; }
-        #copy-toast { position: absolute; left: 100%; top: 50%; transform: translateY(-50%); margin-left: 1rem; font-size: 9px; text-transform: uppercase; color: #4ade80; opacity: 0; transition: opacity 0.3s; pointer-events: none; white-space: nowrap; }
-        #copy-toast.show { opacity: 1; }
-        #mobile-menu { position: fixed; inset: 0; background: rgba(0,0,0,0.96); backdrop-filter: blur(25px); z-index: 2000; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 1.5rem; opacity: 0; transition: opacity 0.4s ease; }
-        #mobile-menu.active { display: flex; opacity: 1; }
-        .mobile-nav-link { font-size: 1rem; font-weight: 700; letter-spacing: 0.4em; text-transform: uppercase; color: white; opacity: 0.6; transition: opacity 0.3s; cursor: pointer; }
-        .mobile-nav-link:hover { opacity: 1; }
 
         /* ==========================================================================
            【手機版優化 (Mobile Optimization)】
@@ -199,10 +212,9 @@
             .sub-page-container { padding: 2.5rem 1.5rem; width: 92%; margin: auto 0; }
             #page-about h3.text-7xl { font-size: 3.5rem; } 
             .gallery-folder { height: 38vh; }
-            
-            /* 手機版標籤還原：靠左顯示 */
             .folder-info { left: 1.5rem; right: auto; bottom: 1.5rem; text-align: left; }
             .folder-title { font-size: 1.8rem; }
+            .nav-arrow { display: none; }
 
             #lightbox-content-wrapper {
                 flex-direction: column; width: 100%; height: 100%;
@@ -228,7 +240,6 @@
             #lb-description { font-size: 0.85rem; line-height: 1.8; text-align: center; margin-top: 0; }
             .close-lightbox { top: 1.2rem; right: 1.2rem; font-size: 8px; }
             .photo-gallery-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 1rem; }
-            #copy-toast { left: 50%; top: 100%; margin-left: 0; margin-top: 2px; transform: translateX(-50%); }
         }
     </style>
 </head>
@@ -260,7 +271,15 @@
     <div id="lightbox-overlay" onclick="handleLightboxClick(event)">
         <span class="close-lightbox" id="close-hint">Click anywhere to close</span>
         <div id="lightbox-content-wrapper">
-            <div id="lightbox-img-container"></div>
+            <div id="lightbox-img-container">
+                <!-- 電腦版側邊導覽 -->
+                <div class="nav-arrow left" onclick="stackPrev(event)">
+                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"></path></svg>
+                </div>
+                <div class="nav-arrow right" onclick="stackNext(event)">
+                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"></path></svg>
+                </div>
+            </div>
             <div id="lightbox-info-pane">
                 <h2 id="lb-title"></h2>
                 <p id="lb-description"></p>
@@ -269,7 +288,7 @@
         <img id="lightbox-img" src="" alt="Full view">
     </div>
 
-    <!-- 頁面 1: Portfolio -->
+    <!-- 頁面結構保持 -->
     <div id="page-portfolio" class="page-content active">
         <section class="hero-section">
             <div class="hero-text">
@@ -304,7 +323,6 @@
         </section>
     </div>
 
-    <!-- 頁面 2: About Me -->
     <div id="page-about" class="page-content fixed-page">
         <div class="sub-page-container">
             <h3 class="text-7xl mb-10" style="font-family: 'Licorice', cursive; text-transform: none; letter-spacing: normal;">Jason Shih</h3>
@@ -319,7 +337,6 @@
         </div>
     </div>
 
-    <!-- 頁面 3: Contact -->
     <div id="page-contact" class="page-content fixed-page">
         <div class="sub-page-container">
             <h2 class="page-heading">Contact</h2>
@@ -337,7 +354,6 @@
         </div>
     </div>
 
-    <!-- 頁面 4: Gallery View -->
     <div id="page-gallery" class="page-content py-16 px-6">
         <div class="max-w-6xl mx-auto">
             <div class="flex flex-col items-center mb-8">
@@ -369,7 +385,24 @@
 
         const CATEGORY_GALLERIES = {
             'Landscape': ["https://lh3.googleusercontent.com/d/1lN6nzJ45A2TcAshEyDW2UtSRTNBwRq0A=w1000", { src: "https://lh3.googleusercontent.com/d/1ObUaqBNzDlns8Qy-OuXjDCooI_8oNwZy=w1000", title: "大濛", description: "大自然送給天文社幹部訓練最完美的句點。\n.\n自從愛上星空攝影，開始背上裝備上山，就鮮少看見天空在夜裡敞開，總羞澀的用雲朵遮著臉。\n.\n一張茫茫雲海，反而成為這趟旅程最令我最難忘的作品。" }],
-            'Street Snap': ["https://lh3.googleusercontent.com/d/1UbX_JDP4lfLfFMRtPdPaG75TEsyXnnX9=w1000"],
+            'Street Snap': [
+                {
+                    type: 'stack',
+                    title: '散策，神農街。',
+                    description: '夜晚的神農街，褪去了白日的喧囂，在昏黃的燈光與古樸的巷弄間，每一處轉角都藏著靜謐的驚喜。',
+                    images: [
+                        "https://lh3.googleusercontent.com/d/1nNJKUtjvruXaCRoju87sfgWwGdIxWqou=w1000",
+                        "https://lh3.googleusercontent.com/d/1PleNEAVOetven-br00Noo7BVHwutAc51=w1000",
+                        "https://lh3.googleusercontent.com/d/1RGkS2Zn3ftrp52WBwQDz8cQRvF84lrLE=w1000",
+                        "https://lh3.googleusercontent.com/d/1E8xOmzD_oLeVM_eijl2DqqDpArngU9BJ=w1000",
+                        "https://lh3.googleusercontent.com/d/1EGd9bKZWXOLH38riW_YJT5VdKqhCIFNC=w1000",
+                        "https://lh3.googleusercontent.com/d/1WHN3g5T6e-bjdToipudhrOKS4Tj47pvU=w1000",
+                        "https://lh3.googleusercontent.com/d/1fZoQVEU-o_B38XyZerqZJsYB2ed4rMVH=w1000",
+                        "https://lh3.googleusercontent.com/d/1zgZEpj8WLMKkQg2znG-D4gw4kIdN3pAE=w1000"
+                    ]
+                },
+                "https://lh3.googleusercontent.com/d/1UbX_JDP4lfLfFMRtPdPaG75TEsyXnnX9=w1000"
+            ],
             'Anima': ["https://lh3.googleusercontent.com/d/1JyR9w7pQdU9SXnI5RR1FhqtiBauiPm56=w1000", "https://lh3.googleusercontent.com/d/1xkUyRhAjcqKeHinO087Z_-zny0b9jrOA=w1000", "https://lh3.googleusercontent.com/d/1a0xUILsyaIwpaidraaFUoPOSQWvqMkYI=w1000"],
             'Game Day': ["https://lh3.googleusercontent.com/d/1wzzYrcM_BWrxACQGvjB8tXBUmpHvn8BE=w1000", "https://lh3.googleusercontent.com/d/1VHFXEifmaMLF_moUvKkwXKDj8rhFi0B2=w1000"],
             'Film Documentary': [{ src: "https://lh3.googleusercontent.com/d/1Gu0kL62o7lqb_JjmMqSAMngBQvjLJf0a=w1000", title: "鍋貼 30", description: "其實在拍下這些照片的時候，還沒特別注意到台灣感性這個議題，只能算是略有耳聞吧。其實就只是喜歡，所以把這個畫面拍下來。\n.\n比起日本的街道，要把這種帶有點懷舊生活感的巷弄拍的好看，真的好難好難。但底片洗出來看到一些不錯的照片，好像突然有點理解為什麼會吹起台灣感性了。" }, { src: "https://lh3.googleusercontent.com/d/1ZXW6sCMj-hf3UU8gnYGFMNTIVBuMrF49=w1000", title: "関西空港駅" }, "https://lh3.googleusercontent.com/d/1kZ2u1nCO5RtFgUnpQK3QFRiG-1pJaOHY=w1000"]
@@ -381,6 +414,10 @@
         const canvasContainer = document.getElementById('canvas-container');
         const ctx = canvas.getContext('2d', { alpha: false }); 
         let width, height, mouse = { x: 0, y: 0, px: 0, py: 0 }, points = [], scrollOffset = 0, lastThumbElement = null, isMobileInfoActive = false;
+
+        let currentStackData = null;
+        let currentStackIndex = 0;
+        let touchStartX = 0;
 
         window.toggleMobileMenu = () => {
             const menu = document.getElementById('mobile-menu');
@@ -405,19 +442,75 @@
             document.body.style.overflowY = "auto";
         };
 
+        // 修改處：支援物理位移的堆疊切換邏輯 (滑動效果)
+        function updateStackUI(direction = 1) {
+            if (!currentStackData) return;
+            const lbImg = document.getElementById('lightbox-img');
+            
+            // 執行滑動動畫：滑出畫面
+            lbImg.style.transition = 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+            lbImg.style.transform = `translate(${direction > 0 ? '-150%' : '50%'}, -50%)`;
+            lbImg.style.opacity = '0';
+            
+            setTimeout(() => {
+                // 更換照片並瞬間移動到進場側
+                lbImg.src = currentStackData.images[currentStackIndex];
+                lbImg.style.transition = 'none';
+                lbImg.style.transform = `translate(${direction > 0 ? '50%' : '-150%'}, -50%)`;
+                lbImg.offsetHeight; 
+                
+                // 滑入中心點
+                lbImg.style.transition = 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+                lbImg.style.transform = 'translate(-50%, -50%)';
+                lbImg.style.opacity = '1';
+            }, 400);
+        }
+
+        window.stackNext = (e) => { 
+            if(e) e.stopPropagation(); 
+            if(currentStackData) { currentStackIndex = (currentStackIndex + 1) % currentStackData.images.length; updateStackUI(1); } 
+        };
+        window.stackPrev = (e) => { 
+            if(e) e.stopPropagation(); 
+            if(currentStackData) { currentStackIndex = (currentStackIndex - 1 + currentStackData.images.length) % currentStackData.images.length; updateStackUI(-1); } 
+        };
+
         window.handleLightboxClick = (e) => {
+            if (e.target.closest('.nav-arrow')) return;
             const isMobile = window.innerWidth <= 768;
             const overlay = document.getElementById('lightbox-overlay');
             const hint = document.getElementById('close-hint');
             const hasInfo = document.getElementById('lb-title').innerText.trim().length > 0 || 
                             document.getElementById('lb-description').innerText.trim().length > 0;
-            if (isMobile && hasInfo && !isMobileInfoActive) {
-                overlay.classList.add('info-active'); hint.innerText = "Click anywhere to close"; isMobileInfoActive = true;
+
+            if (isMobile) {
+                if (currentStackData && !isMobileInfoActive) {
+                    if (currentStackIndex < currentStackData.images.length - 1) {
+                        currentStackIndex++; updateStackUI(1);
+                        if (currentStackIndex === currentStackData.images.length - 1 && hasInfo) hint.innerText = "Click";
+                    } else if (hasInfo) {
+                        overlay.classList.add('info-active'); hint.innerText = "Click anywhere to close"; isMobileInfoActive = true;
+                    } else { closeLightbox(); }
+                } else if (hasInfo && !isMobileInfoActive) {
+                    overlay.classList.add('info-active'); hint.innerText = "Click anywhere to close"; isMobileInfoActive = true;
+                } else { closeLightbox(); }
             } else { closeLightbox(); }
         };
 
+        // 滑動偵測
+        window.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; }, false);
+        window.addEventListener('touchend', e => {
+            const touchEndX = e.changedTouches[0].screenX;
+            if (!currentStackData || isMobileInfoActive) return;
+            if (touchStartX - touchEndX > 50) stackNext(null);
+            else if (touchEndX - touchStartX > 50) stackPrev(null);
+        }, false);
+
         window.openLightbox = (photoData, thumbElement) => {
             lastThumbElement = thumbElement; isMobileInfoActive = false;
+            currentStackData = (photoData.type === 'stack') ? photoData : null;
+            currentStackIndex = 0;
+
             const lightbox = document.getElementById('lightbox-overlay');
             const lbImg = document.getElementById('lightbox-img');
             const lbTitle = document.getElementById('lb-title');
@@ -426,19 +519,21 @@
             const imgContainer = document.getElementById('lightbox-img-container');
             const isMobile = window.innerWidth <= 768;
 
-            const src = typeof photoData === 'object' ? photoData.src : photoData;
-            const title = typeof photoData === 'object' ? photoData.title : "";
-            const desc = typeof photoData === 'object' ? (photoData.description || "") : "";
-            lbTitle.innerText = title; lbDesc.innerText = desc;
+            const src = currentStackData ? currentStackData.images[0] : (typeof photoData === 'object' ? photoData.src : photoData);
+            lbTitle.innerText = typeof photoData === 'object' ? photoData.title : "";
+            lbDesc.innerText = typeof photoData === 'object' ? (photoData.description || "") : "";
             
-            if (isMobile) { hint.innerText = (title || desc) ? "Click" : "Click anywhere to close"; }
-            else { hint.innerText = "Click anywhere to close"; }
+            // 箭頭顯示判斷
+            const arrows = document.querySelectorAll('.nav-arrow');
+            arrows.forEach(a => a.style.display = (currentStackData && !isMobile) ? 'flex' : 'none');
+
+            hint.innerText = isMobile ? (currentStackData ? "Next" : (lbTitle.innerText ? "Click" : "Click anywhere to close")) : "Click anywhere to close";
 
             const rect = thumbElement.getBoundingClientRect();
             lbImg.style.transition = 'none';
             lbImg.style.top = `${rect.top}px`; lbImg.style.left = `${rect.left}px`;
             lbImg.style.width = `${rect.width}px`; lbImg.style.height = `${rect.height}px`;
-            lbImg.style.transform = 'none'; lbImg.style.filter = 'none'; lbImg.src = src;
+            lbImg.style.transform = 'none'; lbImg.style.filter = 'none'; lbImg.src = src; lbImg.style.opacity = '1';
             
             lightbox.style.display = 'flex';
             lbImg.offsetHeight; 
@@ -452,24 +547,17 @@
                     lbImg.style.left = `${containerRect.left + containerRect.width / 2}px`;
                     lbImg.style.width = '92vw'; lbImg.style.height = 'auto'; lbImg.style.maxHeight = '70vh';
                 } else {
-                    if (!title && !desc) {
-                        // 修改處：電腦版「無文字照片」極致放大邏輯
-                        lbImg.style.top = '50%';
-                        lbImg.style.left = '50%';
-                        // 強制影像指派視窗寬高的 95% 與 92%，配合 object-fit: contain 達成最大化放大
+                    if (!lbTitle.innerText && !lbDesc.innerText) {
+                        lbImg.style.top = '50%'; lbImg.style.left = '50%';
                         lbImg.style.width = `${window.innerWidth * 0.95}px`;
                         lbImg.style.height = `${window.innerHeight * 0.92}px`;
-                        lbImg.style.maxWidth = 'none';
-                        lbImg.style.maxHeight = 'none';
                     } else {
-                        // 有文字：精準飛往左側劇場包廂
                         lbImg.style.top = `${containerRect.top + containerRect.height / 2}px`;
                         lbImg.style.left = `${containerRect.left + containerRect.width / 2}px`;
                         lbImg.style.width = `${containerRect.width * 0.98}px`;
                         lbImg.style.height = `${containerRect.height * 0.95}px`;
-                        lbImg.style.maxWidth = 'none';
-                        lbImg.style.maxHeight = 'none';
                     }
+                    lbImg.style.maxWidth = 'none'; lbImg.style.maxHeight = 'none';
                 }
                 lbImg.style.transform = 'translate(-50%, -50%)';
             }, 50);
@@ -487,26 +575,40 @@
             lbImg.style.top = `${rect.top}px`; lbImg.style.left = `${rect.left}px`;
             lbImg.style.width = `${rect.width}px`; lbImg.style.height = `${rect.height}px`;
             lbImg.style.transform = 'translate(0, 0)'; 
-            setTimeout(() => { if (!lightbox.classList.contains('active')) { lightbox.style.display = 'none'; lbImg.src = ''; } }, 600);
+            setTimeout(() => { if (!lightbox.classList.contains('active')) { lightbox.style.display = 'none'; lbImg.src = ''; currentStackData = null; } }, 600);
             document.body.style.overflowY = "auto";
         };
 
         window.openGallery = (category) => {
             const grid = document.getElementById('gallery-grid');
-            const title = document.getElementById('gallery-title');
-            const label = document.getElementById('gallery-label');
-            grid.innerHTML = ''; title.innerText = category;
-            label.innerText = `Category ${CATEGORY_MAPPING[category] || '00'}`;
+            grid.innerHTML = ''; 
+            document.getElementById('gallery-title').innerText = category;
+            document.getElementById('gallery-label').innerText = `Category ${CATEGORY_MAPPING[category] || '00'}`;
+            
             (CATEGORY_GALLERIES[category] || []).forEach(photo => {
                 const item = document.createElement('div'); item.className = 'gallery-item';
-                item.onclick = () => openLightbox(photo, item);
+                const isStack = photo.type === 'stack';
                 const workTitle = (typeof photo === 'object' && photo.title) ? photo.title : "";
-                item.innerHTML = `<img src="${typeof photo === 'object' ? photo.src : photo}" alt="Work" loading="lazy"><div class="item-info"><p class="item-name">${workTitle}</p></div>`;
+                const mainSrc = isStack ? photo.images[0] : (typeof photo === 'object' ? photo.src : photo);
+                
+                // 修正：確保圖片在相簿網格內精確置中
+                item.innerHTML = `
+                    <img src="${mainSrc}" alt="Work" loading="lazy" class="gallery-thumb-img">
+                    <div class="item-info"><p class="item-name">${workTitle}</p></div>`;
+                
+                item.onclick = () => openLightbox(photo, item);
                 grid.appendChild(item);
             });
             switchPage('gallery');
         };
 
+        window.addEventListener('keydown', (e) => {
+            if (!currentStackData) return;
+            if (e.key === 'ArrowRight') stackNext(null);
+            else if (e.key === 'ArrowLeft') stackPrev(null);
+        });
+
+        // 渲染引擎與背景邏輯
         function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; }
         window.addEventListener('resize', resize); resize();
         window.addEventListener('mousemove', e => {
