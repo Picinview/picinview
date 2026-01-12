@@ -121,8 +121,8 @@
         .gallery-item:hover img { transform: scale(1.05); }
 
         .item-info {
-            position: absolute; bottom: 0; left: 0; width: 100%; padding: 0 0 1.5rem 0;
-            text-align: center; pointer-events: none; opacity: 0;
+            position: absolute; bottom: 1.5rem; left: 1.5rem; width: auto; 
+            text-align: left; pointer-events: none; opacity: 0;
             transform: translateY(10px); transition: all 0.4s ease;
         }
         .gallery-item:hover .item-info { opacity: 1; transform: translateY(0); }
@@ -151,7 +151,7 @@
         
         #lightbox-img-container { 
             flex: 1.5; height: 100%; display: flex; flex-direction: column; align-items: center; 
-            justify-content: center; position: relative; pointer-events: none;
+            justify-content: center; position: relative; pointer-events: auto;
             background: transparent !important;
             overflow: hidden; 
         }
@@ -164,13 +164,15 @@
             background: transparent !important;
         }
 
-        /* 純淨側邊箭頭 */
+        /* 修改處：電腦版側邊導覽箭頭，移除背景圓圈 */
         .nav-arrow {
             position: absolute; top: 50%; transform: translateY(-50%);
             width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;
-            background: transparent; color: white; border-radius: 0;
+            background: transparent; /* 移除圓圈背景 */
+            color: white; border-radius: 0;
             cursor: pointer; opacity: 0; transition: all 0.4s ease;
-            pointer-events: auto; z-index: 2100; border: none;
+            pointer-events: auto; z-index: 2100;
+            border: none; /* 移除邊框 */
         }
         #lightbox-img-container:hover .nav-arrow { opacity: 0.6; }
         .nav-arrow:hover { opacity: 1 !important; scale: 1.2; }
@@ -232,9 +234,9 @@
             
             /* 手機版標籤還原：靠左顯示 */
             .folder-info { left: 1.5rem; right: auto; bottom: 1.5rem; text-align: left; }
-            /* 修改處：縮小手機版相簿入口字體尺寸 */
-            .folder-title { font-size: 1.25rem; } 
-            .page-label { font-size: 8px; margin-bottom: 0.5rem; }
+            /* 修正：進一步縮小手機版相簿標題，達成極致細緻感 */
+            .folder-title { font-size: 1.05rem; letter-spacing: 0.12em; } 
+            .page-label { font-size: 7.5px; margin-bottom: 0.4rem; letter-spacing: 0.4em; }
 
             .nav-arrow { display: none; }
 
@@ -475,6 +477,11 @@
         function updateStackUI(direction = 1) {
             if (!currentStackData) return;
             const lbImg = document.getElementById('lightbox-img');
+            const hint = document.getElementById('close-hint');
+            const isMobile = window.innerWidth <= 768;
+            const hasInfo = document.getElementById('lb-title').innerText.trim().length > 0 || 
+                            document.getElementById('lb-description').innerText.trim().length > 0;
+
             lbImg.style.transition = 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
             lbImg.style.transform = `translate(${direction > 0 ? '-150%' : '50%'}, -50%)`;
             lbImg.style.opacity = '0';
@@ -486,14 +493,36 @@
                 lbImg.style.transition = 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
                 lbImg.style.transform = 'translate(-50%, -50%)';
                 lbImg.style.opacity = '1';
+
+                if (isMobile && !isMobileInfoActive) {
+                    if (currentStackIndex < currentStackData.images.length - 1) {
+                        hint.innerHTML = `Next <span class="ml-4 underline opacity-60" onclick="passStack(event)">Pass</span>`;
+                    } else if (hasInfo) {
+                        hint.innerText = "Click";
+                    }
+                }
             }, 400);
         }
 
         window.stackNext = (e) => { if(e) e.stopPropagation(); if(currentStackData) { currentStackIndex = (currentStackIndex + 1) % currentStackData.images.length; updateStackUI(1); } };
         window.stackPrev = (e) => { if(e) e.stopPropagation(); if(currentStackData) { currentStackIndex = (currentStackIndex - 1 + currentStackData.images.length) % currentStackData.images.length; updateStackUI(-1); } };
 
+        window.passStack = (e) => {
+            if (e) e.stopPropagation();
+            if (!currentStackData) return;
+            const overlay = document.getElementById('lightbox-overlay');
+            const hint = document.getElementById('close-hint');
+            currentStackIndex = currentStackData.images.length - 1;
+            updateStackUI(1);
+            setTimeout(() => {
+                overlay.classList.add('info-active');
+                hint.innerText = "Click anywhere to close";
+                isMobileInfoActive = true;
+            }, 450);
+        };
+
         window.handleLightboxClick = (e) => {
-            if (e.target.closest('.nav-arrow')) return;
+            if (e.target.closest('.nav-arrow') || e.target.onclick === window.passStack) return;
             const isMobile = window.innerWidth <= 768;
             const overlay = document.getElementById('lightbox-overlay');
             const hint = document.getElementById('close-hint');
@@ -503,7 +532,6 @@
                 if (currentStackData && !isMobileInfoActive) {
                     if (currentStackIndex < currentStackData.images.length - 1) {
                         currentStackIndex++; updateStackUI(1);
-                        if (currentStackIndex === currentStackData.images.length - 1 && hasInfo) hint.innerText = "Click";
                     } else if (hasInfo) {
                         overlay.classList.add('info-active'); hint.innerText = "Click anywhere to close"; isMobileInfoActive = true;
                     } else { closeLightbox(); }
@@ -537,7 +565,17 @@
             lbDesc.innerText = typeof photoData === 'object' ? (photoData.description || "") : "";
             const arrows = document.querySelectorAll('.nav-arrow');
             arrows.forEach(a => a.style.display = (currentStackData && !isMobile) ? 'flex' : 'none');
-            hint.innerText = isMobile ? (currentStackData ? "Next" : (lbTitle.innerText ? "Click" : "Click anywhere to close")) : "Click anywhere to close";
+            
+            if (isMobile) {
+                if (currentStackData) {
+                    hint.innerHTML = `Next <span class="ml-4 underline opacity-60" onclick="passStack(event)">Pass</span>`;
+                } else {
+                    hint.innerText = (lbTitle.innerText || lbDesc.innerText) ? "Click" : "Click anywhere to close";
+                }
+            } else {
+                hint.innerText = "Click anywhere to close";
+            }
+
             const rect = thumbElement.getBoundingClientRect();
             lbImg.style.transition = 'none';
             lbImg.style.top = `${rect.top}px`; lbImg.style.left = `${rect.left}px`;
