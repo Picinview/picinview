@@ -120,7 +120,6 @@
         }
         .gallery-item:hover img { transform: scale(1.05); }
 
-        /* 還原相簿標題：照片正下方 */
         .item-info {
             position: absolute; bottom: 0; left: 0; width: 100%; padding: 0 0 1.5rem 0;
             text-align: center; pointer-events: none; opacity: 0;
@@ -230,8 +229,13 @@
             .sub-page-container { padding: 2.5rem 1.5rem; width: 92%; margin: auto 0; }
             #page-about h3.text-7xl { font-size: 3.5rem; } 
             .gallery-folder { height: 38vh; }
+            
             /* 手機版標籤還原：靠左顯示 */
             .folder-info { left: 1.5rem; right: auto; bottom: 1.5rem; text-align: left; }
+            /* 修改處：縮小手機版相簿入口字體尺寸 */
+            .folder-title { font-size: 1.25rem; } 
+            .page-label { font-size: 8px; margin-bottom: 0.5rem; }
+
             .nav-arrow { display: none; }
 
             #lightbox-content-wrapper {
@@ -342,7 +346,7 @@
         </section>
     </div>
 
-    <!-- 頁面 2: About Me (還原版本) -->
+    <!-- 頁面 2: About Me -->
     <div id="page-about" class="page-content fixed-page">
         <div class="sub-page-container">
             <h3 class="text-7xl mb-10" style="font-family: 'Licorice', cursive; text-transform: none; letter-spacing: normal;">Jason Shih</h3>
@@ -357,7 +361,7 @@
         </div>
     </div>
 
-    <!-- 頁面 3: Contact (還原版本) -->
+    <!-- 頁面 3: Contact -->
     <div id="page-contact" class="page-content fixed-page">
         <div class="sub-page-container">
             <h2 class="page-heading">Contact</h2>
