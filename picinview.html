@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Picinview Photolife</title>
 
-    <!-- 網頁簡介與社交分享設定 (Metadata) -->
+    <!-- 網頁簡介與社交分享設定 -->
     <meta name="description" content="Pick the evanescent in view">
     <meta property="og:title" content="Picinview Photolife">
     <meta property="og:description" content="Pick the evanescent in view">
@@ -17,11 +17,9 @@
     <meta name="twitter:description" content="Pick the evanescent in view">
     <meta name="twitter:image" content="https://lh3.googleusercontent.com/d/1JyR9w7pQdU9SXnI5RR1FhqtiBauiPm56=w1200">
     
-    <!-- 網站圖示 (Favicon) 設定 -->
     <link rel="icon" href="https://lh3.googleusercontent.com/d/1JyR9w7pQdU9SXnI5RR1FhqtiBauiPm56=w32" type="image/png">
     <link rel="apple-touch-icon" href="https://lh3.googleusercontent.com/d/1JyR9w7pQdU9SXnI5RR1FhqtiBauiPm56=w180">
 
-    <!-- 引入 Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Licorice&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -120,10 +118,9 @@
             transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
             opacity: 1;
         }
-        /* 恢復放大動畫 */
         .gallery-item:hover img { transform: scale(1.05); }
 
-        /* 還原標題設計：出現於照片下方容器底部 */
+        /* 還原相簿標題：照片正下方 */
         .item-info {
             position: absolute; bottom: 0; left: 0; width: 100%; padding: 0 0 1.5rem 0;
             text-align: center; pointer-events: none; opacity: 0;
@@ -133,7 +130,6 @@
         .item-name { 
             font-size: 10px; text-transform: uppercase; letter-spacing: 0.3em; 
             font-weight: 700; color: white; text-shadow: 0 2px 8px rgba(0,0,0,1); 
-            font-family: 'Inter', sans-serif;
         }
 
         /* Lightbox Overlay */
@@ -169,17 +165,15 @@
             background: transparent !important;
         }
 
-        /* 電腦版側邊導覽箭頭：移除背景與邊框，僅保留箭頭 */
+        /* 純淨側邊箭頭 */
         .nav-arrow {
             position: absolute; top: 50%; transform: translateY(-50%);
             width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;
-            background: transparent; /* 移除圓圈背景 */
-            color: white; border-radius: 0;
+            background: transparent; color: white; border-radius: 0;
             cursor: pointer; opacity: 0; transition: all 0.4s ease;
-            pointer-events: auto; z-index: 2100;
-            border: none; /* 移除邊框 */
+            pointer-events: auto; z-index: 2100; border: none;
         }
-        #lightbox-img-container:hover .nav-arrow { opacity: 0.6; } /* 預設不飽和 */
+        #lightbox-img-container:hover .nav-arrow { opacity: 0.6; }
         .nav-arrow:hover { opacity: 1 !important; scale: 1.2; }
         .nav-arrow.left { left: 1rem; }
         .nav-arrow.right { right: 1rem; }
@@ -198,6 +192,30 @@
         }
         .close-lightbox:hover { opacity: 1; }
 
+        /* 還原 Contact 頁面樣式 */
+        .contact-list { display: flex; flex-direction: column; align-items: center; gap: 1.5rem; margin-top: 0; }
+        .contact-item {
+            display: flex; align-items: center; gap: 1.5rem;
+            color: rgba(255,255,255,0.6); transition: all 0.3s ease;
+            cursor: pointer; position: relative;
+        }
+        .contact-item:hover { color: white; transform: translateY(-3px); }
+        .contact-icon { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 1.5; }
+        .contact-text { font-size: 0.9rem; font-weight: 400; letter-spacing: 0.15em; }
+
+        #copy-toast {
+            position: absolute; left: 100%; top: 50%; transform: translateY(-50%);
+            margin-left: 1rem; font-size: 9px; text-transform: uppercase; letter-spacing: 0.2em;
+            color: #4ade80; opacity: 0; transition: opacity 0.3s; pointer-events: none;
+            white-space: nowrap;
+        }
+        #copy-toast.show { opacity: 1; }
+
+        #mobile-menu { position: fixed; inset: 0; background: rgba(0,0,0,0.96); backdrop-filter: blur(25px); z-index: 2000; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 1.5rem; opacity: 0; transition: opacity 0.4s ease; }
+        #mobile-menu.active { display: flex; opacity: 1; }
+        .mobile-nav-link { font-size: 1rem; font-weight: 700; letter-spacing: 0.4em; text-transform: uppercase; color: white; opacity: 0.6; transition: opacity 0.3s; cursor: pointer; }
+        .mobile-nav-link:hover { opacity: 1; }
+
         /* ==========================================================================
            【手機版優化 (Mobile Optimization)】
            ========================================================================== */
@@ -212,8 +230,8 @@
             .sub-page-container { padding: 2.5rem 1.5rem; width: 92%; margin: auto 0; }
             #page-about h3.text-7xl { font-size: 3.5rem; } 
             .gallery-folder { height: 38vh; }
+            /* 手機版標籤還原：靠左顯示 */
             .folder-info { left: 1.5rem; right: auto; bottom: 1.5rem; text-align: left; }
-            .folder-title { font-size: 1.8rem; }
             .nav-arrow { display: none; }
 
             #lightbox-content-wrapper {
@@ -240,6 +258,7 @@
             #lb-description { font-size: 0.85rem; line-height: 1.8; text-align: center; margin-top: 0; }
             .close-lightbox { top: 1.2rem; right: 1.2rem; font-size: 8px; }
             .photo-gallery-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 1rem; }
+            #copy-toast { left: 50%; top: 100%; margin-left: 0; margin-top: 2px; transform: translateX(-50%); }
         }
     </style>
 </head>
@@ -272,7 +291,7 @@
         <span class="close-lightbox" id="close-hint">Click anywhere to close</span>
         <div id="lightbox-content-wrapper">
             <div id="lightbox-img-container">
-                <!-- 電腦版側邊導覽 -->
+                <!-- 電腦版側邊導覽箭頭 -->
                 <div class="nav-arrow left" onclick="stackPrev(event)">
                     <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"></path></svg>
                 </div>
@@ -288,7 +307,7 @@
         <img id="lightbox-img" src="" alt="Full view">
     </div>
 
-    <!-- 頁面結構保持 -->
+    <!-- 頁面 1: Portfolio -->
     <div id="page-portfolio" class="page-content active">
         <section class="hero-section">
             <div class="hero-text">
@@ -323,6 +342,7 @@
         </section>
     </div>
 
+    <!-- 頁面 2: About Me (還原版本) -->
     <div id="page-about" class="page-content fixed-page">
         <div class="sub-page-container">
             <h3 class="text-7xl mb-10" style="font-family: 'Licorice', cursive; text-transform: none; letter-spacing: normal;">Jason Shih</h3>
@@ -337,23 +357,25 @@
         </div>
     </div>
 
+    <!-- 頁面 3: Contact (還原版本) -->
     <div id="page-contact" class="page-content fixed-page">
         <div class="sub-page-container">
             <h2 class="page-heading">Contact</h2>
             <div class="contact-list">
                 <div class="contact-item" onclick="copyEmail(this)">
-                    <svg class="contact-icon" viewBox="0 0 24 24"><path stroke-linecap="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"></path></svg>
-                    <span class="contact-text">picinview.offical@gmail.com</span>
+                    <svg class="contact-icon" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"></path></svg>
+                    <span class="contact-text text-xs md:text-sm">picinview.offical@gmail.com</span>
                     <span id="copy-toast">Copied!</span>
                 </div>
                 <a href="https://www.instagram.com/picinview/" target="_blank" class="contact-item">
-                    <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
-                    <span class="contact-text">picinview</span>
+                    <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                    <span class="contact-text text-xs md:text-sm">picinview</span>
                 </a>
             </div>
         </div>
     </div>
 
+    <!-- 頁面 4: Gallery View -->
     <div id="page-gallery" class="page-content py-16 px-6">
         <div class="max-w-6xl mx-auto">
             <div class="flex flex-col items-center mb-8">
@@ -430,7 +452,11 @@
             textArea.value = text; textArea.style.position = "fixed"; textArea.style.left = "-9999px"; textArea.style.top = "0";
             textArea.setAttribute('readonly', ''); document.body.appendChild(textArea);
             textArea.select(); textArea.setSelectionRange(0, 99999);
-            try { document.execCommand('copy'); const toast = document.getElementById('copy-toast'); toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 2000); } catch (err) {}
+            try {
+                document.execCommand('copy');
+                const toast = document.getElementById('copy-toast');
+                toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 2000);
+            } catch (err) {}
             document.body.removeChild(textArea);
         };
 
@@ -442,38 +468,25 @@
             document.body.style.overflowY = "auto";
         };
 
-        // 修改處：支援物理位移的堆疊切換邏輯 (滑動效果)
         function updateStackUI(direction = 1) {
             if (!currentStackData) return;
             const lbImg = document.getElementById('lightbox-img');
-            
-            // 執行滑動動畫：滑出畫面
             lbImg.style.transition = 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
             lbImg.style.transform = `translate(${direction > 0 ? '-150%' : '50%'}, -50%)`;
             lbImg.style.opacity = '0';
-            
             setTimeout(() => {
-                // 更換照片並瞬間移動到進場側
                 lbImg.src = currentStackData.images[currentStackIndex];
                 lbImg.style.transition = 'none';
                 lbImg.style.transform = `translate(${direction > 0 ? '50%' : '-150%'}, -50%)`;
                 lbImg.offsetHeight; 
-                
-                // 滑入中心點
                 lbImg.style.transition = 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
                 lbImg.style.transform = 'translate(-50%, -50%)';
                 lbImg.style.opacity = '1';
             }, 400);
         }
 
-        window.stackNext = (e) => { 
-            if(e) e.stopPropagation(); 
-            if(currentStackData) { currentStackIndex = (currentStackIndex + 1) % currentStackData.images.length; updateStackUI(1); } 
-        };
-        window.stackPrev = (e) => { 
-            if(e) e.stopPropagation(); 
-            if(currentStackData) { currentStackIndex = (currentStackIndex - 1 + currentStackData.images.length) % currentStackData.images.length; updateStackUI(-1); } 
-        };
+        window.stackNext = (e) => { if(e) e.stopPropagation(); if(currentStackData) { currentStackIndex = (currentStackIndex + 1) % currentStackData.images.length; updateStackUI(1); } };
+        window.stackPrev = (e) => { if(e) e.stopPropagation(); if(currentStackData) { currentStackIndex = (currentStackIndex - 1 + currentStackData.images.length) % currentStackData.images.length; updateStackUI(-1); } };
 
         window.handleLightboxClick = (e) => {
             if (e.target.closest('.nav-arrow')) return;
@@ -482,7 +495,6 @@
             const hint = document.getElementById('close-hint');
             const hasInfo = document.getElementById('lb-title').innerText.trim().length > 0 || 
                             document.getElementById('lb-description').innerText.trim().length > 0;
-
             if (isMobile) {
                 if (currentStackData && !isMobileInfoActive) {
                     if (currentStackIndex < currentStackData.images.length - 1) {
@@ -497,7 +509,6 @@
             } else { closeLightbox(); }
         };
 
-        // 滑動偵測
         window.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; }, false);
         window.addEventListener('touchend', e => {
             const touchEndX = e.changedTouches[0].screenX;
@@ -510,7 +521,6 @@
             lastThumbElement = thumbElement; isMobileInfoActive = false;
             currentStackData = (photoData.type === 'stack') ? photoData : null;
             currentStackIndex = 0;
-
             const lightbox = document.getElementById('lightbox-overlay');
             const lbImg = document.getElementById('lightbox-img');
             const lbTitle = document.getElementById('lb-title');
@@ -518,28 +528,19 @@
             const hint = document.getElementById('close-hint');
             const imgContainer = document.getElementById('lightbox-img-container');
             const isMobile = window.innerWidth <= 768;
-
             const src = currentStackData ? currentStackData.images[0] : (typeof photoData === 'object' ? photoData.src : photoData);
             lbTitle.innerText = typeof photoData === 'object' ? photoData.title : "";
             lbDesc.innerText = typeof photoData === 'object' ? (photoData.description || "") : "";
-            
-            // 箭頭顯示判斷
             const arrows = document.querySelectorAll('.nav-arrow');
             arrows.forEach(a => a.style.display = (currentStackData && !isMobile) ? 'flex' : 'none');
-
             hint.innerText = isMobile ? (currentStackData ? "Next" : (lbTitle.innerText ? "Click" : "Click anywhere to close")) : "Click anywhere to close";
-
             const rect = thumbElement.getBoundingClientRect();
             lbImg.style.transition = 'none';
             lbImg.style.top = `${rect.top}px`; lbImg.style.left = `${rect.left}px`;
             lbImg.style.width = `${rect.width}px`; lbImg.style.height = `${rect.height}px`;
             lbImg.style.transform = 'none'; lbImg.style.filter = 'none'; lbImg.src = src; lbImg.style.opacity = '1';
-            
-            lightbox.style.display = 'flex';
-            lbImg.offsetHeight; 
-            lightbox.classList.add('active');
+            lightbox.style.display = 'flex'; lbImg.offsetHeight; lightbox.classList.add('active');
             lbImg.style.transition = 'all 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
-            
             setTimeout(() => {
                 const containerRect = imgContainer.getBoundingClientRect();
                 if (isMobile) {
@@ -584,46 +585,31 @@
             grid.innerHTML = ''; 
             document.getElementById('gallery-title').innerText = category;
             document.getElementById('gallery-label').innerText = `Category ${CATEGORY_MAPPING[category] || '00'}`;
-            
             (CATEGORY_GALLERIES[category] || []).forEach(photo => {
                 const item = document.createElement('div'); item.className = 'gallery-item';
                 const isStack = photo.type === 'stack';
                 const workTitle = (typeof photo === 'object' && photo.title) ? photo.title : "";
                 const mainSrc = isStack ? photo.images[0] : (typeof photo === 'object' ? photo.src : photo);
-                
-                // 修正：確保圖片在相簿網格內精確置中
-                item.innerHTML = `
-                    <img src="${mainSrc}" alt="Work" loading="lazy" class="gallery-thumb-img">
-                    <div class="item-info"><p class="item-name">${workTitle}</p></div>`;
-                
+                item.innerHTML = `<img src="${mainSrc}" alt="Work" loading="lazy" class="gallery-thumb-img"><div class="item-info"><p class="item-name">${workTitle}</p></div>`;
                 item.onclick = () => openLightbox(photo, item);
                 grid.appendChild(item);
             });
             switchPage('gallery');
         };
 
-        window.addEventListener('keydown', (e) => {
-            if (!currentStackData) return;
-            if (e.key === 'ArrowRight') stackNext(null);
-            else if (e.key === 'ArrowLeft') stackPrev(null);
-        });
-
-        // 渲染引擎與背景邏輯
+        window.addEventListener('keydown', (e) => { if (!currentStackData) return; if (e.key === 'ArrowRight') stackNext(null); else if (e.key === 'ArrowLeft') stackPrev(null); });
         function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; }
         window.addEventListener('resize', resize); resize();
         window.addEventListener('mousemove', e => {
             mouse.px = mouse.x; mouse.py = mouse.y; mouse.x = e.clientX; mouse.y = e.clientY;
             cursor.style.left = `${mouse.x}px`; cursor.style.top = `${mouse.y}px`;
-            if (Math.abs(mouse.x - mouse.px) > 1 || Math.abs(mouse.y - mouse.py) > 1) {
-                points.push({ x: mouse.x, y: mouse.y, vx: (mouse.x - mouse.px) * 0.35, vy: (mouse.y - mouse.py) * 0.35, age: 0, maxAge: 160, growthAge: 90 });
-            }
+            if (Math.abs(mouse.x - mouse.px) > 1 || Math.abs(mouse.y - mouse.py) > 1) { points.push({ x: mouse.x, y: mouse.y, vx: (mouse.x - mouse.px) * 0.35, vy: (mouse.y - mouse.py) * 0.35, age: 0, maxAge: 160, growthAge: 90 }); }
         });
         function drawCoverImage(ctx, img, dx, dy, dw, dh) {
             const imgW = img.naturalWidth; const imgH = img.naturalHeight;
             const imgAspect = imgW / imgH; const destAspect = dw / dh;
             let sx, sy, sw, sh;
-            if (imgAspect > destAspect) { sh = imgH; sw = imgH * destAspect; sx = (imgW - sw) / 2; sy = 0; }
-            else { sw = imgW; sh = imgW / destAspect; sx = 0; sy = (imgH - sh) / 2; }
+            if (imgAspect > destAspect) { sh = imgH; sw = imgH * destAspect; sx = (imgW - sw) / 2; sy = 0; } else { sw = imgW; sh = imgW / destAspect; sx = 0; sy = (imgH - sh) / 2; }
             if (img.complete && img.naturalWidth !== 0) ctx.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh);
         }
         function drawGrid(isColor, offset) {
