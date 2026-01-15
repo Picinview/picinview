@@ -120,7 +120,6 @@
         }
         .gallery-item:hover img { transform: scale(1.05); }
 
-        /* 修正處：將懸停標題改為水平置中對齊 */
         .item-info {
             position: absolute; bottom: 0; left: 0; width: 100%; padding: 0 0 1.5rem 0;
             text-align: center; pointer-events: none; opacity: 0;
@@ -165,7 +164,7 @@
             background: transparent !important;
         }
 
-        /* 純淨側邊導覽箭頭 (無背景圓圈) */
+        /* 純淨側邊箭頭 */
         .nav-arrow {
             position: absolute; top: 50%; transform: translateY(-50%);
             width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;
@@ -230,10 +229,8 @@
             .sub-page-container { padding: 2.5rem 1.5rem; width: 92%; margin: auto 0; }
             #page-about h3.text-7xl { font-size: 3.5rem; } 
             .gallery-folder { height: 38vh; }
-            
-            /* 手機版標籤：靠左顯示 */
             .folder-info { left: 1.5rem; right: auto; bottom: 1.5rem; text-align: left; }
-            /* 精緻小型化標題 */
+            /* 縮小手機版標題尺寸 */
             .folder-title { font-size: 1.05rem; letter-spacing: 0.12em; } 
             .page-label { font-size: 7.5px; margin-bottom: 0.4rem; letter-spacing: 0.4em; }
 
@@ -312,7 +309,7 @@
         <img id="lightbox-img" src="" alt="Full view">
     </div>
 
-    <!-- 頁面 1: Portfolio -->
+    <!-- 頁面結構保持 -->
     <div id="page-portfolio" class="page-content active">
         <section class="hero-section">
             <div class="hero-text">
@@ -347,7 +344,6 @@
         </section>
     </div>
 
-    <!-- 頁面 2: About Me -->
     <div id="page-about" class="page-content fixed-page">
         <div class="sub-page-container">
             <h3 class="text-7xl mb-10" style="font-family: 'Licorice', cursive; text-transform: none; letter-spacing: normal;">Jason Shih</h3>
@@ -362,7 +358,6 @@
         </div>
     </div>
 
-    <!-- 頁面 3: Contact -->
     <div id="page-contact" class="page-content fixed-page">
         <div class="sub-page-container">
             <h2 class="page-heading">Contact</h2>
@@ -380,7 +375,6 @@
         </div>
     </div>
 
-    <!-- 頁面 4: Gallery View -->
     <div id="page-gallery" class="page-content py-16 px-6">
         <div class="max-w-6xl mx-auto">
             <div class="flex flex-col items-center mb-8">
@@ -473,6 +467,7 @@
             document.body.style.overflowY = "auto";
         };
 
+        // 堆疊切換邏輯
         function updateStackUI(direction = 1) {
             if (!currentStackData) return;
             const lbImg = document.getElementById('lightbox-img');
@@ -552,6 +547,15 @@
             lastThumbElement = thumbElement; isMobileInfoActive = false;
             currentStackData = (photoData.type === 'stack') ? photoData : null;
             currentStackIndex = 0;
+
+            // 修正處：預載入該組所有相片，確保快取生效
+            if (currentStackData) {
+                currentStackData.images.forEach(url => {
+                    const preloadImg = new Image();
+                    preloadImg.src = url;
+                });
+            }
+
             const lightbox = document.getElementById('lightbox-overlay');
             const lbImg = document.getElementById('lightbox-img');
             const lbTitle = document.getElementById('lb-title');
@@ -580,6 +584,7 @@
             lbImg.style.top = `${rect.top}px`; lbImg.style.left = `${rect.left}px`;
             lbImg.style.width = `${rect.width}px`; lbImg.style.height = `${rect.height}px`;
             lbImg.style.transform = 'none'; lbImg.style.filter = 'none'; lbImg.src = src; lbImg.style.opacity = '1';
+            
             lightbox.style.display = 'flex'; lbImg.offsetHeight; lightbox.classList.add('active');
             lbImg.style.transition = 'all 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
             setTimeout(() => {
