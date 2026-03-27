@@ -393,7 +393,7 @@
             <div class="flex flex-col items-center mb-8">
                 <p class="page-label" id="gallery-label">Category 00</p>
                 <h2 class="page-heading mb-4" id="gallery-title">Album Name</h2>
-                <button onclick="switchPage('portfolio')" class="text-[9px] tracking-[0.3em] uppercase opacity-40 hover:opacity-100 border-b border-white/20 pb-1">← Back to Portfolio</button>
+                <button onclick="history.back()" class="text-[9px] tracking-[0.3em] uppercase opacity-40 hover:opacity-100 border-b border-white/20 pb-1">← Back to Portfolio</button>
             </div>
             <div id="gallery-grid" class="photo-gallery-grid"></div>
         </div>
@@ -404,6 +404,25 @@
     </div>
 
     <script type="module">
+        let isLightboxOpen = false; 
+        if (window.history && window.history.replaceState) {
+            // 一進來網頁，就將當下的狀態定義為首頁 (portfolio)
+            window.history.replaceState({ page: 'portfolio' }, '');
+        }
+
+        window.addEventListener('popstate', (e) => {
+            if (isLightboxOpen) {
+                // 如果目前圖片被點開著，按下返回鍵就只關閉圖片 (傳入 true 代表是從 history 觸發的)
+                closeLightbox(true); 
+            } else if (e.state && e.state.page) {
+                // 如果圖片沒打開，代表我們在切換頁面 (例如從 gallery 返回 portfolio)
+                switchPage(e.state.page, true);
+            } else {
+                // 萬一沒有狀態 (防呆)，預設回到首頁
+                switchPage('portfolio', true);
+            }
+        });
+        
         const CONTACT_EMAIL = "picinview.offical@gmail.com";
         const BACKGROUND_IMAGES = [
             "https://lh3.googleusercontent.com/d/1-UvOc5AvCWzrAIxqSisJ51LYkHj7HoVR=w1000",
@@ -660,12 +679,32 @@
             document.body.removeChild(textArea);
         };
 
-        window.switchPage = (pageId) => {
+        const scrollPositions = {};
+
+        window.switchPage = (pageId, fromPopState = false) => {
+            const currentActive = document.querySelector('.page-content.active');
+            if (currentActive) {
+                const currentId = currentActive.id.replace('page-', '');
+                scrollPositions[currentId] = window.scrollY;
+            }
+
             document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
             document.getElementById(`page-${pageId}`).classList.add('active');
-            window.scrollTo(0, 0);
+            
+            setTimeout(() => {
+                if (pageId === 'portfolio' && scrollPositions['portfolio'] !== undefined) {
+                    window.scrollTo(0, scrollPositions['portfolio']);
+                } else {
+                    window.scrollTo(0, 0);
+                }
+            }, 0);
+            
             canvasContainer.style.opacity = (pageId === 'portfolio') ? "1" : "0.2";
             document.body.style.overflowY = "auto";
+            
+            if (!fromPopState) {
+                history.pushState({ page: pageId }, '');
+            }
         };
 
         // 堆疊切換邏輯
@@ -757,6 +796,9 @@
                 });
             }
 
+            isLightboxOpen = true;
+            history.pushState({ modal: 'lightbox' }, '');
+
             const lightbox = document.getElementById('lightbox-overlay');
             const lbImg = document.getElementById('lightbox-img');
             const lbTitle = document.getElementById('lb-title');
@@ -812,10 +854,14 @@
             document.body.style.overflow = "hidden";
         };
 
-        window.closeLightbox = () => {
+        window.closeLightbox = (fromPopState = false) => {
             const lightbox = document.getElementById('lightbox-overlay');
             const lbImg = document.getElementById('lightbox-img');
             if (!lastThumbElement) return;
+            
+            // 更新狀態
+            isLightboxOpen = false;
+
             const rect = lastThumbElement.getBoundingClientRect();
             lightbox.classList.remove('active', 'info-active');
             lbImg.style.transition = 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
@@ -825,6 +871,11 @@
             lbImg.style.transform = 'translate(0, 0)'; 
             setTimeout(() => { if (!lightbox.classList.contains('active')) { lightbox.style.display = 'none'; lbImg.src = ''; currentStackData = null; } }, 600);
             document.body.style.overflowY = "auto";
+
+            // 如果你是用滑鼠點旁邊關閉的 (不是按返回鍵)，我們就要主動退一步，保持歷史紀錄乾淨
+            if (!fromPopState) {
+                history.back(); 
+            }
         };
 
         window.openGallery = (category) => {
@@ -844,7 +895,25 @@
             switchPage('gallery');
         };
 
-        window.addEventListener('keydown', (e) => { if (!currentStackData) return; if (e.key === 'ArrowRight') stackNext(null); else if (e.key === 'ArrowLeft') stackPrev(null); });
+        window.addEventListener('keydown', (e) => { 
+            if (e.key === 'Escape') {
+                const currentPage = document.querySelector('.page-content.active').id;
+                if (isLightboxOpen) {
+                    // 模擬按下返回鍵
+                    history.back();
+                } else if (currentPage !== 'page-portfolio') {
+                    // 如果不在首頁，也模擬按下返回鍵退回首頁
+                    history.back();
+                }
+                return; // Escape 執行完直接跳出
+            }
+
+            // 既有的左右鍵切換功能
+            if (!currentStackData) return; 
+            if (e.key === 'ArrowRight') stackNext(null); 
+            else if (e.key === 'ArrowLeft') stackPrev(null); 
+        });
+        
         function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; }
         window.addEventListener('resize', resize); resize();
         window.addEventListener('mousemove', e => {
