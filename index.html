@@ -38,6 +38,15 @@
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             scrollbar-width: none; -ms-overflow-style: none; 
             overscroll-behavior: none; 
+            
+            /* 禁止文字選取 (User Select) */
+            -webkit-user-select: none;  /* Safari, Chrome */
+            -moz-user-select: none;     /* Firefox */
+            -ms-user-select: none;      /* IE/Edge */
+            user-select: none;          /* 標準語法 */
+            
+            /* 禁止圖片拖拽 (防止反白時產生的虛影) */
+            -webkit-user-drag: none;
         }
         body::-webkit-scrollbar { display: none; }
         body { overflow-x: hidden; overflow-y: auto; }
@@ -343,7 +352,7 @@
                 <div class="folder-info"><p class="page-label">Category 03</p><h3 class="folder-title">Anima</h3></div>
             </div>
             <div class="gallery-folder" onclick="openGallery('Game Day')">
-                <img src="https://lh3.googleusercontent.com/d/1wzzYrcM_BWrxACQGvjB8tXBUmpHvn8BE=w10000" class="folder-image" alt="Game Day">
+                <img src="https://lh3.googleusercontent.com/d/1_S_N-Y8KkOErSy9ejpEuhRcuQxA4Op_K=w10000" class="folder-image" alt="Game Day">
                 <div class="folder-info"><p class="page-label">Category 04</p><h3 class="folder-title">Game Day</h3></div>
             </div>
             <div class="gallery-folder" onclick="openGallery('Foodie')">
@@ -432,7 +441,7 @@
             "https://lh3.googleusercontent.com/d/1UbX_JDP4lfLfFMRtPdPaG75TEsyXnnX9=w1000",
             "https://lh3.googleusercontent.com/d/1xkUyRhAjcqKeHinO087Z_-zny0b9jrOA=w1000",
             "https://lh3.googleusercontent.com/d/1H2ZaDAxYoj0owaoP0LNPKW-HqToaKx7W=w1000",
-            "https://lh3.googleusercontent.com/d/1wzzYrcM_BWrxACQGvjB8tXBUmpHvn8BE=w1000",
+            "https://lh3.googleusercontent.com/d/1_S_N-Y8KkOErSy9ejpEuhRcuQxA4Op_K=w1000",
             "https://lh3.googleusercontent.com/d/1lN6nzJ45A2TcAshEyDW2UtSRTNBwRq0A=w1000",
             "https://lh3.googleusercontent.com/d/15yjw7MIFzxhwlCEUejaCtlExjXtHv9xF=w1000",
             "https://lh3.googleusercontent.com/d/18IZ4rEeHcng167Xb6g9CtHO7tfj6RPfn=w1000",
@@ -565,7 +574,21 @@
             ],
             
             'Game Day': [
-                "https://lh3.googleusercontent.com/d/1wzzYrcM_BWrxACQGvjB8tXBUmpHvn8BE=w1000", 
+                {
+                    type: 'stack',
+                    title: '亞太首戰',
+                    description: '比起大巨蛋開幕時的悸動，亞太對臺南人的我來說，似乎又多摻雜了一些無法描繪的情感。\n.\n跟著爸爸走到臺南球場外的售票處買票，這是屬於我小時候的記憶。\n那時候內野是空蕩蕩的，連熱區都坐不滿。就算是季後賽，也不一定能塞滿 12000 人。\n\n五妃廟、綠豆湯、杏仁豆腐冰，是屬於臺南球場的回憶。\n六月雪與星級廁所，亦是對臺南球場的印象。\n\n不過不管是怎麼樣的臺南球場，他都承載著好多人的故事，寫下過許多意義非凡的紀錄與榮耀。\n只是他老了，也到了說再見的那一天。\n.\n真的很期待這座球場，未來能帶給我多少不一樣的感動。',
+                    images: [
+                        "https://lh3.googleusercontent.com/d/173VPLALRG39N_MPSbrMp_3c3Le0Js-9F=w1000",
+                        "https://lh3.googleusercontent.com/d/14KIY6e4pTm8COgbDxs4uHL_zFJ1XTNnP=w1000",
+                        "https://lh3.googleusercontent.com/d/1xzYnrSZdUM6oJdv9fOtCMGEWE-P2McmT=w1000",
+                        "https://lh3.googleusercontent.com/d/1l7h8r8LMfUHb379qrctQkuLAi4UiQ3s_=w1000"
+                    ]
+                },
+                { 
+                    src: "https://lh3.googleusercontent.com/d/1_S_N-Y8KkOErSy9ejpEuhRcuQxA4Op_K=w1000", 
+                    title: "青 春訓"
+                },
                 "https://lh3.googleusercontent.com/d/1VHFXEifmaMLF_moUvKkwXKDj8rhFi0B2=w1000",
                 {
                     type: 'stack',
