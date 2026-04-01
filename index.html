@@ -706,9 +706,15 @@
 
         window.switchPage = (pageId, fromPopState = false) => {
             const currentActive = document.querySelector('.page-content.active');
+            let prevId = '';
             if (currentActive) {
-                const currentId = currentActive.id.replace('page-', '');
-                scrollPositions[currentId] = window.scrollY;
+                prevId = currentActive.id.replace('page-', '');
+                scrollPositions[prevId] = window.scrollY;
+            }
+
+            // 特殊邏輯：如果是從 'about' 或 'contact' 回到 'portfolio'，強制捲動到最上方
+            if (pageId === 'portfolio' && (prevId === 'about' || prevId === 'contact')) {
+                scrollPositions['portfolio'] = 0;
             }
 
             document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
