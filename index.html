@@ -280,6 +280,20 @@
             .photo-gallery-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 1rem; }
             #copy-toast { left: 50%; top: 100%; margin-left: 0; margin-top: 2px; transform: translateX(-50%); }
         }
+        /* --- 新增：Lightbox 描述欄超連結樣式 --- */
+        #lb-description a {
+            color: #ffffff; /* 連結顏色改為純白 */
+            text-decoration: underline; /* 加入底線 */
+            text-underline-offset: 4px; /* 底線與文字距離 */
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+            pointer-events: auto; /* 重要：確保在 info-pane 下連結可以被點擊 */
+            cursor: pointer;
+        }
+
+        #lb-description a:hover {
+            opacity: 1; /* 滑鼠移上去變亮 */
+        }
     </style>
 </head>
 <body>
@@ -593,7 +607,7 @@
                 {
                     type: 'stack',
                     title: 'The Light × 姸爾濟斯',
-                    description: '<br><a href="https://www.instagram.com/yennn_1530/" target="_blank">姸蓁 @yennn_1530</a>',
+                    description: '<a href="https://www.instagram.com/yennn_1530/" target="_blank" style="color: white; text-decoration: underline;">姸蓁 @yennn_1530</a>',
                     images: [
                         "https://lh3.googleusercontent.com/d/1V3ioEuH9mWZGIfOp8ujZAWEEB4jyTs0H=w1000",
                         "https://lh3.googleusercontent.com/d/12PZjuOiI5Vm12cteddiWPheQYwbf0Z4p=w1000",
@@ -796,7 +810,8 @@
         };
 
         window.handleLightboxClick = (e) => {
-            if (e.target.closest('.nav-arrow') || e.target.closest('span[onclick*="passStack"]')) return;
+            // 如果點擊的是超連結 (<a> 標籤)，不執行關閉 Lightbox 的動作
+            if (e.target.tagName === 'A' || e.target.closest('.nav-arrow') || e.target.closest('span[onclick*="passStack"]')) return;
             const isMobile = window.innerWidth <= 768;
             const overlay = document.getElementById('lightbox-overlay');
             const hint = document.getElementById('close-hint');
@@ -848,7 +863,7 @@
             const isMobile = window.innerWidth <= 768;
             const src = currentStackData ? currentStackData.images[0] : (typeof photoData === 'object' ? photoData.src : photoData);
             lbTitle.innerText = typeof photoData === 'object' ? photoData.title : "";
-            lbDesc.innerText = typeof photoData === 'object' ? (photoData.description || "") : "";
+            lbDesc.innerHTML = typeof photoData === 'object' ? (photoData.description || "") : "";
             const arrows = document.querySelectorAll('.nav-arrow');
             arrows.forEach(a => a.style.display = (currentStackData && !isMobile) ? 'flex' : 'none');
             
