@@ -281,20 +281,21 @@
             #copy-toast { left: 50%; top: 100%; margin-left: 0; margin-top: 2px; transform: translateX(-50%); }
         }
         
-        /* --- 新增：Lightbox 描述欄超連結樣式 (粗體無底線) --- */
+        /* --- 強制去除底線並設定粗體 --- */
         #lb-description a {
-            color: #ffffff; 
-            font-weight: 800; /* 設定為極粗體 */
-            text-decoration: none; /* 去掉底線 */
+            color: #ffffff !important; 
+            font-weight: 800 !important; 
+            text-decoration: none !important; /* 強制去掉底線 */
+            border-bottom: none !important;  /* 有些框架會用 border 模擬底線，一併去掉 */
             opacity: 0.8;
             transition: all 0.3s ease;
-            pointer-events: auto; 
+            pointer-events: auto !important; 
             cursor: pointer;
-            letter-spacing: 0.05em; /* 稍微增加字距，增加質感 */
+            display: inline-block; /* 確保樣式能正確套用 */
         }
         #lb-description a:hover {
             opacity: 1; 
-            color: #cccccc; /* 移上去稍微變灰，讓使用者知道有點到 */
+            text-decoration: none !important; /* 確保滑鼠移上去也不會出現底線 */
         }
     </style>
 </head>
