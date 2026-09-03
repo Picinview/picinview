@@ -1,0 +1,1361 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9Y47DQBEEC"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+    
+        gtag('config', 'G-9Y47DQBEEC');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Picinview Photolife</title>
+
+    <!-- 網頁簡介與社交分享設定 -->
+    <meta name="description" content="Pick the evanescent in view">
+    <meta property="og:title" content="Picinview Photolife">
+    <meta property="og:description" content="Pick the evanescent in view">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://lh3.googleusercontent.com/d/1UEBfi8q2FSnwNqVQDzB93NoklEzgx9qp=w1200">
+    <meta property="og:url" content="https://picinview.com">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Picinview Photolife">
+    <meta name="twitter:description" content="Pick the evanescent in view">
+    <meta name="twitter:image" content="https://lh3.googleusercontent.com/d/1UEBfi8q2FSnwNqVQDzB93NoklEzgx9qp=w1200">
+    
+    <link rel="icon" href="https://lh3.googleusercontent.com/d/1nlQ80tqa_n17eIqIyCcxsyDnfAktjrnY=w32" type="image/png">
+    <link rel="apple-touch-icon" href="https://lh3.googleusercontent.com/d/1nlQ80tqa_n17eIqIyCcxsyDnfAktjrnY=w180">
+
+    <link href="https://fonts.googleapis.com/css2?family=Licorice&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background-color: #050505; color: white;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            scrollbar-width: none; -ms-overflow-style: none; 
+            overscroll-behavior: none; 
+            
+            /* 禁止文字選取 (User Select) */
+            -webkit-user-select: none;  /* Safari, Chrome */
+            -moz-user-select: none;     /* Firefox */
+            -ms-user-select: none;      /* IE/Edge */
+            user-select: none;          /* 標準語法 */
+            
+            /* 禁止圖片拖拽 (防止反白時產生的虛影) */
+            -webkit-user-drag: none;
+        }
+        body::-webkit-scrollbar { display: none; }
+        body { overflow-x: hidden; overflow-y: auto; }
+
+        #canvas-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1; transition: opacity 0.8s ease; pointer-events: none;
+        }
+        canvas { display: block; width: 100%; height: 100%; }
+
+        .page-content {
+            position: relative; width: 100%; min-height: 100vh; z-index: 10;
+            display: none; opacity: 0; transition: opacity 0.5s ease;
+        }
+        .page-content.active { display: block; opacity: 1; }
+        .page-content.active.fixed-page { 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+        }
+        .fixed-page { min-height: 100vh; width: 100%; overflow-y: auto; }
+
+        nav {
+            position: fixed; top: 0; width: 100%; padding: 2.5rem;
+            display: flex; justify-content: space-between; align-items: center;
+            pointer-events: auto; z-index: 100;
+        }
+        .logo { font-size: 1.2rem; font-weight: 900; letter-spacing: 0.3em; text-transform: uppercase; cursor: pointer; }
+        .nav-link { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; cursor: pointer; transition: opacity 0.3s; }
+        .nav-link:hover { opacity: 0.5; }
+
+        .hero-section { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; pointer-events: none; }
+        .hero-text {
+            display: inline-flex; flex-direction: column; align-items: center;
+            text-align: center; text-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.3); padding: 2.5rem 4rem;
+            backdrop-filter: blur(8px); border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.1); pointer-events: auto;
+        }
+        .hero-title { font-size: clamp(2rem, 8vw, 6rem); line-height: 1; font-weight: 900; margin-bottom: 0.5rem; letter-spacing: -0.02em; }
+        .hero-subtitle { font-size: 0.9rem; letter-spacing: 0.5em; text-transform: uppercase; opacity: 0.7; width: 100%; text-align: center; }
+
+        .galleries-section { padding: 10vh 5vw; background: linear-gradient(to bottom, transparent, #050505 20%); }
+        .gallery-folder {
+            position: relative; width: 100%; height: 60vh; margin-bottom: 10vh;
+            overflow: hidden; border-radius: 8px; cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        .gallery-folder:hover { transform: scale(0.98); }
+        .folder-image { width: 100%; height: 100%; object-fit: cover; opacity: 0.6; transition: transform 1.2s ease, opacity 0.6s ease; }
+        .gallery-folder:hover .folder-image { transform: scale(1.1); opacity: 0.8; }
+        .folder-info { position: absolute; bottom: 4rem; left: 4rem; pointer-events: none; }
+        .folder-title { font-size: 3rem; font-weight: 900; text-transform: uppercase; letter-spacing: -0.02em; }
+
+        .sub-page-container {
+            max-width: 800px; width: 90%; background: rgba(10, 10, 10, 0.9);
+            padding: 4rem; backdrop-filter: blur(25px); border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            display: flex; flex-direction: column; align-items: center;
+            margin: 2rem 0; 
+        }
+
+        body { cursor: none; }
+        .custom-cursor {
+            position: fixed; width: 10px; height: 10px; background: white;
+            border-radius: 50%; pointer-events: none; z-index: 5000; 
+            mix-blend-mode: difference; transform: translate(-50%, -50%);
+        }
+
+        .page-label { font-size: 10px; letter-spacing: 0.6em; text-transform: uppercase; opacity: 0.4; margin-bottom: 1rem; }
+        .page-heading { font-size: 1.875rem; font-weight: 900; margin-bottom: 2rem; text-transform: uppercase; letter-spacing: 0.1em; text-align: center; }
+
+        .photo-gallery-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2.5rem; width: 100%; padding: 2rem 0;
+        }
+        .gallery-item {
+            position: relative; aspect-ratio: 1/1; 
+            display: flex; align-items: center; justify-content: center; 
+            overflow: hidden; cursor: pointer;
+            background: transparent !important;
+        }
+        .gallery-item img {
+            max-width: 100%; max-height: 100%; 
+            width: auto; height: auto;
+            object-fit: contain; 
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            opacity: 1;
+        }
+        .gallery-item:hover img { transform: scale(1.05); }
+
+        .item-info {
+            position: absolute; bottom: 0; left: 0; width: 100%; padding: 0 0 1.5rem 0;
+            text-align: center; pointer-events: none; opacity: 0;
+            transform: translateY(10px); transition: all 0.4s ease;
+        }
+        .gallery-item:hover .item-info { opacity: 1; transform: translateY(0); }
+        .item-name { 
+            font-size: 10px; text-transform: uppercase; letter-spacing: 0.3em; 
+            font-weight: 700; color: white; text-shadow: 0 2px 8px rgba(0,0,0,1); 
+        }
+
+        /* Lightbox Overlay */
+        #lightbox-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0); z-index: 2000;
+            display: none; justify-content: center; align-items: center;
+            transition: background 0.6s ease; cursor: pointer;
+        }
+        #lightbox-overlay.active { background: rgba(0,0,0,0.98); backdrop-filter: blur(25px); }
+        
+        #lightbox-content-wrapper {
+            display: flex; flex-direction: row; align-items: center; justify-content: center;
+            width: 90vw; height: 85vh; 
+            max-width: 1500px; 
+            opacity: 0; transition: opacity 0.5s ease;
+            margin: 0 auto;
+        }
+        #lightbox-overlay.active #lightbox-content-wrapper { opacity: 1; transition-delay: 0.3s; }
+        
+        #lightbox-img-container { 
+            flex: 1.5; height: 100%; display: flex; flex-direction: column; align-items: center; 
+            justify-content: center; position: relative; pointer-events: auto;
+            background: transparent !important;
+            overflow: hidden; 
+        }
+        
+        #lightbox-img { 
+            position: fixed; object-fit: contain; 
+            box-shadow: 0 0 60px rgba(0,0,0,0.8); 
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); 
+            z-index: 2001; pointer-events: none;
+            background: transparent !important;
+        }
+
+        /* 純淨側邊箭頭 */
+        .nav-arrow {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;
+            background: transparent; color: white; border-radius: 0;
+            cursor: pointer; opacity: 0; transition: all 0.4s ease;
+            pointer-events: auto; z-index: 2100; border: none;
+        }
+        #lightbox-img-container:hover .nav-arrow { opacity: 0.6; }
+        .nav-arrow:hover { opacity: 1 !important; scale: 1.2; }
+        .nav-arrow.left { left: 1rem; }
+        .nav-arrow.right { right: 1rem; }
+
+        #lightbox-info-pane { 
+            flex: 0 0 450px; padding-left: 4rem; text-align: left; display: flex; 
+            flex-direction: column; justify-content: center; max-width: 450px; 
+            height: 100%; pointer-events: none; position: relative;
+        }
+        #lb-title { font-size: 1.5rem; font-weight: 900; letter-spacing: 0.2em; margin-bottom: 2rem; text-transform: uppercase; color: white; }
+        #lb-description { font-size: 0.85rem; line-height: 2.2; letter-spacing: 0.12em; color: rgba(255,255,255,0.6); white-space: pre-line; }
+
+        .close-lightbox {
+            position: absolute; top: 3rem; right: 3rem; color: white; font-size: 10px;
+            letter-spacing: 0.4em; text-transform: uppercase; cursor: pointer; opacity: 0.4; transition: opacity 0.3s, color 0.3s; z-index: 2005;
+        }
+        .close-lightbox:hover { opacity: 1; }
+
+        /* 還原 Contact 頁面樣式 */
+        .contact-list { display: flex; flex-direction: column; align-items: center; gap: 1.5rem; margin-top: 0; }
+        .contact-item {
+            display: flex; align-items: center; gap: 1.5rem;
+            color: rgba(255,255,255,0.6); transition: all 0.3s ease;
+            cursor: pointer; position: relative;
+        }
+        .contact-item:hover { color: white; transform: translateY(-3px); }
+        .contact-icon { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 1.5; }
+        .contact-text { font-size: 0.9rem; font-weight: 400; letter-spacing: 0.15em; }
+
+        #copy-toast {
+            position: absolute; left: 100%; top: 50%; transform: translateY(-50%);
+            margin-left: 1rem; font-size: 9px; text-transform: uppercase; letter-spacing: 0.2em;
+            color: #4ade80; opacity: 0; transition: opacity 0.3s; pointer-events: none;
+            white-space: nowrap;
+        }
+        #copy-toast.show { opacity: 1; }
+
+        #mobile-menu { position: fixed; inset: 0; background: rgba(0,0,0,0.96); backdrop-filter: blur(25px); z-index: 2000; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 1.5rem; opacity: 0; transition: opacity 0.4s ease; }
+        #mobile-menu.active { display: flex; opacity: 1; }
+        .mobile-nav-link { font-size: 1rem; font-weight: 700; letter-spacing: 0.4em; text-transform: uppercase; color: white; opacity: 0.6; transition: opacity 0.3s; cursor: pointer; }
+        .mobile-nav-link:hover { opacity: 1; }
+
+        /* ==========================================================================
+           【手機版優化 (Mobile Optimization)】
+           ========================================================================== */
+        @media (max-width: 768px) {
+            .custom-cursor { display: none; }
+            body { cursor: auto; }
+            nav { padding: 1.5rem; }
+            .logo { font-size: 1rem; letter-spacing: 0.2em; }
+            .hero-text { width: 88%; padding: 2rem 1.5rem; }
+            .hero-title { font-size: 2.2rem; }
+            .hero-subtitle { font-size: 0.5rem; letter-spacing: 0.2em; }
+            .sub-page-container { padding: 2.5rem 1.5rem; width: 92%; margin: auto 0; }
+            #page-about h3.text-7xl { font-size: 3.5rem; } 
+            .gallery-folder { height: 38vh; }
+            .folder-info { left: 1.5rem; right: auto; bottom: 1.5rem; text-align: left; }
+            /* 縮小手機版標題尺寸 */
+            .folder-title { font-size: 1.05rem; letter-spacing: 0.12em; } 
+            .page-label { font-size: 7.5px; margin-bottom: 0.4rem; letter-spacing: 0.4em; }
+
+            .nav-arrow { display: none; }
+
+            #lightbox-content-wrapper {
+                flex-direction: column; width: 100%; height: 100%;
+                justify-content: center; padding-top: 0; overflow: hidden; 
+                max-width: none;
+            }
+            #lightbox-img-container { 
+                flex: none; width: 100%; height: auto;
+                min-height: 250px; margin-bottom: 0; 
+                display: flex; align-items: center; justify-content: center;
+            }
+            #lightbox-info-pane {
+                position: absolute; inset: 0; flex: none; width: 100%; height: 100%;
+                padding: 3rem 2rem; text-align: center;
+                justify-content: center; align-items: center;
+                background: rgba(0,0,0,0.6); backdrop-filter: blur(15px);
+                opacity: 0; pointer-events: none;
+                transition: opacity 0.5s ease; z-index: 2002;
+            }
+            #lightbox-overlay.info-active #lightbox-info-pane { opacity: 1; pointer-events: auto; }
+            #lightbox-overlay.info-active #lightbox-img { filter: blur(20px) brightness(0.3); }
+            #lb-title { font-size: 1.1rem; margin-top: 0; margin-bottom: 1.5rem; }
+            #lb-description { font-size: 0.85rem; line-height: 1.8; text-align: center; margin-top: 0; }
+            .close-lightbox { top: 1.2rem; right: 1.2rem; font-size: 8px; }
+            .photo-gallery-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 1rem; }
+            #copy-toast { left: 50%; top: 100%; margin-left: 0; margin-top: 2px; transform: translateX(-50%); }
+        }
+        
+        /* --- 強制去除底線並設定粗體 --- */
+        #lb-description a {
+            color: #ffffff !important; 
+            font-weight: 800 !important; 
+            text-decoration: none !important; /* 強制去掉底線 */
+            border-bottom: none !important;  /* 有些框架會用 border 模擬底線，一併去掉 */
+            opacity: 0.8;
+            transition: all 0.3s ease;
+            pointer-events: auto !important; 
+            cursor: pointer;
+            display: inline-block; /* 確保樣式能正確套用 */
+        }
+        #lb-description a:hover {
+            opacity: 1; 
+            text-decoration: none !important; /* 確保滑鼠移上去也不會出現底線 */
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo" onclick="switchPage('portfolio')">PICINVIEW</div>
+        <div class="hidden md:flex space-x-8">
+            <div class="nav-link" onclick="switchPage('portfolio')">Portfolio</div>
+            <div class="nav-link" onclick="switchPage('about')">About Me</div>
+            <div class="nav-link" onclick="switchPage('contact')">Contact</div>
+        </div>
+        <div class="md:hidden flex cursor-pointer z-[2100]" onclick="toggleMobileMenu()">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+        </div>
+    </nav>
+
+    <div id="mobile-menu">
+        <div class="absolute top-6 right-6 p-2 cursor-pointer" onclick="toggleMobileMenu()">
+            <svg class="w-8 h-8 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </div>
+        <div class="mobile-nav-link" onclick="switchPage('portfolio'); toggleMobileMenu()">Portfolio</div>
+        <div class="mobile-nav-link" onclick="switchPage('about'); toggleMobileMenu()">About Me</div>
+        <div class="mobile-nav-link" onclick="switchPage('contact'); toggleMobileMenu()">Contact</div>
+    </div>
+
+    <div class="custom-cursor" id="cursor"></div>
+
+    <div id="lightbox-overlay" onclick="handleLightboxClick(event)">
+        <span class="close-lightbox" id="close-hint">Click anywhere to close</span>
+        <div id="lightbox-content-wrapper">
+            <div id="lightbox-img-container">
+                <!-- 電腦版側邊導覽箭頭 -->
+                <div class="nav-arrow left" onclick="stackPrev(event)">
+                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"></path></svg>
+                </div>
+                <div class="nav-arrow right" onclick="stackNext(event)">
+                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"></path></svg>
+                </div>
+            </div>
+            <div id="lightbox-info-pane">
+                <h2 id="lb-title"></h2>
+                <p id="lb-description"></p>
+            </div>
+        </div>
+        <img id="lightbox-img" src="" alt="Full view">
+    </div>
+
+    <!-- 頁面結構保持 -->
+    <div id="page-portfolio" class="page-content active">
+        <section class="hero-section">
+            <div class="hero-text">
+                <h1 class="hero-title">PICINVIEW</h1>
+                <p class="hero-subtitle">Pick the evanescent in view</p>
+                <div class="mt-8 animate-bounce opacity-40">
+                    <svg class="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
+            </div>
+        </section>
+        <section class="galleries-section">
+            <div class="gallery-folder" onclick="openGallery('Landscape')">
+                <img src="https://lh3.googleusercontent.com/d/1ObUaqBNzDlns8Qy-OuXjDCooI_8oNwZy=w10000" class="folder-image" alt="Landscape">
+                <div class="folder-info"><p class="page-label">Category 01</p><h3 class="folder-title">Landscape</h3></div>
+            </div>
+            <div class="gallery-folder" onclick="openGallery('Street Snap')">
+                <img src="https://lh3.googleusercontent.com/d/1fBcqt6ft5KTqmB-5dpX8Ulc-FzDhINpS=w10000" class="folder-image" alt="Street Snap">
+                <div class="folder-info"><p class="page-label">Category 02</p><h3 class="folder-title">Street Snap</h3></div>
+            </div>
+            <div class="gallery-folder" onclick="openGallery('Anima')">
+                <img src="https://lh3.googleusercontent.com/d/1x_Hhx_4uE1E7WUfCCHXzUXKuV3re6TVm=w10000" class="folder-image" alt="Anima">
+                <div class="folder-info"><p class="page-label">Category 03</p><h3 class="folder-title">Anima</h3></div>
+            </div>
+            <div class="gallery-folder" onclick="openGallery('Game Day')">
+                <img src="https://lh3.googleusercontent.com/d/1_S_N-Y8KkOErSy9ejpEuhRcuQxA4Op_K=w10000" class="folder-image" alt="Game Day">
+                <div class="folder-info"><p class="page-label">Category 04</p><h3 class="folder-title">Game Day</h3></div>
+            </div>
+            <div class="gallery-folder" onclick="openGallery('Foodie')">
+                <img src="https://lh3.googleusercontent.com/d/1r10GXw0DkbXbtuuVSd4nPADJRv2aMkpR=w1000" class="folder-image" alt="Foodie">
+                <div class="folder-info"><p class="page-label">Category 05</p><h3 class="folder-title">Foodie</h3></div>
+            </div>
+            <div class="gallery-folder" onclick="openGallery('Film Documentary')">
+                <img src="https://lh3.googleusercontent.com/d/1ZXW6sCMj-hf3UU8gnYGFMNTIVBuMrF49=w10000" class="folder-image" alt="Film Documentary">
+                <div class="folder-info"><p class="page-label">Category 06</p><h3 class="folder-title">Film Documentary</h3></div>
+            </div>
+        </section>
+    </div>
+
+    <div id="page-about" class="page-content fixed-page">
+        <div class="sub-page-container">
+            <h3 class="text-7xl mb-10" style="font-family: 'Licorice', cursive; text-transform: none; letter-spacing: normal;">Jason Shih</h3>
+            <div class="text-center opacity-80 text-[0.8rem] md:text-[0.85rem] tracking-[0.12em] md:tracking-[0.15em] leading-[2.2] md:leading-[2.5] mb-8 md:mb-12 max-w-[550px]">
+                <p>一個在新竹載浮載沉的研究生，在生活的風口浪尖，拿著相機進入觀景窗裡的桃花源。光影流動之際，我試圖在喧囂的世界中尋找那份寧靜的平衡。</p>
+            </div>
+            <div class="flex flex-wrap justify-center gap-x-8 md:gap-x-12 gap-y-4 pt-8 border-t border-white/10 w-full">
+                <a href="https://www.instagram.com/picinview/" target="_blank" class="text-[10px] font-bold tracking-[0.3em] uppercase hover:text-gray-400 transition">Instagram</a>
+                <a href="https://www.threads.net/@picinview" target="_blank" class="text-[10px] font-bold tracking-[0.3em] uppercase hover:text-gray-400 transition">Threads</a>
+                <a href="https://www.youtube.com/@picinview" target="_blank" class="text-[10px] font-bold tracking-[0.3em] uppercase hover:text-gray-400 transition">YouTube</a>
+            </div>
+        </div>
+    </div>
+
+    <div id="page-contact" class="page-content fixed-page">
+        <div class="sub-page-container">
+            <h2 class="page-heading">Contact</h2>
+            <div class="contact-list">
+                <div class="contact-item" onclick="copyEmail(this)">
+                    <svg class="contact-icon" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"></path></svg>
+                    <span class="contact-text text-xs md:text-sm">picinview.official@gmail.com</span>
+                    <span id="copy-toast">Copied!</span>
+                </div>
+                <a href="https://www.instagram.com/picinview/" target="_blank" class="contact-item">
+                    <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                    <span class="contact-text text-xs md:text-sm">picinview</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div id="page-gallery" class="page-content py-16 px-6">
+        <div class="max-w-6xl mx-auto">
+            <div class="flex flex-col items-center mb-8">
+                <p class="page-label" id="gallery-label">Category 00</p>
+                <h2 class="page-heading mb-4" id="gallery-title">Album Name</h2>
+                <button onclick="switchPage('portfolio')" class="text-[9px] tracking-[0.3em] uppercase opacity-40 hover:opacity-100 border-b border-white/20 pb-1">← Back to Portfolio</button>
+            </div>
+            <div id="gallery-grid" class="photo-gallery-grid"></div>
+        </div>
+    </div>
+
+    <div id="canvas-container">
+        <canvas id="fluid-canvas"></canvas>
+    </div>
+
+    <script type="module">
+        let isLightboxOpen = false;
+        let currentCategory = null;
+        let currentWorkSlug = null;
+        let lightboxCanGoBack = false;
+        
+        const CONTACT_EMAIL = "picinview.official@gmail.com";
+        const BACKGROUND_IMAGES = [
+            "https://lh3.googleusercontent.com/d/1-UvOc5AvCWzrAIxqSisJ51LYkHj7HoVR=w1000",
+            "https://lh3.googleusercontent.com/d/1x_Hhx_4uE1E7WUfCCHXzUXKuV3re6TVm=w1000",
+            "https://lh3.googleusercontent.com/d/1ZXW6sCMj-hf3UU8gnYGFMNTIVBuMrF49=w1000",
+            "https://lh3.googleusercontent.com/d/1mM6UXA6h8ZsgdQx1SXtGc7Hx03_t9nGs=w1000",
+            "https://lh3.googleusercontent.com/d/1UbX_JDP4lfLfFMRtPdPaG75TEsyXnnX9=w1000",
+            "https://lh3.googleusercontent.com/d/1xkUyRhAjcqKeHinO087Z_-zny0b9jrOA=w1000",
+            "https://lh3.googleusercontent.com/d/1H2ZaDAxYoj0owaoP0LNPKW-HqToaKx7W=w1000",
+            "https://lh3.googleusercontent.com/d/1_S_N-Y8KkOErSy9ejpEuhRcuQxA4Op_K=w1000",
+            "https://lh3.googleusercontent.com/d/1lN6nzJ45A2TcAshEyDW2UtSRTNBwRq0A=w1000",
+            "https://lh3.googleusercontent.com/d/15yjw7MIFzxhwlCEUejaCtlExjXtHv9xF=w1000",
+            "https://lh3.googleusercontent.com/d/18IZ4rEeHcng167Xb6g9CtHO7tfj6RPfn=w1000",
+            "https://lh3.googleusercontent.com/d/1jaUdZnL8ZEjaRy9CKSUnEK4-AeJwK_HV=w1000",
+            "https://lh3.googleusercontent.com/d/12SrZqY9HYQMefoLI0dau9T8QS8jJlb_4=w1000",
+            "https://lh3.googleusercontent.com/d/1kDpZBok6W1sCTQKKv40VQyLiPWnqmtWd=w1000"
+        ];
+        
+        const loadedImages = BACKGROUND_IMAGES.map(src => { const img = new Image(); img.crossOrigin = "anonymous"; img.src = src; return img; });
+        const imageSequence = []; const COLS = 5; const scrollSpeed = 0.3;
+        
+        function initDynamicSequence() {
+            imageSequence.length = 0; const imgCount = BACKGROUND_IMAGES.length;
+            for (let i = 0; i < 30; i++) imageSequence.push(i % imgCount);
+            for (let i = imageSequence.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [imageSequence[i], imageSequence[j]] = [imageSequence[j], imageSequence[i]]; }
+        }
+        initDynamicSequence();
+
+        const CATEGORY_GALLERIES = {
+            'Landscape': [
+                { 
+                    src: "https://lh3.googleusercontent.com/d/1ObUaqBNzDlns8Qy-OuXjDCooI_8oNwZy=w1000", 
+                    title: "大濛", 
+                    description: "大自然送給天文社幹部訓練最完美的句點。\n.\n自從愛上星空攝影，開始背上裝備上山，就鮮少看見天空在夜裡敞開，總羞澀的用雲朵遮著臉。\n.\n一張茫茫雲海，反而成為這趟旅程最令我最難忘的作品。" 
+                },
+                { 
+                    src: "https://lh3.googleusercontent.com/d/12SrZqY9HYQMefoLI0dau9T8QS8jJlb_4=w1000", 
+                    title: "雲 hûn", 
+                    description: "我們都正在嘗試找到生命中的太陽。" 
+                },
+                {
+                    type: 'stack',
+                    title: '交大落雨松 - 1',
+                    description: '大家都是兩個人一台相機，只有我是一個人兩台相機。\n好期待 Glod 200 配上落羽松洗出來的色調。',
+                    images: [
+                        "https://lh3.googleusercontent.com/d/1OYiM4_L4HSUoBq5bYtWslybDY4kenVK5=w1000",
+                        "https://lh3.googleusercontent.com/d/1jaUdZnL8ZEjaRy9CKSUnEK4-AeJwK_HV=w1000"
+                    ]
+                },
+                {
+                    type: 'stack',
+                    title: '交大落雨松 - 2',
+                    description: '今天騎去園區的路上，感覺我們就像一群被圈牧著的羊群。',
+                    images: [
+                        "https://lh3.googleusercontent.com/d/1dQURBmt8f97tHGXgTU9jat4iuAS99R7e=w1000",
+                        "https://lh3.googleusercontent.com/d/1RDMTWaT6s8r5wWmRZylcaVyLJhJpJ5jU=w1000"
+                    ]
+                },
+                {
+                    type: 'stack',
+                    title: '象山百萬夜景',
+                    description: '有些悶熱的天氣，讓上山的過程變得更加狼狽。\n\n但我相信我還會再來一次。',
+                    images: [
+                        "https://lh3.googleusercontent.com/d/1UEBfi8q2FSnwNqVQDzB93NoklEzgx9qp=w1000",
+                        "https://lh3.googleusercontent.com/d/1NHX0Krd3DDxU9kTXZ0_F2ie9FR2eeKjs=w1000"
+                    ]
+                },
+                "https://lh3.googleusercontent.com/d/1lN6nzJ45A2TcAshEyDW2UtSRTNBwRq0A=w1000"
+            ],
+            
+            'Street Snap': [
+                {
+                    type: 'stack',
+                    title: '散策，神農街。',
+                    description: '夜晚的神農街，褪去了白日的喧囂，在昏黃的燈光與古樸的巷弄間，每一處轉角都藏著靜謐的驚喜。',
+                    images: [
+                        "https://lh3.googleusercontent.com/d/1nNJKUtjvruXaCRoju87sfgWwGdIxWqou=w1000",
+                        "https://lh3.googleusercontent.com/d/1PleNEAVOetven-br00Noo7BVHwutAc51=w1000",
+                        "https://lh3.googleusercontent.com/d/1RGkS2Zn3ftrp52WBwQDz8cQRvF84lrLE=w1000",
+                        "https://lh3.googleusercontent.com/d/1E8xOmzD_oLeVM_eijl2DqqDpArngU9BJ=w1000",
+                        "https://lh3.googleusercontent.com/d/1EGd9bKZWXOLH38riW_YJT5VdKqhCIFNC=w1000",
+                        "https://lh3.googleusercontent.com/d/1WHN3g5T6e-bjdToipudhrOKS4Tj47pvU=w1000",
+                        "https://lh3.googleusercontent.com/d/1fZoQVEU-o_B38XyZerqZJsYB2ed4rMVH=w1000",
+                        "https://lh3.googleusercontent.com/d/1zgZEpj8WLMKkQg2znG-D4gw4kIdN3pAE=w1000"
+                    ]
+                },
+                {
+                    type: 'stack',
+                    title: '仁川，冬日。',
+                    images: [
+                        "https://lh3.googleusercontent.com/d/1vVQmbTzieUmUULsJjRnFd4kQUY7pVOJP=w1000",
+                        "https://lh3.googleusercontent.com/d/1pEm3VX_HKxeeBVQNdLA8c2-2p-_HN29m=w1000"
+                    ]
+                },
+                {
+                    type: 'stack',
+                    title: '未歸之途',
+                    description: '「回來再決定吧。」\n我們是這麼說好的。\n.\n這是一場不能結束的旅程，對當時的我來說。\n我知道我們會用四天的伴遊，結束十年的陪伴。\n\n「原來那天的天空是如此清澈。」我看著照片這麼想著。\n.\n你，還好嗎？',
+                    images: [
+                        "https://lh3.googleusercontent.com/d/1mM6UXA6h8ZsgdQx1SXtGc7Hx03_t9nGs=w1000",
+                        "https://lh3.googleusercontent.com/d/1fBcqt6ft5KTqmB-5dpX8Ulc-FzDhINpS=w1000",
+                        "https://lh3.googleusercontent.com/d/1inE2l03kjWJH5eBNXKOYMDRbzlv4_y8w=w1000",
+                        "https://lh3.googleusercontent.com/d/1-SBT-EIGJ79NYSFosJfQ33ehAiWfWbm2=w1000"
+                    ]
+                },
+                {
+                    type: 'stack',
+                    title: '初見淡江 - 1',
+                    description: '時間追逐我於人流之中，即便騎著電輔 YouBike 也很難稱得上愜意。\n\n結語：淡水人很多，下次拍夕陽我會提早出門。',
+                    images: [
+                        "https://lh3.googleusercontent.com/d/1l2zKpx5j2roC6Bhaz5MiXcFEtWqDoUns=w1000",
+                        "https://lh3.googleusercontent.com/d/1QipgqlDdKGxjETzBMu--y5eeeVG2yaYF=w1000",
+                        "https://lh3.googleusercontent.com/d/1j4u-o7uQBAGW4QmAtC1-SpvKZbjnIvPV=w1000"
+                    ]
+                },
+                {
+                    type: 'stack',
+                    title: '初見淡江 - 2',
+                    description: '我喜歡在路邊尋找合適的相框。\n\n向 Zaha Hadid 致敬，願妳在彼端繼續勾勒未完的線條。',
+                    images: [
+                        "https://lh3.googleusercontent.com/d/1PreqfQ4X-CgrMzaUIc5wxMTiV024Vl5k=w1000",
+                        "https://lh3.googleusercontent.com/d/1DThjeoLXY6UdTVr7wfnEi8XTrWw6JMQm=w1000",
+                        "https://lh3.googleusercontent.com/d/1H0buwjLSAYbHAJEicsx9c_WLbJwZlzre=w1000"
+                    ]
+                },
+                { 
+                    src: "https://lh3.googleusercontent.com/d/1C_kOu08oRc5rigiw8SbkBjhrkEkKk5uA=w1000", 
+                    title: "牢籠", 
+                    description: "會不會不管站在哪一邊，我們永遠都是被困在現實的囚徒。" 
+                },
+                {
+                    type: 'stack',
+                    title: '天未亮',
+                    description: '那一天，我失去的自己的避風港。',
+                    images: [
+                        "https://lh3.googleusercontent.com/d/15fJ2ojKB1f-VN_XNm16NTeupSpM9bi7j=w1000",
+                        "https://lh3.googleusercontent.com/d/1ADR0USmRJgdjrXWwjuJbscpklBw7AGEp=w1000"
+                    ]
+                },
+                { 
+                    src: "https://lh3.googleusercontent.com/d/1kDpZBok6W1sCTQKKv40VQyLiPWnqmtWd=w1000", 
+                    title: "薄紗", 
+                    description: "玻璃的另一側是將近 0 度的空氣，剛繞過山脊的陽光，渲染了紗簾，看起來格外溫暖。\n\n然而，卻是身後空調的陣陣暖氣，讓一切變得真實。" 
+                },
+                { 
+                    src: "https://lh3.googleusercontent.com/d/18JGiksSMeBEPDBYhzp_1UiCgl7NIfYys=w1000", 
+                    title: "望", 
+                    description: "遙遙相望，卻始終沒辦法觸碰彼此。\n這是筆下淒美的故事，還是現實留存的溫柔。\n.\n我把我對摺，也輕輕把你對摺。\n今生是你借我的，來生是我答應你的。\n越記得，越不捨，我不懂的，愛得恨得痛得心如刀割，痛過就懂了。\n— 任賢齊《對摺》" 
+                },
+                {
+                    type: 'stack',
+                    title: '我要當老師',
+                    description: '晚上的新竹孔廟沒有太多人，意外的好拍。',
+                    images: [
+                        "https://lh3.googleusercontent.com/d/1KSAgpp-xf_6BrQy6vShyCkIbP4BqPRXe=w1000",
+                        "https://lh3.googleusercontent.com/d/1jSfuxdd1jsExvPkr0RL7eDALOQIsOiV-=w1000",
+                        "https://lh3.googleusercontent.com/d/1JueAuQwfXFUrxDVqBZ-26eRC6cdEnGDb=w1000",
+                        "https://lh3.googleusercontent.com/d/1mqoOkG2_LPtBwKlf5zX2fT3Kgfonlm-k=w1000",
+                        "https://lh3.googleusercontent.com/d/1WiHpyKaWDuujuOwEjDPLtnExpNpGsoER=w1000"
+                    ]
+                }
+            ],
+            
+            'Anima': [
+                "https://lh3.googleusercontent.com/d/1x_Hhx_4uE1E7WUfCCHXzUXKuV3re6TVm=w1000", 
+                "https://lh3.googleusercontent.com/d/1xkUyRhAjcqKeHinO087Z_-zny0b9jrOA=w1000", 
+                "https://lh3.googleusercontent.com/d/1a0xUILsyaIwpaidraaFUoPOSQWvqMkYI=w1000",
+                {
+                    type: 'stack',
+                    title: 'Mooooood',
+                    description: '寫論文的心理狀態 be like',
+                    images: [
+                        "https://lh3.googleusercontent.com/d/1hTHSw9zyMY9L9yj-UpT8Mrxx3XSTb0ik=w1000",
+                        "https://lh3.googleusercontent.com/d/1s-ecSb6QSl5kJV9PLYO28WiGWIxkaHbX=w1000"
+                    ]
+                }
+            ],
+            
+            'Game Day': [
+                {
+                    type: 'stack',
+                    title: '亞太首戰',
+                    description: '比起大巨蛋開幕時的悸動，亞太對臺南人的我來說，似乎又多摻雜了一些無法描繪的情感。\n.\n跟著爸爸走到臺南球場外的售票處買票，這是屬於我小時候的記憶。\n那時候內野是空蕩蕩的，連熱區都坐不滿。就算是季後賽，也不一定能塞滿 12000 人。\n\n五妃廟、綠豆湯、杏仁豆腐冰，是屬於臺南球場的回憶。\n六月雪與星級廁所，亦是對臺南球場的印象。\n\n不過不管是怎麼樣的臺南球場，他都承載著好多人的故事，寫下過許多意義非凡的紀錄與榮耀。\n只是他老了，也到了說再見的那一天。\n.\n真的很期待這座球場，未來能帶給我多少不一樣的感動。',
+                    images: [
+                        "https://lh3.googleusercontent.com/d/173VPLALRG39N_MPSbrMp_3c3Le0Js-9F=w1000",
+                        "https://lh3.googleusercontent.com/d/14KIY6e4pTm8COgbDxs4uHL_zFJ1XTNnP=w1000",
+                        "https://lh3.googleusercontent.com/d/1xzYnrSZdUM6oJdv9fOtCMGEWE-P2McmT=w1000",
+                        "https://lh3.googleusercontent.com/d/1l7h8r8LMfUHb379qrctQkuLAi4UiQ3s_=w1000"
+                    ]
+                },
+                { 
+                    src: "https://lh3.googleusercontent.com/d/1_S_N-Y8KkOErSy9ejpEuhRcuQxA4Op_K=w1000", 
+                    title: "青 春訓"
+                },
+                "https://lh3.googleusercontent.com/d/1VHFXEifmaMLF_moUvKkwXKDj8rhFi0B2=w1000",
+                {
+                    type: 'stack',
+                    title: 'The Light × 姸爾濟斯',
+                    description: '<a href="https://www.instagram.com/yennn_1530/" target="_blank" style="color: white; text-decoration: underline;">姸蓁 @yennn_1530</a>',
+                    images: [
+                        "https://lh3.googleusercontent.com/d/1V3ioEuH9mWZGIfOp8ujZAWEEB4jyTs0H=w1000",
+                        "https://lh3.googleusercontent.com/d/12PZjuOiI5Vm12cteddiWPheQYwbf0Z4p=w1000",
+                        "https://lh3.googleusercontent.com/d/1AB15jKaklCKxl8eWgUIMdBFwuqoZcVXL=w1000",
+                        "https://lh3.googleusercontent.com/d/1ea_ohUe6n6NuRylLGSnuJfNVW7CH3AB2=w1000"
+                    ]
+                },
+                {
+                    type: 'stack',
+                    title: '午後澄清',
+                    description: '澄清湖的寧靜感，與一點溫柔的陽光。',
+                    images: [
+                        "https://lh3.googleusercontent.com/d/1Xs0cZ4hpmPzokpYtEjpa6Z9YvM0pcT7_=w1000",
+                        "https://lh3.googleusercontent.com/d/1yXyPzTxWu_7luglU_PErcLC8lHWiOqPw=w1000",
+                        "https://lh3.googleusercontent.com/d/1_ALNO4zr04qOFAYF3QBjaBexlbDoaMzy=w1000",
+                        "https://lh3.googleusercontent.com/d/1j8jNmwUMzsHl6SLgWkE1doOwdINtrL56=w1000",
+                        "https://lh3.googleusercontent.com/d/1H3Al1qUJdSVV47xEcCFskA5EzS6QQXJb=w1000",
+                        "https://lh3.googleusercontent.com/d/1j9y4OgORMiffi7RREx3sZK76PrKlkMTi=w1000"
+                    ]
+                },
+            ],
+
+            'Foodie': [
+                { 
+                    src: "https://lh3.googleusercontent.com/d/1iTe9h4yeYO3HypFt7zY10wZ-F0mASy80=w1000", 
+                    title: "鹽 & 冰" 
+                }, 
+                {
+                    type: 'stack',
+                    title: 'KOEMON',
+                    description: '姍姍來遲的清醒，成了午後最美的伏筆。漫步於陌生的巷弄，才發現藏在日常邊界外的咖啡香。',
+                    images: [
+                        "https://lh3.googleusercontent.com/d/1b03byC9xO9x3CnkX3GAzmH9VCqGWw4Ua=w1000",
+                        "https://lh3.googleusercontent.com/d/1vlXJpZuk-UBM5Kw2OkEnzzkMZXJ6ElAS=w1000",
+                        "https://lh3.googleusercontent.com/d/1Y6qlIsChop1F99l9teC4urRUP2czcZ2K=w1000"
+                    ]
+                },
+                { 
+                    src: "https://lh3.googleusercontent.com/d/180OHVyQ0dFzlimEHPIJmY6Cha5xHGqLr=w1000", 
+                    title: "鼎富發" 
+                },
+                {
+                    type: 'stack',
+                    title: 'DOCAT',
+                    description: 'coffee & thesis',
+                    images: [
+                        "https://lh3.googleusercontent.com/d/1R1_3VHNqXvd4xuKIJSapHnLruthkpxRB=w1000",
+                        "https://lh3.googleusercontent.com/d/1r10GXw0DkbXbtuuVSd4nPADJRv2aMkpR=w1000"
+                    ]
+                }
+            ],
+            
+            'Film Documentary': [
+                { 
+                    src: "https://lh3.googleusercontent.com/d/18IZ4rEeHcng167Xb6g9CtHO7tfj6RPfn=w1000", 
+                    title: "儲藏室", 
+                    description: "拍底片，對我來說到底是什麼。\n千禧年出生的我，雖然小時候還看過磁片，但擁有的第一台手機，已經只剩下一片玻璃螢幕。\n\n在數位的時代下長大，快門很長一段時間對我來說，是保險，是紀錄。\n然而，卻不一定有故事。\n\n是底片讓每次快門，在我心中重新有了重量。" 
+                },
+                { 
+                    src: "https://lh3.googleusercontent.com/d/1qco-mbhc-gY7tK0sqawGPn5gSHenSZUg=w1000", 
+                    title: "Your friends Steve's'", 
+                    description: "雖然到頭來，終究是因為底片的成本，讓我們更珍惜每一下快門。\n\n不過那又何妨，重新開始珍惜每一個畫面就足夠了。\n.\n每次按下快門前，更認真思考這張照片所呈現的樣子，如何寫下心中的故事。\n或許不一定是什麼扣人心弦、氣勢磅礴的大作，也可以是一篇寫下自己當下心情的田園小品。\n\n只要最後有人能夠收到照片背後的故事，\n即便聽起來像是另一個故事，即便那個人只有自己，也沒關係，這張底片就會超過標籤賦予它的價值。" 
+                },
+                { 
+                    src: "https://lh3.googleusercontent.com/d/1ZXW6sCMj-hf3UU8gnYGFMNTIVBuMrF49=w1000", 
+                    title: "関西空港駅" 
+                }, 
+                {
+                    type: 'stack',
+                    title: '罐裝愛情',
+                    description: '露天神社的販賣機裡，應該沒有販售罐裝愛情。\n.\n在街頭亂晃或許是個幌子，因為我買了幾卷幫忙代購的底片後，就往反方向走去 20 分鐘外的露天神社。\n神社靜靜佇立在大阪巷弄間，聽說這裡是著名的戀愛神社。前幾天才因為想著最後一天的露天神社，才在清水寺買了愛情以外的御守，總不能為了買衣服而把期望留在日本。\n.\n然而到現在，我都還沒找到與自己和解的方法。',
+                    images: [
+                        "https://lh3.googleusercontent.com/d/19RrmqLAYqWNunSvXSl8TSLJJGnoOEw8c=w1000",
+                        "https://lh3.googleusercontent.com/d/10LYLtLBvNzSO3fyPddAM6oWkdg_8GKMd=w1000"
+                    ]
+                },
+                { 
+                    src: "https://lh3.googleusercontent.com/d/1Gu0kL62o7lqb_JjmMqSAMngBQvjLJf0a=w1000", 
+                    title: "鍋貼 30", 
+                    description: "其實在拍下這些照片的時候，還沒特別注意到台灣感性這個議題，只能算是略有耳聞吧。其實就只是喜歡，所以把這個畫面拍下來。\n.\n比起日本的街道，要把這種帶有點懷舊生活感的巷弄拍的好看，真的好難好難。但底片洗出來看到一些不錯的照片，好像突然有點理解為什麼會吹起台灣感性了。" 
+                }, 
+                { 
+                    src: "https://lh3.googleusercontent.com/d/1kZ2u1nCO5RtFgUnpQK3QFRiG-1pJaOHY=w1000",
+                    title: "Gold 200", 
+                    description: "我很喜歡 Gold 200 的顏色，他總是能把我瞳孔裡冷冷的世界，變得溫暖一點。" 
+                },
+                {
+                    type: 'stack',
+                    title: '永樂市場',
+                    description: '一些屬於永樂市場的記憶。',
+                    images: [
+                        "https://lh3.googleusercontent.com/d/1tHDC0-Z5njEGBkqDgbS6NYaZxekYntJd=w1000",
+                        "https://lh3.googleusercontent.com/d/1G72sFGh6maIwsqbldvyh_ErjOjlFNMpu=w1000"
+                    ]
+                }
+            ]
+        };
+        const CATEGORY_MAPPING = {'Landscape': '01', 'Street Snap': '02', 'Anima': '03', 'Game Day': '04', 'Foodie': '05', 'Film Documentary': '06'};
+
+        // =====================================================================
+        // URL / Router 設定
+        // =====================================================================
+        // 預設規則：
+        // 1. Category 直接使用 Category 名稱當網址，例如 /gallery/Landscape
+        // 2. 作品直接使用 title 當網址，例如 /gallery/Landscape/象山百萬夜景
+        // 3. 若作品物件另外設定 slug，則優先使用 slug
+        // 4. stack 內的單張圖片不建立獨立網址
+        // 5. 沒有 title 的純圖片項目，使用 work-1、work-2... 作為備援網址
+
+        function normalizeUrlName(value) {
+            return String(value ?? '')
+                .normalize('NFC')
+                .trim()
+                // 斜線會被瀏覽器視為下一層路徑，因此改成全形斜線，避免破壞 URL 結構。
+                .replaceAll('/', '／')
+                .replaceAll('\\', '＼');
+        }
+
+        function encodePathSegment(value) {
+            return encodeURIComponent(normalizeUrlName(value));
+        }
+
+        function safeDecodePathSegment(value) {
+            try {
+                return decodeURIComponent(value).normalize('NFC');
+            } catch (err) {
+                return value.normalize('NFC');
+            }
+        }
+
+        function getCategorySlug(category) {
+            return normalizeUrlName(category);
+        }
+
+        function getWorkBaseSlug(photo, index) {
+            if (photo && typeof photo === 'object') {
+                if (photo.slug !== undefined && photo.slug !== null && String(photo.slug).trim() !== '') {
+                    return normalizeUrlName(photo.slug);
+                }
+                if (photo.title !== undefined && photo.title !== null && String(photo.title).trim() !== '') {
+                    return normalizeUrlName(photo.title);
+                }
+            }
+            return `work-${index + 1}`;
+        }
+
+        // 同一個 Category 若不小心出現完全相同的 title/slug，
+        // 第二個開始自動加 -2、-3...，避免網址互相衝突。
+        function getWorkEntries(category) {
+            const used = new Map();
+            return (CATEGORY_GALLERIES[category] || []).map((photo, index) => {
+                const baseSlug = getWorkBaseSlug(photo, index) || `work-${index + 1}`;
+                const count = (used.get(baseSlug) || 0) + 1;
+                used.set(baseSlug, count);
+                const slug = count === 1 ? baseSlug : `${baseSlug}-${count}`;
+                return { photo, index, slug };
+            });
+        }
+
+        function getGalleryUrl(category) {
+            return `/gallery/${encodePathSegment(getCategorySlug(category))}`;
+        }
+
+        function getWorkUrl(category, workSlug) {
+            return `${getGalleryUrl(category)}/${encodePathSegment(workSlug)}`;
+        }
+
+        function getPageUrl(pageId) {
+            if (pageId === 'portfolio') return '/';
+            if (pageId === 'about') return '/about';
+            if (pageId === 'contact') return '/contact';
+            if (pageId === 'gallery' && currentCategory) return getGalleryUrl(currentCategory);
+            return '/';
+        }
+
+        function setHistoryState(mode, state, url) {
+            if (!window.history) return;
+            if (mode === 'replace') history.replaceState(state, '', url);
+            else history.pushState(state, '', url);
+        }
+
+        function updatePageMeta(title = '') {
+            const baseTitle = 'Picinview Photolife';
+            document.title = title ? `${title} | ${baseTitle}` : baseTitle;
+
+            const fullUrl = window.location.href;
+            const ogUrl = document.querySelector('meta[property="og:url"]');
+            if (ogUrl) ogUrl.setAttribute('content', fullUrl);
+
+            const ogTitle = document.querySelector('meta[property="og:title"]');
+            if (ogTitle) ogTitle.setAttribute('content', title || baseTitle);
+
+            const twitterTitle = document.querySelector('meta[name="twitter:title"]');
+            if (twitterTitle) twitterTitle.setAttribute('content', title || baseTitle);
+        }
+
+        function findCategoryBySlug(slug) {
+            const target = normalizeUrlName(slug).toLocaleLowerCase();
+            return Object.keys(CATEGORY_GALLERIES).find(category =>
+                getCategorySlug(category).toLocaleLowerCase() === target
+            ) || null;
+        }
+
+        function parseCurrentRoute() {
+            const rawParts = window.location.pathname.split('/').filter(Boolean);
+            const parts = rawParts.map(safeDecodePathSegment);
+
+            if (parts.length === 0) return { type: 'page', page: 'portfolio' };
+            if (parts.length === 1 && parts[0].toLocaleLowerCase() === 'about') return { type: 'page', page: 'about' };
+            if (parts.length === 1 && parts[0].toLocaleLowerCase() === 'contact') return { type: 'page', page: 'contact' };
+
+            if (parts[0].toLocaleLowerCase() === 'gallery' && parts.length >= 2) {
+                const category = findCategoryBySlug(parts[1]);
+                if (!category) return { type: 'not-found' };
+
+                if (parts.length >= 3) {
+                    return {
+                        type: 'work',
+                        category,
+                        workSlug: normalizeUrlName(parts.slice(2).join('/'))
+                    };
+                }
+                return { type: 'gallery', category };
+            }
+
+            return { type: 'not-found' };
+        }
+
+        const canvas = document.getElementById('fluid-canvas');
+        const cursor = document.getElementById('cursor');
+        const canvasContainer = document.getElementById('canvas-container');
+        const ctx = canvas.getContext('2d', { alpha: false }); 
+        let width, height, mouse = { x: 0, y: 0, px: 0, py: 0 }, points = [], scrollOffset = 0, lastThumbElement = null, isMobileInfoActive = false;
+
+        let currentStackData = null;
+        let currentStackIndex = 0;
+        let touchStartX = 0;
+
+        window.toggleMobileMenu = () => {
+            const menu = document.getElementById('mobile-menu');
+            if (menu.style.display === 'flex') { menu.style.opacity = '0'; setTimeout(() => menu.style.display = 'none', 400); }
+            else { menu.style.display = 'flex'; menu.offsetHeight; menu.style.opacity = '1'; }
+        };
+
+        window.copyEmail = (element) => {
+            const text = CONTACT_EMAIL; const textArea = document.createElement("textarea");
+            textArea.value = text; textArea.style.position = "fixed"; textArea.style.left = "-9999px"; textArea.style.top = "0";
+            textArea.setAttribute('readonly', ''); document.body.appendChild(textArea);
+            textArea.select(); textArea.setSelectionRange(0, 99999);
+            try {
+                document.execCommand('copy');
+                const toast = document.getElementById('copy-toast');
+                toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 2000);
+            } catch (err) {}
+            document.body.removeChild(textArea);
+        };
+
+        const scrollPositions = {};
+
+        window.switchPage = (pageId, fromPopState = false) => {
+            const currentActive = document.querySelector('.page-content.active');
+            let prevId = '';
+            if (currentActive) {
+                prevId = currentActive.id.replace('page-', '');
+                scrollPositions[prevId] = window.scrollY;
+            }
+
+            // 特殊邏輯：如果是從 'about' 或 'contact' 回到 'portfolio'，強制捲動到最上方
+            if (pageId === 'portfolio' && (prevId === 'about' || prevId === 'contact')) {
+                scrollPositions['portfolio'] = 0;
+            }
+
+            document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+            document.getElementById(`page-${pageId}`).classList.add('active');
+
+            setTimeout(() => {
+                if (pageId === 'portfolio' && scrollPositions['portfolio'] !== undefined) {
+                    window.scrollTo(0, scrollPositions['portfolio']);
+                } else {
+                    window.scrollTo(0, 0);
+                }
+            }, 0);
+
+            canvasContainer.style.opacity = (pageId === 'portfolio') ? "1" : "0.2";
+            document.body.style.overflowY = "auto";
+
+            if (!fromPopState) {
+                const url = getPageUrl(pageId);
+                setHistoryState('push', { page: pageId }, url);
+            }
+
+            if (pageId === 'portfolio') updatePageMeta('');
+            else if (pageId === 'about') updatePageMeta('About Me');
+            else if (pageId === 'contact') updatePageMeta('Contact');
+            else if (pageId === 'gallery' && currentCategory) updatePageMeta(currentCategory);
+        };
+
+        // 堆疊切換邏輯
+        function updateStackUI(direction = 1) {
+            if (!currentStackData) return;
+            const lbImg = document.getElementById('lightbox-img');
+            const hint = document.getElementById('close-hint');
+            const isMobile = window.innerWidth <= 768;
+            const hasInfo = document.getElementById('lb-title').innerText.trim().length > 0 || 
+                            document.getElementById('lb-description').innerText.trim().length > 0;
+
+            lbImg.style.transition = 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+            lbImg.style.transform = `translate(${direction > 0 ? '-150%' : '50%'}, -50%)`;
+            lbImg.style.opacity = '0';
+            setTimeout(() => {
+                lbImg.src = currentStackData.images[currentStackIndex];
+                lbImg.style.transition = 'none';
+                lbImg.style.transform = `translate(${direction > 0 ? '50%' : '-150%'}, -50%)`;
+                lbImg.offsetHeight; 
+                lbImg.style.transition = 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+                lbImg.style.transform = 'translate(-50%, -50%)';
+                lbImg.style.opacity = '1';
+
+                if (isMobile && !isMobileInfoActive) {
+                    if (currentStackIndex < currentStackData.images.length - 1) {
+                        hint.innerHTML = `<span class="opacity-60" onclick="passStack(event)">Pass</span> <span class="ml-4">Next</span>`;
+                    } else if (hasInfo) {
+                        hint.innerText = "Click";
+                    }
+                }
+            }, 400);
+        }
+
+        window.stackNext = (e) => { if(e) e.stopPropagation(); if(currentStackData) { currentStackIndex = (currentStackIndex + 1) % currentStackData.images.length; updateStackUI(1); } };
+        window.stackPrev = (e) => { if(e) e.stopPropagation(); if(currentStackData) { currentStackIndex = (currentStackIndex - 1 + currentStackData.images.length) % currentStackData.images.length; updateStackUI(-1); } };
+
+        window.passStack = (e) => {
+            if (e) e.stopPropagation();
+            if (!currentStackData) return;
+            const overlay = document.getElementById('lightbox-overlay');
+            const hint = document.getElementById('close-hint');
+            currentStackIndex = currentStackData.images.length - 1;
+            updateStackUI(1);
+            setTimeout(() => {
+                overlay.classList.add('info-active');
+                hint.innerText = "Click anywhere to close";
+                isMobileInfoActive = true;
+            }, 450);
+        };
+
+        window.handleLightboxClick = (e) => {
+            // 如果點擊的是超連結 (<a> 標籤)，不執行關閉 Lightbox 的動作
+            if (e.target.tagName === 'A' || e.target.closest('.nav-arrow') || e.target.closest('span[onclick*="passStack"]')) return;
+            const isMobile = window.innerWidth <= 768;
+            const overlay = document.getElementById('lightbox-overlay');
+            const hint = document.getElementById('close-hint');
+            const hasInfo = document.getElementById('lb-title').innerText.trim().length > 0 || 
+                            document.getElementById('lb-description').innerText.trim().length > 0;
+            if (isMobile) {
+                if (currentStackData && !isMobileInfoActive) {
+                    if (currentStackIndex < currentStackData.images.length - 1) {
+                        currentStackIndex++; updateStackUI(1);
+                    } else if (hasInfo) {
+                        overlay.classList.add('info-active'); hint.innerText = "Click anywhere to close"; isMobileInfoActive = true;
+                    } else { closeLightbox(); }
+                } else if (hasInfo && !isMobileInfoActive) {
+                    overlay.classList.add('info-active'); hint.innerText = "Click anywhere to close"; isMobileInfoActive = true;
+                } else { closeLightbox(); }
+            } else { closeLightbox(); }
+        };
+
+        window.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; }, false);
+        window.addEventListener('touchend', e => {
+            const touchEndX = e.changedTouches[0].screenX;
+            if (!currentStackData || isMobileInfoActive) return;
+            if (touchStartX - touchEndX > 50) stackNext(null);
+            else if (touchEndX - touchStartX > 50) stackPrev(null);
+        }, false);
+
+        window.openLightbox = (photoData, thumbElement, fromRoute = false, forcedWorkSlug = null) => {
+            lastThumbElement = thumbElement;
+            isMobileInfoActive = false;
+            currentStackData = (photoData && photoData.type === 'stack') ? photoData : null;
+            currentStackIndex = 0;
+
+            // 找出目前作品對應的 URL 名稱。
+            const matchedEntry = currentCategory
+                ? getWorkEntries(currentCategory).find(entry => entry.photo === photoData)
+                : null;
+            currentWorkSlug = forcedWorkSlug || thumbElement?.dataset?.workSlug || matchedEntry?.slug || null;
+
+            // 預載入該組所有相片，確保 stack 切換時快取生效。
+            if (currentStackData) {
+                currentStackData.images.forEach(url => {
+                    const preloadImg = new Image();
+                    preloadImg.src = url;
+                });
+            }
+
+            isLightboxOpen = true;
+            lightboxCanGoBack = !fromRoute;
+
+            if (!fromRoute && currentCategory && currentWorkSlug) {
+                setHistoryState(
+                    'push',
+                    { page: 'gallery', category: currentCategory, work: currentWorkSlug },
+                    getWorkUrl(currentCategory, currentWorkSlug)
+                );
+            }
+
+            const lightbox = document.getElementById('lightbox-overlay');
+            const lbImg = document.getElementById('lightbox-img');
+            const lbTitle = document.getElementById('lb-title');
+            const lbDesc = document.getElementById('lb-description');
+            const hint = document.getElementById('close-hint');
+            const imgContainer = document.getElementById('lightbox-img-container');
+            const isMobile = window.innerWidth <= 768;
+            const src = currentStackData ? currentStackData.images[0] : (typeof photoData === 'object' ? photoData.src : photoData);
+            lbTitle.innerText = typeof photoData === 'object' ? (photoData.title || '') : '';
+            lbDesc.innerHTML = typeof photoData === 'object' ? (photoData.description || '') : '';
+            const arrows = document.querySelectorAll('.nav-arrow');
+            arrows.forEach(a => a.style.display = (currentStackData && !isMobile) ? 'flex' : 'none');
+
+            if (isMobile) {
+                if (currentStackData) {
+                    hint.innerHTML = `<span class="opacity-60" onclick="passStack(event)">Pass</span> <span class="ml-4">Next</span>`;
+                } else {
+                    hint.innerText = (lbTitle.innerText || lbDesc.innerText) ? 'Click' : 'Click anywhere to close';
+                }
+            } else {
+                hint.innerText = 'Click anywhere to close';
+            }
+
+            const rect = thumbElement.getBoundingClientRect();
+            lbImg.style.transition = 'none';
+            lbImg.style.top = `${rect.top}px`;
+            lbImg.style.left = `${rect.left}px`;
+            lbImg.style.width = `${rect.width}px`;
+            lbImg.style.height = `${rect.height}px`;
+            lbImg.style.transform = 'none';
+            lbImg.style.filter = 'none';
+            lbImg.src = src;
+            lbImg.style.opacity = '1';
+
+            lightbox.style.display = 'flex';
+            lbImg.offsetHeight;
+            lightbox.classList.add('active');
+            lbImg.style.transition = 'all 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
+            setTimeout(() => {
+                const containerRect = imgContainer.getBoundingClientRect();
+                if (isMobile) {
+                    lbImg.style.top = `${containerRect.top + containerRect.height / 2}px`;
+                    lbImg.style.left = `${containerRect.left + containerRect.width / 2}px`;
+                    lbImg.style.width = '92vw';
+                    lbImg.style.height = 'auto';
+                    lbImg.style.maxHeight = '70vh';
+                } else {
+                    if (!lbTitle.innerText && !lbDesc.innerText) {
+                        lbImg.style.top = '50%';
+                        lbImg.style.left = '50%';
+                        lbImg.style.width = `${window.innerWidth * 0.95}px`;
+                        lbImg.style.height = `${window.innerHeight * 0.92}px`;
+                    } else {
+                        lbImg.style.top = `${containerRect.top + containerRect.height / 2}px`;
+                        lbImg.style.left = `${containerRect.left + containerRect.width / 2}px`;
+                        lbImg.style.width = `${containerRect.width * 0.98}px`;
+                        lbImg.style.height = `${containerRect.height * 0.95}px`;
+                    }
+                    lbImg.style.maxWidth = 'none';
+                    lbImg.style.maxHeight = 'none';
+                }
+                lbImg.style.transform = 'translate(-50%, -50%)';
+            }, 50);
+
+            document.body.style.overflow = 'hidden';
+
+            const title = (photoData && typeof photoData === 'object' && photoData.title)
+                ? photoData.title
+                : currentCategory;
+            updatePageMeta(title || currentCategory || '');
+        };
+
+        window.closeLightbox = (fromPopState = false) => {
+            const lightbox = document.getElementById('lightbox-overlay');
+            const lbImg = document.getElementById('lightbox-img');
+
+            // 即使縮圖元素暫時不存在，也要能正確關閉 overlay。
+            const rect = lastThumbElement?.getBoundingClientRect?.();
+
+            isLightboxOpen = false;
+            lightbox.classList.remove('active', 'info-active');
+            lbImg.style.filter = 'none';
+
+            if (rect) {
+                lbImg.style.transition = 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+                lbImg.style.top = `${rect.top}px`;
+                lbImg.style.left = `${rect.left}px`;
+                lbImg.style.width = `${rect.width}px`;
+                lbImg.style.height = `${rect.height}px`;
+                lbImg.style.transform = 'translate(0, 0)';
+            } else {
+                lbImg.style.transition = 'opacity 0.25s ease';
+                lbImg.style.opacity = '0';
+            }
+
+            setTimeout(() => {
+                if (!lightbox.classList.contains('active')) {
+                    lightbox.style.display = 'none';
+                    lbImg.src = '';
+                    lbImg.style.opacity = '1';
+                    currentStackData = null;
+                    currentStackIndex = 0;
+                }
+            }, rect ? 600 : 250);
+
+            document.body.style.overflowY = 'auto';
+            updatePageMeta(currentCategory || '');
+
+            // 一般從 Gallery 點進作品：回上一筆 history 即可。
+            // 若使用者是直接用作品分享網址進站，沒有 Gallery 這一層 history，
+            // 就直接把目前網址改成該 Category，避免關閉後跳離網站。
+            if (!fromPopState) {
+                if (lightboxCanGoBack) {
+                    history.back();
+                } else if (currentCategory) {
+                    setHistoryState(
+                        'replace',
+                        { page: 'gallery', category: currentCategory },
+                        getGalleryUrl(currentCategory)
+                    );
+                }
+            }
+
+            currentWorkSlug = null;
+            lightboxCanGoBack = false;
+        };
+
+        window.openGallery = (category, fromRoute = false) => {
+            if (!CATEGORY_GALLERIES[category]) return;
+
+            currentCategory = category;
+            currentWorkSlug = null;
+
+            const grid = document.getElementById('gallery-grid');
+            grid.innerHTML = '';
+            document.getElementById('gallery-title').innerText = category;
+            document.getElementById('gallery-label').innerText = `Category ${CATEGORY_MAPPING[category] || '00'}`;
+
+            getWorkEntries(category).forEach(({ photo, slug }) => {
+                const item = document.createElement('div');
+                item.className = 'gallery-item';
+                item.dataset.workSlug = slug;
+
+                const isStack = photo && typeof photo === 'object' && photo.type === 'stack';
+                const workTitle = (photo && typeof photo === 'object' && photo.title) ? photo.title : '';
+                const mainSrc = isStack
+                    ? photo.images[0]
+                    : (photo && typeof photo === 'object' ? photo.src : photo);
+
+                item.innerHTML = `<img src="${mainSrc}" alt="${workTitle || 'Work'}" loading="lazy" class="gallery-thumb-img"><div class="item-info"><p class="item-name">${workTitle}</p></div>`;
+                item.onclick = () => openLightbox(photo, item, false, slug);
+                grid.appendChild(item);
+            });
+
+            // openGallery 自己管理 Gallery URL，因此 switchPage 這裡不再重複 pushState。
+            switchPage('gallery', true);
+
+            if (!fromRoute) {
+                setHistoryState(
+                    'push',
+                    { page: 'gallery', category },
+                    getGalleryUrl(category)
+                );
+            }
+            updatePageMeta(category);
+        };
+
+        function applyRouteFromLocation({ initial = false } = {}) {
+            const route = parseCurrentRoute();
+
+            if (route.type === 'page') {
+                if (isLightboxOpen) closeLightbox(true);
+                currentCategory = null;
+                currentWorkSlug = null;
+                switchPage(route.page, true);
+
+                if (initial) {
+                    setHistoryState('replace', { page: route.page }, getPageUrl(route.page));
+                }
+                return;
+            }
+
+            if (route.type === 'gallery') {
+                if (isLightboxOpen) closeLightbox(true);
+                openGallery(route.category, true);
+
+                if (initial) {
+                    setHistoryState(
+                        'replace',
+                        { page: 'gallery', category: route.category },
+                        getGalleryUrl(route.category)
+                    );
+                }
+                return;
+            }
+
+            if (route.type === 'work') {
+                if (isLightboxOpen) closeLightbox(true);
+
+                openGallery(route.category, true);
+                const entry = getWorkEntries(route.category).find(({ slug }) =>
+                    normalizeUrlName(slug).toLocaleLowerCase() === normalizeUrlName(route.workSlug).toLocaleLowerCase()
+                );
+
+                // Category 存在但作品網址不存在：回到該 Category。
+                if (!entry) {
+                    setHistoryState(
+                        'replace',
+                        { page: 'gallery', category: route.category },
+                        getGalleryUrl(route.category)
+                    );
+                    updatePageMeta(route.category);
+                    return;
+                }
+
+                currentWorkSlug = entry.slug;
+                const thumb = Array.from(document.querySelectorAll('#gallery-grid .gallery-item'))
+                    .find(item => item.dataset.workSlug === entry.slug);
+
+                if (initial) {
+                    setHistoryState(
+                        'replace',
+                        { page: 'gallery', category: route.category, work: entry.slug },
+                        getWorkUrl(route.category, entry.slug)
+                    );
+                }
+
+                // 等 Gallery 進入 active 狀態、瀏覽器完成一次 layout 後再展開 lightbox，
+                // 這樣直接貼分享網址進站時，開場動畫位置也會正確。
+                requestAnimationFrame(() => {
+                    if (thumb) openLightbox(entry.photo, thumb, true, entry.slug);
+                });
+                return;
+            }
+
+            // 無效網址：回首頁，並用 replace 避免錯誤網址留在 history。
+            if (isLightboxOpen) closeLightbox(true);
+            currentCategory = null;
+            currentWorkSlug = null;
+            switchPage('portfolio', true);
+            setHistoryState('replace', { page: 'portfolio' }, '/');
+            updatePageMeta('');
+        }
+
+        window.addEventListener('popstate', () => {
+            applyRouteFromLocation({ initial: false });
+        });
+
+        // 第一次進站時，依目前網址決定要顯示首頁 / Category / 作品。
+        applyRouteFromLocation({ initial: true });
+
+        window.addEventListener('keydown', (e) => { 
+            if (e.key === 'Escape') {
+                const currentPage = document.querySelector('.page-content.active').id;
+                if (isLightboxOpen) {
+                    // 模擬按下返回鍵
+                    history.back();
+                } else if (currentPage !== 'page-portfolio') {
+                    // 如果不在首頁，也模擬按下返回鍵退回首頁
+                    history.back();
+                }
+                return; // Escape 執行完直接跳出
+            }
+
+            // 既有的左右鍵切換功能
+            if (!currentStackData) return; 
+            if (e.key === 'ArrowRight') stackNext(null); 
+            else if (e.key === 'ArrowLeft') stackPrev(null); 
+        });
+        
+        function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resize); resize();
+        window.addEventListener('mousemove', e => {
+            mouse.px = mouse.x; mouse.py = mouse.y; mouse.x = e.clientX; mouse.y = e.clientY;
+            cursor.style.left = `${mouse.x}px`; cursor.style.top = `${mouse.y}px`;
+            if (Math.abs(mouse.x - mouse.px) > 1 || Math.abs(mouse.y - mouse.py) > 1) { points.push({ x: mouse.x, y: mouse.y, vx: (mouse.x - mouse.px) * 0.35, vy: (mouse.y - mouse.py) * 0.35, age: 0, maxAge: 160, growthAge: 90 }); }
+        });
+        function drawCoverImage(ctx, img, dx, dy, dw, dh) {
+            const imgW = img.naturalWidth; const imgH = img.naturalHeight;
+            const imgAspect = imgW / imgH; const destAspect = dw / dh;
+            let sx, sy, sw, sh;
+            if (imgAspect > destAspect) { sh = imgH; sw = imgH * destAspect; sx = (imgW - sw) / 2; sy = 0; } else { sw = imgW; sh = imgW / destAspect; sx = 0; sy = (imgH - sh) / 2; }
+            if (img.complete && img.naturalWidth !== 0) ctx.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh);
+        }
+        function drawGrid(isColor, offset) {
+            if (loadedImages.length === 0) return;
+            const gap = 15; const imgW = (width - (COLS + 1) * gap) / COLS; const imgH = imgW * 1.1; 
+            const totalRows = 30 / COLS; const totalGridHeight = totalRows * (imgH + gap);
+            ctx.save(); if (!isColor) ctx.filter = 'grayscale(100%) brightness(15%)';
+            for (let i = 0; i < 30; i++) {
+                const c = i % COLS; const r = Math.floor(i / COLS);
+                const img = loadedImages[i % loadedImages.length];
+                const x = gap + c * (imgW + gap); const colOffsets = [0, 120, -80, 200, 40];
+                let yBase = gap + r * (imgH + gap) + colOffsets[c];
+                let y = ((yBase - offset) % totalGridHeight + totalGridHeight) % totalGridHeight - imgH;
+                const drawImg = (posY) => { if (posY + imgH > -imgH && posY < height + imgH) { if (img) drawCoverImage(ctx, img, x, posY, imgW, imgH); else { ctx.fillStyle = isColor ? "#222" : "#111"; ctx.fillRect(x, posY, imgW, imgH); } } };
+                drawImg(y); drawImg(y + totalGridHeight); drawImg(y - totalGridHeight);
+            }
+            ctx.restore();
+        }
+        function render() {
+            scrollOffset += scrollSpeed; ctx.fillStyle = "#050505"; ctx.fillRect(0, 0, width, height);
+            drawGrid(false, scrollOffset);
+            if (points.length > 0) {
+                ctx.save(); ctx.beginPath();
+                for (let i = points.length - 1; i >= 0; i--) {
+                    const p = points[i]; p.x += p.vx; p.y += p.vy; p.vx *= 0.96; p.vy *= 0.96; p.age++;
+                    const scaleIn = Math.min(p.age / p.growthAge, 1); const scaleOut = Math.max(1 - p.age / p.maxAge, 0);
+                    const size = (-(Math.cos(Math.PI * scaleIn) - 1) / 2) * scaleOut * 260; 
+                    if (size > 0.1) { ctx.moveTo(p.x + size, p.y); ctx.arc(p.x, p.y, size, 0, Math.PI * 2); }
+                    if (p.age > p.maxAge) points.splice(i, 1);
+                }
+                ctx.clip(); drawGrid(true, scrollOffset); ctx.restore();
+            }
+            requestAnimationFrame(render);
+        }
+        render();
+    </script>
+</body>
+</html>
