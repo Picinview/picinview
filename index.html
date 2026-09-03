@@ -753,7 +753,11 @@
         }
 
         function encodePathSegment(value) {
-            return encodeURIComponent(normalizeUrlName(value));
+            return encodeURIComponent(
+                String(value)
+                    .trim()
+                    .replace(/\s+/g, '-')
+            );
         }
 
         function safeDecodePathSegment(value) {
