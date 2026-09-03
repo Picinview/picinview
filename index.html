@@ -794,17 +794,17 @@
         }
 
         function getGalleryUrl(category) {
-            return `/gallery/${encodePathSegment(getCategorySlug(category))}`;
+            return `/#/gallery/${encodePathSegment(getCategorySlug(category))}`;
         }
-
+        
         function getWorkUrl(category, workSlug) {
             return `${getGalleryUrl(category)}/${encodePathSegment(workSlug)}`;
         }
-
+        
         function getPageUrl(pageId) {
             if (pageId === 'portfolio') return '/';
-            if (pageId === 'about') return '/about';
-            if (pageId === 'contact') return '/contact';
+            if (pageId === 'about') return '/#/about';
+            if (pageId === 'contact') return '/#/contact';
             if (pageId === 'gallery' && currentCategory) return getGalleryUrl(currentCategory);
             return '/';
         }
@@ -838,28 +838,76 @@
         }
 
         function parseCurrentRoute() {
-            const rawParts = window.location.pathname.split('/').filter(Boolean);
+            // 例如：
+            // https://picinview.com/#/gallery/Game%20Day/青%20春訓
+            //
+            // window.location.hash =
+            // "#/gallery/Game%20Day/青%20春訓"
+        
+            const hashPath = window.location.hash.replace(/^#\/?/, '');
+        
+            const rawParts = hashPath.split('/').filter(Boolean);
             const parts = rawParts.map(safeDecodePathSegment);
-
-            if (parts.length === 0) return { type: 'page', page: 'portfolio' };
-            if (parts.length === 1 && parts[0].toLocaleLowerCase() === 'about') return { type: 'page', page: 'about' };
-            if (parts.length === 1 && parts[0].toLocaleLowerCase() === 'contact') return { type: 'page', page: 'contact' };
-
-            if (parts[0].toLocaleLowerCase() === 'gallery' && parts.length >= 2) {
+        
+            // 沒有 hash → 首頁
+            if (parts.length === 0) {
+                return {
+                    type: 'page',
+                    page: 'portfolio'
+                };
+            }
+        
+            if (
+                parts.length === 1 &&
+                parts[0].toLocaleLowerCase() === 'about'
+            ) {
+                return {
+                    type: 'page',
+                    page: 'about'
+                };
+            }
+        
+            if (
+                parts.length === 1 &&
+                parts[0].toLocaleLowerCase() === 'contact'
+            ) {
+                return {
+                    type: 'page',
+                    page: 'contact'
+                };
+            }
+        
+            if (
+                parts[0].toLocaleLowerCase() === 'gallery' &&
+                parts.length >= 2
+            ) {
                 const category = findCategoryBySlug(parts[1]);
-                if (!category) return { type: 'not-found' };
-
+        
+                if (!category) {
+                    return {
+                        type: 'not-found'
+                    };
+                }
+        
                 if (parts.length >= 3) {
                     return {
                         type: 'work',
                         category,
-                        workSlug: normalizeUrlName(parts.slice(2).join('/'))
+                        workSlug: normalizeUrlName(
+                            parts.slice(2).join('/')
+                        )
                     };
                 }
-                return { type: 'gallery', category };
+        
+                return {
+                    type: 'gallery',
+                    category
+                };
             }
-
-            return { type: 'not-found' };
+        
+            return {
+                type: 'not-found'
+            };
         }
 
         const canvas = document.getElementById('fluid-canvas');
