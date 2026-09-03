@@ -734,30 +734,31 @@
         const CATEGORY_MAPPING = {'Landscape': '01', 'Street Snap': '02', 'Anima': '03', 'Game Day': '04', 'Foodie': '05', 'Film Documentary': '06'};
 
         // =====================================================================
-        // URL / Router 設定
+        // URL / Router 設定（GitHub Pages Hash Router）
         // =====================================================================
         // 預設規則：
-        // 1. Category 直接使用 Category 名稱當網址，例如 /gallery/Landscape
-        // 2. 作品直接使用 title 當網址，例如 /gallery/Landscape/象山百萬夜景
-        // 3. 若作品物件另外設定 slug，則優先使用 slug
-        // 4. stack 內的單張圖片不建立獨立網址
-        // 5. 沒有 title 的純圖片項目，使用 work-1、work-2... 作為備援網址
+        // 1. 使用 # 路由，避免 GitHub Pages 直接開分享網址時出現 404。
+        // 2. Category 預設直接使用 Category 名稱，例如：#/gallery/Game-Day
+        // 3. 作品預設直接使用 title，例如：#/gallery/Game-Day/青-春訓
+        // 4. 名稱中的空白會自動轉成「-」，所以不會出現 %20。
+        // 5. 若作品物件另外設定 slug，則優先使用 slug。
+        // 6. 若 Category 在 CATEGORY_SLUGS 另外設定名稱，則優先使用該設定。
+        // 7. stack 內的單張圖片不建立獨立網址。
+        // 8. 沒有 title 的純圖片項目，使用 work-1、work-2... 作為備援網址。
 
         function normalizeUrlName(value) {
             return String(value ?? '')
                 .normalize('NFC')
                 .trim()
-                // 斜線會被瀏覽器視為下一層路徑，因此改成全形斜線，避免破壞 URL 結構。
+                // 斜線會被視為下一層路徑，因此改成全形斜線，避免破壞 URL 結構。
                 .replaceAll('/', '／')
-                .replaceAll('\\', '＼');
+                .replaceAll('\\', '＼')
+                // 網址中的空白自動轉成「-」，例如 Game Day -> Game-Day。
+                .replace(/\s+/g, '-');
         }
 
         function encodePathSegment(value) {
-            return encodeURIComponent(
-                String(value)
-                    .trim()
-                    .replace(/\s+/g, '-')
-            );
+            return encodeURIComponent(normalizeUrlName(value));
         }
 
         function safeDecodePathSegment(value) {
@@ -768,8 +769,16 @@
             }
         }
 
+        // 如果某個資料夾想另外指定網址名稱，可在這裡設定。
+        // 沒有設定的 Category 就直接使用原本名稱。
+        // 例如：'Game Day': 'baseball'
+        const CATEGORY_SLUGS = {
+            // 'Game Day': 'baseball',
+            // 'Film Documentary': 'film'
+        };
+
         function getCategorySlug(category) {
-            return normalizeUrlName(category);
+            return normalizeUrlName(CATEGORY_SLUGS[category] || category);
         }
 
         function getWorkBaseSlug(photo, index) {
@@ -800,11 +809,11 @@
         function getGalleryUrl(category) {
             return `/#/gallery/${encodePathSegment(getCategorySlug(category))}`;
         }
-        
+
         function getWorkUrl(category, workSlug) {
             return `${getGalleryUrl(category)}/${encodePathSegment(workSlug)}`;
         }
-        
+
         function getPageUrl(pageId) {
             if (pageId === 'portfolio') return '/';
             if (pageId === 'about') return '/#/about';
@@ -842,76 +851,32 @@
         }
 
         function parseCurrentRoute() {
-            // 例如：
-            // https://picinview.com/#/gallery/Game%20Day/青%20春訓
-            //
-            // window.location.hash =
-            // "#/gallery/Game%20Day/青%20春訓"
-        
+            // Hash Router 範例：
+            // https://picinview.com/#/gallery/Game-Day/青-春訓
+            // window.location.hash 會是：#/gallery/Game-Day/青-春訓
             const hashPath = window.location.hash.replace(/^#\/?/, '');
-        
             const rawParts = hashPath.split('/').filter(Boolean);
             const parts = rawParts.map(safeDecodePathSegment);
-        
-            // 沒有 hash → 首頁
-            if (parts.length === 0) {
-                return {
-                    type: 'page',
-                    page: 'portfolio'
-                };
-            }
-        
-            if (
-                parts.length === 1 &&
-                parts[0].toLocaleLowerCase() === 'about'
-            ) {
-                return {
-                    type: 'page',
-                    page: 'about'
-                };
-            }
-        
-            if (
-                parts.length === 1 &&
-                parts[0].toLocaleLowerCase() === 'contact'
-            ) {
-                return {
-                    type: 'page',
-                    page: 'contact'
-                };
-            }
-        
-            if (
-                parts[0].toLocaleLowerCase() === 'gallery' &&
-                parts.length >= 2
-            ) {
+
+            if (parts.length === 0) return { type: 'page', page: 'portfolio' };
+            if (parts.length === 1 && parts[0].toLocaleLowerCase() === 'about') return { type: 'page', page: 'about' };
+            if (parts.length === 1 && parts[0].toLocaleLowerCase() === 'contact') return { type: 'page', page: 'contact' };
+
+            if (parts[0].toLocaleLowerCase() === 'gallery' && parts.length >= 2) {
                 const category = findCategoryBySlug(parts[1]);
-        
-                if (!category) {
-                    return {
-                        type: 'not-found'
-                    };
-                }
-        
+                if (!category) return { type: 'not-found' };
+
                 if (parts.length >= 3) {
                     return {
                         type: 'work',
                         category,
-                        workSlug: normalizeUrlName(
-                            parts.slice(2).join('/')
-                        )
+                        workSlug: normalizeUrlName(parts.slice(2).join('/'))
                     };
                 }
-        
-                return {
-                    type: 'gallery',
-                    category
-                };
+                return { type: 'gallery', category };
             }
-        
-            return {
-                type: 'not-found'
-            };
+
+            return { type: 'not-found' };
         }
 
         const canvas = document.getElementById('fluid-canvas');
@@ -1339,7 +1304,7 @@
             applyRouteFromLocation({ initial: false });
         });
 
-        // 第一次進站時，依目前網址決定要顯示首頁 / Category / 作品。
+        // 第一次進站時，依目前 hash 網址決定要顯示首頁 / Category / 作品。
         applyRouteFromLocation({ initial: true });
 
         window.addEventListener('keydown', (e) => { 
